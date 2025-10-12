@@ -1,0 +1,1667 @@
+{
+  "descriptive_stats": {
+    "Haveri": {
+      "Market": "Haveri",
+      "Count": 841,
+      "Mean_Price": 4183.790725326991,
+      "Std_Price": 1364.5059498237288,
+      "Min_Price": 2400,
+      "Max_Price": 9200,
+      "Mean_Arrivals": 30.48513674197384,
+      "Std_Arrivals": 28.701876166676463,
+      "Min_Arrivals": 1,
+      "Max_Arrivals": 219,
+      "Median_Price": 3650.0,
+      "IQR_Price": 2050.0,
+      "Skewness_Price": 1.0308581193043196,
+      "Kurtosis_Price": 0.3136084569390656,
+      "CV_Price": 32.614106187567096
+    },
+    "Kalagategi": {
+      "Market": "Kalagategi",
+      "Count": 1137,
+      "Mean_Price": 4195.181178540018,
+      "Std_Price": 1399.8581689591892,
+      "Min_Price": 1230,
+      "Max_Price": 9874,
+      "Mean_Arrivals": 39.73526824978012,
+      "Std_Arrivals": 42.84149581723819,
+      "Min_Arrivals": 1,
+      "Max_Arrivals": 534,
+      "Median_Price": 3700.0,
+      "IQR_Price": 1140.0,
+      "Skewness_Price": 1.1620102483976638,
+      "Kurtosis_Price": 0.5755822782140356,
+      "CV_Price": 33.36824106953969
+    },
+    "Bidar": {
+      "Market": "Bidar",
+      "Count": 1797,
+      "Mean_Price": 4287.9365609348915,
+      "Std_Price": 1281.9617381098778,
+      "Min_Price": 2231,
+      "Max_Price": 9200,
+      "Mean_Arrivals": 171.09571508069004,
+      "Std_Arrivals": 274.76831254239926,
+      "Min_Arrivals": 1,
+      "Max_Arrivals": 2400,
+      "Median_Price": 3950.0,
+      "IQR_Price": 1550.0,
+      "Skewness_Price": 0.8781785723427723,
+      "Kurtosis_Price": 0.5075794107251999,
+      "CV_Price": 29.896938070146582
+    },
+    "Kalaburgi": {
+      "Market": "Kalaburgi",
+      "Count": 1596,
+      "Mean_Price": 3873.6127819548874,
+      "Std_Price": 1099.625251839138,
+      "Min_Price": 1550,
+      "Max_Price": 9000,
+      "Mean_Arrivals": 7.549498746867168,
+      "Std_Arrivals": 15.304866142775708,
+      "Min_Arrivals": 1,
+      "Max_Arrivals": 285,
+      "Median_Price": 3750.0,
+      "IQR_Price": 1369.0,
+      "Skewness_Price": 0.7134641924636362,
+      "Kurtosis_Price": 0.5077789425601686,
+      "CV_Price": 28.38758837645596
+    },
+    "Bailhongal": {
+      "Market": "Bailhongal",
+      "Count": 504,
+      "Mean_Price": 4559.976190476191,
+      "Std_Price": 566.8508201587817,
+      "Min_Price": 2820,
+      "Max_Price": 6228,
+      "Mean_Arrivals": 161.90674603174602,
+      "Std_Arrivals": 229.49162684805475,
+      "Min_Arrivals": 1,
+      "Max_Arrivals": 1556,
+      "Median_Price": 4590.0,
+      "IQR_Price": 793.75,
+      "Skewness_Price": -0.8609334755106043,
+      "Kurtosis_Price": 1.0602278436211305,
+      "CV_Price": 12.43100394564969
+    }
+  },
+  "correlation_matrix": null,
+  "regression_results": {},
+  "cointegration_results": {
+    "trace_stats": "[         nan          nan 700.40556671 337.86431577   6.44404122]",
+    "max_eigen_stats": "[         nan          nan 362.54125094 331.42027455   6.44404122]",
+    "critical_values_trace": "[[65.8202 69.8189 77.8202]\n [44.4929 47.8545 54.6815]\n [27.0669 29.7961 35.4628]\n [13.4294 15.4943 19.9349]\n [ 2.7055  3.8415  6.6349]]",
+    "critical_values_max_eigen": "[[31.2379 33.8777 39.3693]\n [25.1236 27.5858 32.7172]\n [18.8928 21.1314 25.865 ]\n [12.2971 14.2639 18.52  ]\n [ 2.7055  3.8415  6.6349]]",
+    "eigenvalues": "[1.         1.         1.         1.         0.41550289]",
+    "markets": [
+      "Haveri",
+      "Kalagategi",
+      "Bidar",
+      "Kalaburgi",
+      "Bailhongal"
+    ]
+  },
+  "cointegration_tables": {
+    "trace_table": [
+      {
+        "Null_Hypothesis": "r \u2264 0",
+        "Alternative": "r > 0",
+        "Trace_Statistic": NaN,
+        "Critical_Value_5": 69.8189,
+        "Result_5": "Accept H0"
+      },
+      {
+        "Null_Hypothesis": "r \u2264 1",
+        "Alternative": "r > 1",
+        "Trace_Statistic": NaN,
+        "Critical_Value_5": 47.8545,
+        "Result_5": "Accept H0"
+      },
+      {
+        "Null_Hypothesis": "r \u2264 2",
+        "Alternative": "r > 2",
+        "Trace_Statistic": 700.4055667097945,
+        "Critical_Value_5": 29.7961,
+        "Result_5": "Reject H0"
+      },
+      {
+        "Null_Hypothesis": "r \u2264 3",
+        "Alternative": "r > 3",
+        "Trace_Statistic": 337.86431576779074,
+        "Critical_Value_5": 15.4943,
+        "Result_5": "Reject H0"
+      },
+      {
+        "Null_Hypothesis": "r \u2264 4",
+        "Alternative": "r > 4",
+        "Trace_Statistic": 6.444041218925259,
+        "Critical_Value_5": 3.8415,
+        "Result_5": "Reject H0"
+      }
+    ],
+    "max_eigen_table": [
+      {
+        "Null_Hypothesis": "r = 0",
+        "Alternative": "r = 1",
+        "Max_Eigen_Statistic": NaN,
+        "Critical_Value_5": 33.8777,
+        "Result_5": "Accept H0"
+      },
+      {
+        "Null_Hypothesis": "r = 1",
+        "Alternative": "r = 2",
+        "Max_Eigen_Statistic": NaN,
+        "Critical_Value_5": 27.5858,
+        "Result_5": "Accept H0"
+      },
+      {
+        "Null_Hypothesis": "r = 2",
+        "Alternative": "r = 3",
+        "Max_Eigen_Statistic": 362.54125094200367,
+        "Critical_Value_5": 21.1314,
+        "Result_5": "Reject H0"
+      },
+      {
+        "Null_Hypothesis": "r = 3",
+        "Alternative": "r = 4",
+        "Max_Eigen_Statistic": 331.42027454886545,
+        "Critical_Value_5": 14.2639,
+        "Result_5": "Reject H0"
+      },
+      {
+        "Null_Hypothesis": "r = 4",
+        "Alternative": "r = 5",
+        "Max_Eigen_Statistic": 6.444041218925259,
+        "Critical_Value_5": 3.8415,
+        "Result_5": "Reject H0"
+      }
+    ],
+    "summary_stats": {
+      "Number_of_Variables": 5,
+      "Markets_Analyzed": [
+        "Haveri",
+        "Kalagategi",
+        "Bidar",
+        "Kalaburgi",
+        "Bailhongal"
+      ],
+      "Eigenvalues": [
+        1.0000000000003748,
+        1.000000000000132,
+        0.9999999999999243,
+        0.9999999999989873,
+        0.41550288557610515
+      ],
+      "Number_of_Cointegrating_Relations": 3
+    },
+    "interpretation": {
+      "conclusion": "3 Cointegrating Relationships",
+      "meaning": "Markets are highly integrated",
+      "implications": [
+        "Strong market integration",
+        "Rapid price transmission",
+        "Very limited arbitrage opportunities"
+      ],
+      "policy_implications": [
+        "Regional policy coordination is essential",
+        "High market efficiency"
+      ]
+    }
+  },
+  "arima_models": {
+    "Haveri": {
+      "best_params": [
+        2,
+        1,
+        2
+      ],
+      "aic": 4289.699981475062,
+      "bic": 4308.36668785955,
+      "log_likelihood": -2139.849990737531,
+      "parameters_count": 5,
+      "forecast": [
+        4211.720252089879,
+        4218.2226954262605,
+        4214.297908761768,
+        4205.589541845514,
+        4201.241297556397,
+        4204.576436140164,
+        4211.015919652692,
+        4213.878047005407,
+        4211.105588699727,
+        4206.3665111127175,
+        4204.519610202368,
+        4206.784933216449
+      ],
+      "models_tested": [
+        {
+          "order": [
+            0,
+            1,
+            0
+          ],
+          "AIC": 4293.107275017468,
+          "BIC": 4296.840616294366,
+          "log_likelihood": -2145.553637508734,
+          "parameters": 1
+        },
+        {
+          "order": [
+            0,
+            1,
+            1
+          ],
+          "AIC": 4294.462223243795,
+          "BIC": 4301.92890579759,
+          "log_likelihood": -2145.2311116218975,
+          "parameters": 2
+        },
+        {
+          "order": [
+            0,
+            1,
+            2
+          ],
+          "AIC": 4293.130239813082,
+          "BIC": 4304.330263643776,
+          "log_likelihood": -2143.565119906541,
+          "parameters": 3
+        },
+        {
+          "order": [
+            0,
+            1,
+            3
+          ],
+          "AIC": 4291.988903097229,
+          "BIC": 4306.92226820482,
+          "log_likelihood": -2141.9944515486145,
+          "parameters": 4
+        },
+        {
+          "order": [
+            1,
+            1,
+            0
+          ],
+          "AIC": 4294.320578713172,
+          "BIC": 4301.787261266967,
+          "log_likelihood": -2145.160289356586,
+          "parameters": 2
+        },
+        {
+          "order": [
+            1,
+            1,
+            1
+          ],
+          "AIC": 4295.779965435844,
+          "BIC": 4306.979989266538,
+          "log_likelihood": -2144.889982717922,
+          "parameters": 3
+        },
+        {
+          "order": [
+            1,
+            1,
+            2
+          ],
+          "AIC": 4293.816901307498,
+          "BIC": 4308.750266415089,
+          "log_likelihood": -2142.908450653749,
+          "parameters": 4
+        },
+        {
+          "order": [
+            1,
+            1,
+            3
+          ],
+          "AIC": 4293.898989788052,
+          "BIC": 4312.565696172541,
+          "log_likelihood": -2141.949494894026,
+          "parameters": 5
+        },
+        {
+          "order": [
+            2,
+            1,
+            0
+          ],
+          "AIC": 4293.942405404684,
+          "BIC": 4305.142429235378,
+          "log_likelihood": -2143.971202702342,
+          "parameters": 3
+        },
+        {
+          "order": [
+            2,
+            1,
+            1
+          ],
+          "AIC": 4297.535390134523,
+          "BIC": 4312.468755242115,
+          "log_likelihood": -2144.7676950672617,
+          "parameters": 4
+        },
+        {
+          "order": [
+            2,
+            1,
+            2
+          ],
+          "AIC": 4289.699981475062,
+          "BIC": 4308.36668785955,
+          "log_likelihood": -2139.849990737531,
+          "parameters": 5
+        },
+        {
+          "order": [
+            2,
+            1,
+            3
+          ],
+          "AIC": 4291.339854122796,
+          "BIC": 4313.739901784183,
+          "log_likelihood": -2139.669927061398,
+          "parameters": 6
+        },
+        {
+          "order": [
+            3,
+            1,
+            0
+          ],
+          "AIC": 4293.633313069069,
+          "BIC": 4308.56667817666,
+          "log_likelihood": -2142.8166565345346,
+          "parameters": 4
+        },
+        {
+          "order": [
+            3,
+            1,
+            1
+          ],
+          "AIC": 4295.550181761773,
+          "BIC": 4314.216888146262,
+          "log_likelihood": -2142.7750908808866,
+          "parameters": 5
+        },
+        {
+          "order": [
+            3,
+            1,
+            2
+          ],
+          "AIC": 4291.166749758109,
+          "BIC": 4313.566797419496,
+          "log_likelihood": -2139.5833748790546,
+          "parameters": 6
+        },
+        {
+          "order": [
+            3,
+            1,
+            3
+          ],
+          "AIC": 4292.483254435223,
+          "BIC": 4318.616643373507,
+          "log_likelihood": -2139.2416272176115,
+          "parameters": 7
+        }
+      ]
+    },
+    "Kalagategi": {
+      "best_params": [
+        2,
+        1,
+        2
+      ],
+      "aic": 4259.053269255703,
+      "bic": 4277.62193328325,
+      "log_likelihood": -2124.5266346278513,
+      "parameters_count": 5,
+      "forecast": [
+        4349.016822610555,
+        4342.877884066747,
+        4347.037627689804,
+        4350.475617451763,
+        4349.265482321074,
+        4347.540397928069,
+        4347.762741755384,
+        4348.5594784656605,
+        4348.604468953639,
+        4348.262916389286,
+        4348.18206377661,
+        4348.31746830866
+      ],
+      "models_tested": [
+        {
+          "order": [
+            0,
+            1,
+            0
+          ],
+          "AIC": 4285.19345803107,
+          "BIC": 4288.9071908365795,
+          "log_likelihood": -2141.596729015535,
+          "parameters": 1
+        },
+        {
+          "order": [
+            0,
+            1,
+            1
+          ],
+          "AIC": 4281.733047574025,
+          "BIC": 4289.160513185043,
+          "log_likelihood": -2138.8665237870123,
+          "parameters": 2
+        },
+        {
+          "order": [
+            0,
+            1,
+            2
+          ],
+          "AIC": 4262.416687512974,
+          "BIC": 4273.557885929502,
+          "log_likelihood": -2128.208343756487,
+          "parameters": 3
+        },
+        {
+          "order": [
+            0,
+            1,
+            3
+          ],
+          "AIC": 4263.128193164231,
+          "BIC": 4277.983124386268,
+          "log_likelihood": -2127.5640965821153,
+          "parameters": 4
+        },
+        {
+          "order": [
+            1,
+            1,
+            0
+          ],
+          "AIC": 4279.781385872531,
+          "BIC": 4287.20885148355,
+          "log_likelihood": -2137.8906929362656,
+          "parameters": 2
+        },
+        {
+          "order": [
+            1,
+            1,
+            1
+          ],
+          "AIC": 4279.899675498993,
+          "BIC": 4291.040873915521,
+          "log_likelihood": -2136.9498377494965,
+          "parameters": 3
+        },
+        {
+          "order": [
+            1,
+            1,
+            2
+          ],
+          "AIC": 4263.880869325195,
+          "BIC": 4278.735800547232,
+          "log_likelihood": -2127.9404346625975,
+          "parameters": 4
+        },
+        {
+          "order": [
+            1,
+            1,
+            3
+          ],
+          "AIC": 4260.373960379513,
+          "BIC": 4278.94262440706,
+          "log_likelihood": -2125.1869801897565,
+          "parameters": 5
+        },
+        {
+          "order": [
+            2,
+            1,
+            0
+          ],
+          "AIC": 4274.628347782786,
+          "BIC": 4285.7695461993135,
+          "log_likelihood": -2134.314173891393,
+          "parameters": 3
+        },
+        {
+          "order": [
+            2,
+            1,
+            1
+          ],
+          "AIC": 4274.08765393783,
+          "BIC": 4288.942585159867,
+          "log_likelihood": -2133.043826968915,
+          "parameters": 4
+        },
+        {
+          "order": [
+            2,
+            1,
+            2
+          ],
+          "AIC": 4259.053269255703,
+          "BIC": 4277.62193328325,
+          "log_likelihood": -2124.5266346278513,
+          "parameters": 5
+        },
+        {
+          "order": [
+            2,
+            1,
+            3
+          ],
+          "AIC": 4259.554767506254,
+          "BIC": 4281.83716433931,
+          "log_likelihood": -2123.777383753127,
+          "parameters": 6
+        },
+        {
+          "order": [
+            3,
+            1,
+            0
+          ],
+          "AIC": 4266.638303785165,
+          "BIC": 4281.493235007202,
+          "log_likelihood": -2129.3191518925823,
+          "parameters": 4
+        },
+        {
+          "order": [
+            3,
+            1,
+            1
+          ],
+          "AIC": 4262.880609914981,
+          "BIC": 4281.449273942528,
+          "log_likelihood": -2126.4403049574903,
+          "parameters": 5
+        },
+        {
+          "order": [
+            3,
+            1,
+            2
+          ],
+          "AIC": 4259.923989765317,
+          "BIC": 4282.206386598373,
+          "log_likelihood": -2123.9619948826585,
+          "parameters": 6
+        },
+        {
+          "order": [
+            3,
+            1,
+            3
+          ],
+          "AIC": 4261.206618050515,
+          "BIC": 4287.202747689081,
+          "log_likelihood": -2123.6033090252577,
+          "parameters": 7
+        }
+      ]
+    },
+    "Bidar": {
+      "best_params": [
+        2,
+        1,
+        2
+      ],
+      "aic": 5376.275810349012,
+      "bic": 5396.233133084552,
+      "log_likelihood": -2683.137905174506,
+      "parameters_count": 5,
+      "forecast": [
+        4008.5055478891345,
+        4037.6203332992427,
+        4060.018880875129,
+        4071.443283784543,
+        4070.437625872677,
+        4058.40043133005,
+        4039.0083520399708,
+        4017.1966619063683,
+        3997.9613818939165,
+        3985.2617255297937,
+        3981.2532028909345,
+        3985.9876182345233
+      ],
+      "models_tested": [
+        {
+          "order": [
+            0,
+            1,
+            0
+          ],
+          "AIC": 5405.646336843101,
+          "BIC": 5409.6378013902095,
+          "log_likelihood": -2701.8231684215507,
+          "parameters": 1
+        },
+        {
+          "order": [
+            0,
+            1,
+            1
+          ],
+          "AIC": 5394.514326216031,
+          "BIC": 5402.497255310247,
+          "log_likelihood": -2695.2571631080154,
+          "parameters": 2
+        },
+        {
+          "order": [
+            0,
+            1,
+            2
+          ],
+          "AIC": 5396.119031849039,
+          "BIC": 5408.093425490363,
+          "log_likelihood": -2695.0595159245195,
+          "parameters": 3
+        },
+        {
+          "order": [
+            0,
+            1,
+            3
+          ],
+          "AIC": 5396.284081474774,
+          "BIC": 5412.2499396632065,
+          "log_likelihood": -2694.142040737387,
+          "parameters": 4
+        },
+        {
+          "order": [
+            1,
+            1,
+            0
+          ],
+          "AIC": 5393.730244701116,
+          "BIC": 5401.713173795332,
+          "log_likelihood": -2694.865122350558,
+          "parameters": 2
+        },
+        {
+          "order": [
+            1,
+            1,
+            1
+          ],
+          "AIC": 5394.742600230964,
+          "BIC": 5406.716993872288,
+          "log_likelihood": -2694.371300115482,
+          "parameters": 3
+        },
+        {
+          "order": [
+            1,
+            1,
+            2
+          ],
+          "AIC": 5396.466294802738,
+          "BIC": 5412.43215299117,
+          "log_likelihood": -2694.233147401369,
+          "parameters": 4
+        },
+        {
+          "order": [
+            1,
+            1,
+            3
+          ],
+          "AIC": 5394.3379640910225,
+          "BIC": 5414.295286826562,
+          "log_likelihood": -2692.1689820455113,
+          "parameters": 5
+        },
+        {
+          "order": [
+            2,
+            1,
+            0
+          ],
+          "AIC": 5395.486428796444,
+          "BIC": 5407.460822437768,
+          "log_likelihood": -2694.743214398222,
+          "parameters": 3
+        },
+        {
+          "order": [
+            2,
+            1,
+            1
+          ],
+          "AIC": 5396.561119851769,
+          "BIC": 5412.526978040201,
+          "log_likelihood": -2694.2805599258845,
+          "parameters": 4
+        },
+        {
+          "order": [
+            2,
+            1,
+            2
+          ],
+          "AIC": 5376.275810349012,
+          "BIC": 5396.233133084552,
+          "log_likelihood": -2683.137905174506,
+          "parameters": 5
+        },
+        {
+          "order": [
+            2,
+            1,
+            3
+          ],
+          "AIC": 5376.9336026141245,
+          "BIC": 5400.882389896772,
+          "log_likelihood": -2682.4668013070623,
+          "parameters": 6
+        },
+        {
+          "order": [
+            3,
+            1,
+            0
+          ],
+          "AIC": 5395.026904256864,
+          "BIC": 5410.992762445297,
+          "log_likelihood": -2693.513452128432,
+          "parameters": 4
+        },
+        {
+          "order": [
+            3,
+            1,
+            1
+          ],
+          "AIC": 5396.3195191592295,
+          "BIC": 5416.276841894769,
+          "log_likelihood": -2693.1597595796147,
+          "parameters": 5
+        },
+        {
+          "order": [
+            3,
+            1,
+            2
+          ],
+          "AIC": 5377.864796712532,
+          "BIC": 5401.813583995179,
+          "log_likelihood": -2682.932398356266,
+          "parameters": 6
+        },
+        {
+          "order": [
+            3,
+            1,
+            3
+          ],
+          "AIC": 5387.939519381058,
+          "BIC": 5415.8797712108135,
+          "log_likelihood": -2686.969759690529,
+          "parameters": 7
+        }
+      ]
+    },
+    "Kalaburgi": {
+      "best_params": [
+        2,
+        1,
+        3
+      ],
+      "aic": 5576.321608114846,
+      "bic": 5599.883164270668,
+      "log_likelihood": -2782.160804057423,
+      "parameters_count": 6,
+      "forecast": [
+        3763.795860997788,
+        3769.820562832679,
+        3769.0655511482732,
+        3762.7706960314563,
+        3752.9679629178386,
+        3741.987768552578,
+        3731.9921959122685,
+        3724.6144524597275,
+        3720.7519604383747,
+        3720.525180830428,
+        3723.382562153978,
+        3728.308978938968
+      ],
+      "models_tested": [
+        {
+          "order": [
+            0,
+            1,
+            0
+          ],
+          "AIC": 5681.715853332094,
+          "BIC": 5685.642779358065,
+          "log_likelihood": -2839.857926666047,
+          "parameters": 1
+        },
+        {
+          "order": [
+            0,
+            1,
+            1
+          ],
+          "AIC": 5596.933385201007,
+          "BIC": 5604.787237252947,
+          "log_likelihood": -2796.4666926005034,
+          "parameters": 2
+        },
+        {
+          "order": [
+            0,
+            1,
+            2
+          ],
+          "AIC": 5594.83262748156,
+          "BIC": 5606.613405559471,
+          "log_likelihood": -2794.41631374078,
+          "parameters": 3
+        },
+        {
+          "order": [
+            0,
+            1,
+            3
+          ],
+          "AIC": 5594.019557373125,
+          "BIC": 5609.727261477007,
+          "log_likelihood": -2793.0097786865626,
+          "parameters": 4
+        },
+        {
+          "order": [
+            1,
+            1,
+            0
+          ],
+          "AIC": 5606.649929953936,
+          "BIC": 5614.503782005877,
+          "log_likelihood": -2801.324964976968,
+          "parameters": 2
+        },
+        {
+          "order": [
+            1,
+            1,
+            1
+          ],
+          "AIC": 5596.21080616703,
+          "BIC": 5607.991584244941,
+          "log_likelihood": -2795.105403083515,
+          "parameters": 3
+        },
+        {
+          "order": [
+            1,
+            1,
+            2
+          ],
+          "AIC": 5596.0066227177995,
+          "BIC": 5611.714326821681,
+          "log_likelihood": -2794.0033113588997,
+          "parameters": 4
+        },
+        {
+          "order": [
+            1,
+            1,
+            3
+          ],
+          "AIC": 5595.383659320838,
+          "BIC": 5615.01828945069,
+          "log_likelihood": -2792.691829660419,
+          "parameters": 5
+        },
+        {
+          "order": [
+            2,
+            1,
+            0
+          ],
+          "AIC": 5592.883400153932,
+          "BIC": 5604.664178231843,
+          "log_likelihood": -2793.441700076966,
+          "parameters": 3
+        },
+        {
+          "order": [
+            2,
+            1,
+            1
+          ],
+          "AIC": 5594.8392788648,
+          "BIC": 5610.546982968682,
+          "log_likelihood": -2793.4196394324,
+          "parameters": 4
+        },
+        {
+          "order": [
+            2,
+            1,
+            2
+          ],
+          "AIC": 5594.85200598836,
+          "BIC": 5614.486636118212,
+          "log_likelihood": -2792.42600299418,
+          "parameters": 5
+        },
+        {
+          "order": [
+            2,
+            1,
+            3
+          ],
+          "AIC": 5576.321608114846,
+          "BIC": 5599.883164270668,
+          "log_likelihood": -2782.160804057423,
+          "parameters": 6
+        },
+        {
+          "order": [
+            3,
+            1,
+            0
+          ],
+          "AIC": 5594.81250429473,
+          "BIC": 5610.520208398612,
+          "log_likelihood": -2793.406252147365,
+          "parameters": 4
+        },
+        {
+          "order": [
+            3,
+            1,
+            1
+          ],
+          "AIC": 5596.685756082321,
+          "BIC": 5616.320386212173,
+          "log_likelihood": -2793.3428780411605,
+          "parameters": 5
+        },
+        {
+          "order": [
+            3,
+            1,
+            2
+          ],
+          "AIC": 5596.56757491455,
+          "BIC": 5620.129131070373,
+          "log_likelihood": -2792.283787457275,
+          "parameters": 6
+        },
+        {
+          "order": [
+            3,
+            1,
+            3
+          ],
+          "AIC": 5576.884406165162,
+          "BIC": 5604.372888346955,
+          "log_likelihood": -2781.442203082581,
+          "parameters": 7
+        }
+      ]
+    },
+    "Bailhongal": {
+      "best_params": [
+        3,
+        1,
+        3
+      ],
+      "aic": 1817.4841637071872,
+      "bic": 1837.7166076047395,
+      "log_likelihood": -901.7420818535936,
+      "parameters_count": 7,
+      "forecast": [
+        4003.7938913199055,
+        4004.91063631388,
+        3969.4549053801848,
+        3969.3661162432836,
+        3962.1868199141236,
+        3986.5791156586283,
+        3994.3953058352054,
+        4007.096668188407,
+        3994.5636081727844,
+        3986.2160881180685,
+        3971.2083607393774,
+        3973.741683189244
+      ],
+      "models_tested": [
+        {
+          "order": [
+            0,
+            1,
+            0
+          ],
+          "AIC": 1829.1040006885355,
+          "BIC": 1831.9943498167572,
+          "log_likelihood": -913.5520003442678,
+          "parameters": 1
+        },
+        {
+          "order": [
+            0,
+            1,
+            1
+          ],
+          "AIC": 1830.6937507032019,
+          "BIC": 1836.4744489596453,
+          "log_likelihood": -913.3468753516009,
+          "parameters": 2
+        },
+        {
+          "order": [
+            0,
+            1,
+            2
+          ],
+          "AIC": 1829.9308791692285,
+          "BIC": 1838.601926553894,
+          "log_likelihood": -911.9654395846143,
+          "parameters": 3
+        },
+        {
+          "order": [
+            0,
+            1,
+            3
+          ],
+          "AIC": 1823.230736034323,
+          "BIC": 1834.79213254721,
+          "log_likelihood": -907.6153680171615,
+          "parameters": 4
+        },
+        {
+          "order": [
+            1,
+            1,
+            0
+          ],
+          "AIC": 1830.8037875014502,
+          "BIC": 1836.5844857578936,
+          "log_likelihood": -913.4018937507251,
+          "parameters": 2
+        },
+        {
+          "order": [
+            1,
+            1,
+            1
+          ],
+          "AIC": 1832.5067187550924,
+          "BIC": 1841.1777661397578,
+          "log_likelihood": -913.2533593775462,
+          "parameters": 3
+        },
+        {
+          "order": [
+            1,
+            1,
+            2
+          ],
+          "AIC": 1828.9856535790009,
+          "BIC": 1840.547050091888,
+          "log_likelihood": -910.4928267895004,
+          "parameters": 4
+        },
+        {
+          "order": [
+            1,
+            1,
+            3
+          ],
+          "AIC": 1821.6377663964975,
+          "BIC": 1836.0895120376063,
+          "log_likelihood": -905.8188831982487,
+          "parameters": 5
+        },
+        {
+          "order": [
+            2,
+            1,
+            0
+          ],
+          "AIC": 1829.8434370057294,
+          "BIC": 1838.5144843903947,
+          "log_likelihood": -911.9217185028647,
+          "parameters": 3
+        },
+        {
+          "order": [
+            2,
+            1,
+            1
+          ],
+          "AIC": 1826.724916231488,
+          "BIC": 1838.286312744375,
+          "log_likelihood": -909.362458115744,
+          "parameters": 4
+        },
+        {
+          "order": [
+            2,
+            1,
+            2
+          ],
+          "AIC": 1820.2383361805148,
+          "BIC": 1834.6900818216236,
+          "log_likelihood": -905.1191680902574,
+          "parameters": 5
+        },
+        {
+          "order": [
+            2,
+            1,
+            3
+          ],
+          "AIC": 1821.9006020500733,
+          "BIC": 1839.2426968194038,
+          "log_likelihood": -904.9503010250367,
+          "parameters": 6
+        },
+        {
+          "order": [
+            3,
+            1,
+            0
+          ],
+          "AIC": 1822.2754111153654,
+          "BIC": 1833.8368076282525,
+          "log_likelihood": -907.1377055576827,
+          "parameters": 4
+        },
+        {
+          "order": [
+            3,
+            1,
+            1
+          ],
+          "AIC": 1824.1399066388321,
+          "BIC": 1838.591652279941,
+          "log_likelihood": -907.0699533194161,
+          "parameters": 5
+        },
+        {
+          "order": [
+            3,
+            1,
+            2
+          ],
+          "AIC": 1826.0908730507663,
+          "BIC": 1843.4329678200968,
+          "log_likelihood": -907.0454365253831,
+          "parameters": 6
+        },
+        {
+          "order": [
+            3,
+            1,
+            3
+          ],
+          "AIC": 1817.4841637071872,
+          "BIC": 1837.7166076047395,
+          "log_likelihood": -901.7420818535936,
+          "parameters": 7
+        }
+      ]
+    }
+  },
+  "arima_explanations": {
+    "Haveri": {
+      "selected_model": "ARIMA(2,1,2)",
+      "aic_value": 4289.699981475062,
+      "why_this_model": [
+        "AR(p=2): Uses past {p} price values",
+        "I(d=1): Data differenced {d} time(s)",
+        "MA(q=2): Uses past {q} forecast errors"
+      ],
+      "model_complexity": "Moderate",
+      "total_models_tested": 16
+    },
+    "Kalagategi": {
+      "selected_model": "ARIMA(2,1,2)",
+      "aic_value": 4259.053269255703,
+      "why_this_model": [
+        "AR(p=2): Uses past {p} price values",
+        "I(d=1): Data differenced {d} time(s)",
+        "MA(q=2): Uses past {q} forecast errors"
+      ],
+      "model_complexity": "Moderate",
+      "total_models_tested": 16
+    },
+    "Bidar": {
+      "selected_model": "ARIMA(2,1,2)",
+      "aic_value": 5376.275810349012,
+      "why_this_model": [
+        "AR(p=2): Uses past {p} price values",
+        "I(d=1): Data differenced {d} time(s)",
+        "MA(q=2): Uses past {q} forecast errors"
+      ],
+      "model_complexity": "Moderate",
+      "total_models_tested": 16
+    },
+    "Kalaburgi": {
+      "selected_model": "ARIMA(2,1,3)",
+      "aic_value": 5576.321608114846,
+      "why_this_model": [
+        "AR(p=2): Uses past {p} price values",
+        "I(d=1): Data differenced {d} time(s)",
+        "MA(q=3): Uses past {q} forecast errors"
+      ],
+      "model_complexity": "Moderate",
+      "total_models_tested": 16
+    },
+    "Bailhongal": {
+      "selected_model": "ARIMA(3,1,3)",
+      "aic_value": 1817.4841637071872,
+      "why_this_model": [
+        "AR(p=3): Uses past {p} price values",
+        "I(d=1): Data differenced {d} time(s)",
+        "MA(q=3): Uses past {q} forecast errors"
+      ],
+      "model_complexity": "Complex",
+      "total_models_tested": 16
+    }
+  },
+  "forecasts": {},
+  "ml_models": {
+    "logistic_regression": {
+      "Haveri": {
+        "accuracy": 0.746031746031746,
+        "cv_mean": 0.694017094017094,
+        "cv_std": 0.0459952958874315,
+        "feature_names": [
+          "Arrivals (Tonnes)",
+          "Arrivals_Lag1",
+          "Price_Lag1",
+          "Price_Lag2",
+          "Arrivals_MA3",
+          "Price_MA3",
+          "Price_Volatility",
+          "Month",
+          "Quarter"
+        ],
+        "coefficients": [
+          0.008910411026675641,
+          0.10725063065523001,
+          -4.405918975839135,
+          -0.7278468262954635,
+          -0.05623696859828572,
+          5.064823288083387,
+          0.1975216936560805,
+          -0.002421608954378403,
+          0.06262839129067241
+        ]
+      },
+      "Kalagategi": {
+        "accuracy": 0.6529411764705882,
+        "cv_mean": 0.6632752169413263,
+        "cv_std": 0.01899301386989706,
+        "feature_names": [
+          "Arrivals (Tonnes)",
+          "Arrivals_Lag1",
+          "Price_Lag1",
+          "Price_Lag2",
+          "Arrivals_MA3",
+          "Price_MA3",
+          "Price_Volatility",
+          "Month",
+          "Quarter"
+        ],
+        "coefficients": [
+          0.07496575507446981,
+          -0.030057509368354874,
+          -4.455038283126401,
+          -0.5498676856776636,
+          0.035276596440240816,
+          4.9825809052707495,
+          0.04716731609058242,
+          -0.10236415794507019,
+          0.14618365432037042
+        ]
+      },
+      "Bidar": {
+        "accuracy": 0.637546468401487,
+        "cv_mean": 0.6294820717131474,
+        "cv_std": 0.010389167179605805,
+        "feature_names": [
+          "Arrivals (Tonnes)",
+          "Arrivals_Lag1",
+          "Price_Lag1",
+          "Price_Lag2",
+          "Arrivals_MA3",
+          "Price_MA3",
+          "Price_Volatility",
+          "Month",
+          "Quarter"
+        ],
+        "coefficients": [
+          0.03141336874579173,
+          -0.015280386310754561,
+          -4.048506812104741,
+          -1.6155343081473519,
+          0.12808738938585107,
+          5.581274871179349,
+          0.10131093434395294,
+          0.08331299876037962,
+          -0.10187693319088202
+        ]
+      },
+      "Kalaburgi": {
+        "accuracy": 0.7698744769874477,
+        "cv_mean": 0.7361127944087584,
+        "cv_std": 0.03353698347218874,
+        "feature_names": [
+          "Arrivals (Tonnes)",
+          "Arrivals_Lag1",
+          "Price_Lag1",
+          "Price_Lag2",
+          "Arrivals_MA3",
+          "Price_MA3",
+          "Price_Volatility",
+          "Month",
+          "Quarter"
+        ],
+        "coefficients": [
+          0.18782246166051048,
+          -0.19913104205107038,
+          -6.593577656038994,
+          -1.715095376235327,
+          0.1469490366063051,
+          7.967581586348765,
+          0.1639219574042565,
+          0.2305168313242036,
+          -0.2766968312755248
+        ]
+      },
+      "Bailhongal": {
+        "accuracy": 0.6533333333333333,
+        "cv_mean": 0.6371428571428572,
+        "cv_std": 0.03790428331834742,
+        "feature_names": [
+          "Arrivals (Tonnes)",
+          "Arrivals_Lag1",
+          "Price_Lag1",
+          "Price_Lag2",
+          "Arrivals_MA3",
+          "Price_MA3",
+          "Price_Volatility",
+          "Month",
+          "Quarter"
+        ],
+        "coefficients": [
+          0.17709909804704616,
+          -0.30006294092393965,
+          -3.08042643620527,
+          -0.5203331464643391,
+          0.12659763174862557,
+          3.4106749151499476,
+          0.1866655113920998,
+          -0.1348833330022541,
+          0.14008025642231656
+        ]
+      }
+    },
+    "random_forest": {
+      "Haveri": {
+        "accuracy": 0.623015873015873,
+        "cv_mean": 0.6478632478632479,
+        "cv_std": 0.037993351745116005,
+        "feature_names": [
+          "Arrivals (Tonnes)",
+          "Arrivals_Lag1",
+          "Price_Lag1",
+          "Price_Lag2",
+          "Arrivals_MA3",
+          "Price_MA3",
+          "Price_Volatility",
+          "Month",
+          "Quarter"
+        ],
+        "feature_importance": [
+          0.1068849471245183,
+          0.11674408259564589,
+          0.17212760168388655,
+          0.10947975061946753,
+          0.11767871944206756,
+          0.14871223669327724,
+          0.15869551710777002,
+          0.0476284119694562,
+          0.02204873276391074
+        ]
+      },
+      "Kalagategi": {
+        "accuracy": 0.5852941176470589,
+        "cv_mean": 0.568800254756787,
+        "cv_std": 0.0395452314096684,
+        "feature_names": [
+          "Arrivals (Tonnes)",
+          "Arrivals_Lag1",
+          "Price_Lag1",
+          "Price_Lag2",
+          "Arrivals_MA3",
+          "Price_MA3",
+          "Price_Volatility",
+          "Month",
+          "Quarter"
+        ],
+        "feature_importance": [
+          0.13581031883520134,
+          0.11454123811755072,
+          0.17752590284228958,
+          0.10845889302280066,
+          0.1193048678868027,
+          0.1447874420789586,
+          0.12950763189185122,
+          0.053771494048158563,
+          0.016292211276386644
+        ]
+      },
+      "Bidar": {
+        "accuracy": 0.5892193308550185,
+        "cv_mean": 0.5888446215139442,
+        "cv_std": 0.013892904999332812,
+        "feature_names": [
+          "Arrivals (Tonnes)",
+          "Arrivals_Lag1",
+          "Price_Lag1",
+          "Price_Lag2",
+          "Arrivals_MA3",
+          "Price_MA3",
+          "Price_Volatility",
+          "Month",
+          "Quarter"
+        ],
+        "feature_importance": [
+          0.12282883564821201,
+          0.12393745068421247,
+          0.14304895577105317,
+          0.11339535918948386,
+          0.14052468284124442,
+          0.12727849752563236,
+          0.16891298529982524,
+          0.04388550293889281,
+          0.01618773010144362
+        ]
+      },
+      "Kalaburgi": {
+        "accuracy": 0.6213389121338913,
+        "cv_mean": 0.6373651678584414,
+        "cv_std": 0.02259772813974552,
+        "feature_names": [
+          "Arrivals (Tonnes)",
+          "Arrivals_Lag1",
+          "Price_Lag1",
+          "Price_Lag2",
+          "Arrivals_MA3",
+          "Price_MA3",
+          "Price_Volatility",
+          "Month",
+          "Quarter"
+        ],
+        "feature_importance": [
+          0.07422592518425088,
+          0.061144458991624476,
+          0.24184129224766213,
+          0.14577357340005206,
+          0.07949961680933607,
+          0.18716945736233395,
+          0.14189075844708762,
+          0.05057964147546951,
+          0.017875276082183433
+        ]
+      },
+      "Bailhongal": {
+        "accuracy": 0.6533333333333333,
+        "cv_mean": 0.5599999999999999,
+        "cv_std": 0.05883217223421143,
+        "feature_names": [
+          "Arrivals (Tonnes)",
+          "Arrivals_Lag1",
+          "Price_Lag1",
+          "Price_Lag2",
+          "Arrivals_MA3",
+          "Price_MA3",
+          "Price_Volatility",
+          "Month",
+          "Quarter"
+        ],
+        "feature_importance": [
+          0.13503534252709393,
+          0.14499369256669614,
+          0.1394221472584969,
+          0.11574039122625221,
+          0.14334108516221997,
+          0.1278661814610048,
+          0.11989703194707842,
+          0.05466052443453992,
+          0.019043603416617726
+        ]
+      }
+    }
+  },
+  "model_comparisons": {
+    "Haveri": {
+      "ranking": [
+        [
+          "Logistic Regression",
+          0.746031746031746,
+          0.694017094017094
+        ],
+        [
+          "Random Forest",
+          0.623015873015873,
+          0.6478632478632479
+        ]
+      ],
+      "best_model": "Logistic Regression",
+      "best_accuracy": 0.746031746031746
+    },
+    "Kalagategi": {
+      "ranking": [
+        [
+          "Logistic Regression",
+          0.6529411764705882,
+          0.6632752169413263
+        ],
+        [
+          "Random Forest",
+          0.5852941176470589,
+          0.568800254756787
+        ]
+      ],
+      "best_model": "Logistic Regression",
+      "best_accuracy": 0.6529411764705882
+    },
+    "Bidar": {
+      "ranking": [
+        [
+          "Logistic Regression",
+          0.637546468401487,
+          0.6294820717131474
+        ],
+        [
+          "Random Forest",
+          0.5892193308550185,
+          0.5888446215139442
+        ]
+      ],
+      "best_model": "Logistic Regression",
+      "best_accuracy": 0.637546468401487
+    },
+    "Kalaburgi": {
+      "ranking": [
+        [
+          "Logistic Regression",
+          0.7698744769874477,
+          0.7361127944087584
+        ],
+        [
+          "Random Forest",
+          0.6213389121338913,
+          0.6373651678584414
+        ]
+      ],
+      "best_model": "Logistic Regression",
+      "best_accuracy": 0.7698744769874477
+    },
+    "Bailhongal": {
+      "ranking": [
+        [
+          "Logistic Regression",
+          0.6533333333333333,
+          0.6371428571428572
+        ],
+        [
+          "Random Forest",
+          0.6533333333333333,
+          0.5599999999999999
+        ]
+      ],
+      "best_model": "Logistic Regression",
+      "best_accuracy": 0.6533333333333333
+    }
+  },
+  "correlation_data": [
+    {
+      "Market": "Haveri",
+      "Price_Arrivals_Correlation": -0.1979575033963872
+    },
+    {
+      "Market": "Kalagategi",
+      "Price_Arrivals_Correlation": -0.1622476517189619
+    },
+    {
+      "Market": "Bidar",
+      "Price_Arrivals_Correlation": -0.036382008971178444
+    },
+    {
+      "Market": "Kalaburgi",
+      "Price_Arrivals_Correlation": -0.13969619425760837
+    },
+    {
+      "Market": "Bailhongal",
+      "Price_Arrivals_Correlation": -0.2810091575921659
+    }
+  ]
+}
