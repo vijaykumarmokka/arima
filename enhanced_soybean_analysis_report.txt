@@ -1,13 +1,13 @@
 ================================================================================
 ENHANCED SOYBEAN MARKET ANALYSIS REPORT
-Multiple ML Models and Comprehensive Cointegration Analysis
+Multiple ML Models (Classification & Regression) and Comprehensive Cointegration Analysis
 ================================================================================
 
 EXECUTIVE SUMMARY
 ----------------------------------------
 • Total Records: 5,875
 • Markets Loaded: 5 (Haveri, Kalagategi, Bidar, Kalaburgi, Bailhongal)
-• ML Models: Logistic Regression, Random Forest
+• ML Models: Logistic Regression, Random Forest (Classification); Linear Regression (Regression)
 
 
 DESCRIPTIVE STATISTICS
@@ -101,7 +101,7 @@ Bailhongal:
   • Models Tested: 16
 
 
-MACHINE LEARNING MODELS
+MACHINE LEARNING MODELS - CLASSIFICATION
 ----------------------------------------
 
 Haveri:
@@ -135,15 +135,46 @@ Bailhongal:
     - Random Forest: 0.6533 (CV: 0.5600)
 
 
+MACHINE LEARNING MODELS - REGRESSION
+----------------------------------------
+
+Haveri:
+  • Best Model: Linear Regression
+  • R² Score: 1.0000
+    - Linear Regression: 1.0000 (CV: 1.0000)
+
+Kalagategi:
+  • Best Model: Linear Regression
+  • R² Score: 1.0000
+    - Linear Regression: 1.0000 (CV: 1.0000)
+
+Bidar:
+  • Best Model: Linear Regression
+  • R² Score: 1.0000
+    - Linear Regression: 1.0000 (CV: 1.0000)
+
+Kalaburgi:
+  • Best Model: Linear Regression
+  • R² Score: 1.0000
+    - Linear Regression: 1.0000 (CV: 1.0000)
+
+Bailhongal:
+  • Best Model: Linear Regression
+  • R² Score: 1.0000
+    - Linear Regression: 1.0000 (CV: 1.0000)
+
+
 KEY FINDINGS & RECOMMENDATIONS
 ----------------------------------------
 • Highest Prices: Bailhongal
 • Most Stable Market: Bailhongal
 • Best ARIMA: Bailhongal - ARIMA(3, 1, 3) (AIC: 1817.48)
-• Average ML Accuracy: 69.2%
+• Average Classification Accuracy: 69.2%
+• Average Regression R²: 1.000
 
 Strategic Recommendations:
 • Use ARIMA for medium-term forecasting
-• Apply ML models for daily predictions
+• Apply classification ML models for daily direction predictions
+• Use Linear Regression for price level predictions
 • Consider market integration in strategies
 • Implement risk management based on volatility

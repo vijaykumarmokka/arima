@@ -1287,9 +1287,6 @@
   "ml_models": {
     "logistic_regression": {
       "Haveri": {
-        "accuracy": 0.746031746031746,
-        "cv_mean": 0.694017094017094,
-        "cv_std": 0.0459952958874315,
         "feature_names": [
           "Arrivals (Tonnes)",
           "Arrivals_Lag1",
@@ -1301,6 +1298,10 @@
           "Month",
           "Quarter"
         ],
+        "task": "classification",
+        "accuracy": 0.746031746031746,
+        "cv_mean": 0.694017094017094,
+        "cv_std": 0.0459952958874315,
         "coefficients": [
           0.008910411026675641,
           0.10725063065523001,
@@ -1314,9 +1315,6 @@
         ]
       },
       "Kalagategi": {
-        "accuracy": 0.6529411764705882,
-        "cv_mean": 0.6632752169413263,
-        "cv_std": 0.01899301386989706,
         "feature_names": [
           "Arrivals (Tonnes)",
           "Arrivals_Lag1",
@@ -1328,6 +1326,10 @@
           "Month",
           "Quarter"
         ],
+        "task": "classification",
+        "accuracy": 0.6529411764705882,
+        "cv_mean": 0.6632752169413263,
+        "cv_std": 0.01899301386989706,
         "coefficients": [
           0.07496575507446981,
           -0.030057509368354874,
@@ -1341,9 +1343,6 @@
         ]
       },
       "Bidar": {
-        "accuracy": 0.637546468401487,
-        "cv_mean": 0.6294820717131474,
-        "cv_std": 0.010389167179605805,
         "feature_names": [
           "Arrivals (Tonnes)",
           "Arrivals_Lag1",
@@ -1355,6 +1354,10 @@
           "Month",
           "Quarter"
         ],
+        "task": "classification",
+        "accuracy": 0.637546468401487,
+        "cv_mean": 0.6294820717131474,
+        "cv_std": 0.010389167179605805,
         "coefficients": [
           0.03141336874579173,
           -0.015280386310754561,
@@ -1368,9 +1371,6 @@
         ]
       },
       "Kalaburgi": {
-        "accuracy": 0.7698744769874477,
-        "cv_mean": 0.7361127944087584,
-        "cv_std": 0.03353698347218874,
         "feature_names": [
           "Arrivals (Tonnes)",
           "Arrivals_Lag1",
@@ -1382,6 +1382,10 @@
           "Month",
           "Quarter"
         ],
+        "task": "classification",
+        "accuracy": 0.7698744769874477,
+        "cv_mean": 0.7361127944087584,
+        "cv_std": 0.03353698347218874,
         "coefficients": [
           0.18782246166051048,
           -0.19913104205107038,
@@ -1395,9 +1399,6 @@
         ]
       },
       "Bailhongal": {
-        "accuracy": 0.6533333333333333,
-        "cv_mean": 0.6371428571428572,
-        "cv_std": 0.03790428331834742,
         "feature_names": [
           "Arrivals (Tonnes)",
           "Arrivals_Lag1",
@@ -1409,6 +1410,10 @@
           "Month",
           "Quarter"
         ],
+        "task": "classification",
+        "accuracy": 0.6533333333333333,
+        "cv_mean": 0.6371428571428572,
+        "cv_std": 0.03790428331834742,
         "coefficients": [
           0.17709909804704616,
           -0.30006294092393965,
@@ -1424,9 +1429,6 @@
     },
     "random_forest": {
       "Haveri": {
-        "accuracy": 0.623015873015873,
-        "cv_mean": 0.6478632478632479,
-        "cv_std": 0.037993351745116005,
         "feature_names": [
           "Arrivals (Tonnes)",
           "Arrivals_Lag1",
@@ -1438,6 +1440,10 @@
           "Month",
           "Quarter"
         ],
+        "task": "classification",
+        "accuracy": 0.623015873015873,
+        "cv_mean": 0.6478632478632479,
+        "cv_std": 0.037993351745116005,
         "feature_importance": [
           0.1068849471245183,
           0.11674408259564589,
@@ -1451,9 +1457,6 @@
         ]
       },
       "Kalagategi": {
-        "accuracy": 0.5852941176470589,
-        "cv_mean": 0.568800254756787,
-        "cv_std": 0.0395452314096684,
         "feature_names": [
           "Arrivals (Tonnes)",
           "Arrivals_Lag1",
@@ -1465,6 +1468,10 @@
           "Month",
           "Quarter"
         ],
+        "task": "classification",
+        "accuracy": 0.5852941176470589,
+        "cv_mean": 0.568800254756787,
+        "cv_std": 0.0395452314096684,
         "feature_importance": [
           0.13581031883520134,
           0.11454123811755072,
@@ -1478,9 +1485,6 @@
         ]
       },
       "Bidar": {
-        "accuracy": 0.5892193308550185,
-        "cv_mean": 0.5888446215139442,
-        "cv_std": 0.013892904999332812,
         "feature_names": [
           "Arrivals (Tonnes)",
           "Arrivals_Lag1",
@@ -1492,6 +1496,10 @@
           "Month",
           "Quarter"
         ],
+        "task": "classification",
+        "accuracy": 0.5892193308550185,
+        "cv_mean": 0.5888446215139442,
+        "cv_std": 0.013892904999332812,
         "feature_importance": [
           0.12282883564821201,
           0.12393745068421247,
@@ -1505,9 +1513,6 @@
         ]
       },
       "Kalaburgi": {
-        "accuracy": 0.6213389121338913,
-        "cv_mean": 0.6373651678584414,
-        "cv_std": 0.02259772813974552,
         "feature_names": [
           "Arrivals (Tonnes)",
           "Arrivals_Lag1",
@@ -1519,6 +1524,10 @@
           "Month",
           "Quarter"
         ],
+        "task": "classification",
+        "accuracy": 0.6213389121338913,
+        "cv_mean": 0.6373651678584414,
+        "cv_std": 0.02259772813974552,
         "feature_importance": [
           0.07422592518425088,
           0.061144458991624476,
@@ -1532,9 +1541,6 @@
         ]
       },
       "Bailhongal": {
-        "accuracy": 0.6533333333333333,
-        "cv_mean": 0.5599999999999999,
-        "cv_std": 0.05883217223421143,
         "feature_names": [
           "Arrivals (Tonnes)",
           "Arrivals_Lag1",
@@ -1546,6 +1552,10 @@
           "Month",
           "Quarter"
         ],
+        "task": "classification",
+        "accuracy": 0.6533333333333333,
+        "cv_mean": 0.5599999999999999,
+        "cv_std": 0.05883217223421143,
         "feature_importance": [
           0.13503534252709393,
           0.14499369256669614,
@@ -1557,6 +1567,153 @@
           0.05466052443453992,
           0.019043603416617726
         ]
+      }
+    },
+    "linear_regression": {
+      "Haveri": {
+        "feature_names": [
+          "Arrivals (Tonnes)",
+          "Arrivals_Lag1",
+          "Price_Lag1",
+          "Price_Lag2",
+          "Arrivals_MA3",
+          "Price_MA3",
+          "Price_Volatility",
+          "Month",
+          "Quarter"
+        ],
+        "task": "regression",
+        "r2_score": 1.0,
+        "cv_mean": 1.0,
+        "cv_std": 0.0,
+        "coefficients": [
+          1.1864799062034851e-14,
+          -9.103828801926284e-15,
+          -1.0,
+          -1.0000000000000002,
+          -2.005340338229189e-15,
+          3.000000000000001,
+          -4.597017211338539e-16,
+          -2.5409447664697955e-14,
+          4.110617350520408e-14
+        ],
+        "intercept": -9.094947017729282e-13
+      },
+      "Kalagategi": {
+        "feature_names": [
+          "Arrivals (Tonnes)",
+          "Arrivals_Lag1",
+          "Price_Lag1",
+          "Price_Lag2",
+          "Arrivals_MA3",
+          "Price_MA3",
+          "Price_Volatility",
+          "Month",
+          "Quarter"
+        ],
+        "task": "regression",
+        "r2_score": 1.0,
+        "cv_mean": 1.0,
+        "cv_std": 0.0,
+        "coefficients": [
+          2.658210209742828e-15,
+          -1.887379141862766e-15,
+          -1.0000000000000022,
+          -1.0000000000000018,
+          -2.060851489460447e-15,
+          3.000000000000004,
+          2.0816681711721685e-16,
+          -2.6010660639230743e-14,
+          9.430669678338333e-14
+        ],
+        "intercept": 9.094947017729282e-13
+      },
+      "Bidar": {
+        "feature_names": [
+          "Arrivals (Tonnes)",
+          "Arrivals_Lag1",
+          "Price_Lag1",
+          "Price_Lag2",
+          "Arrivals_MA3",
+          "Price_MA3",
+          "Price_Volatility",
+          "Month",
+          "Quarter"
+        ],
+        "task": "regression",
+        "r2_score": 1.0,
+        "cv_mean": 1.0,
+        "cv_std": 0.0,
+        "coefficients": [
+          1.3658959015070863e-15,
+          -1.609823385706477e-15,
+          -0.9999999999999983,
+          -1.0000000000000009,
+          -8.604228440844963e-16,
+          2.999999999999999,
+          1.5612511283791264e-17,
+          -1.4422870450031544e-14,
+          5.926043076392995e-14
+        ],
+        "intercept": 1.8189894035458565e-12
+      },
+      "Kalaburgi": {
+        "feature_names": [
+          "Arrivals (Tonnes)",
+          "Arrivals_Lag1",
+          "Price_Lag1",
+          "Price_Lag2",
+          "Arrivals_MA3",
+          "Price_MA3",
+          "Price_Volatility",
+          "Month",
+          "Quarter"
+        ],
+        "task": "regression",
+        "r2_score": 1.0,
+        "cv_mean": 1.0,
+        "cv_std": 0.0,
+        "coefficients": [
+          1.354982060490911e-14,
+          6.217248937900877e-15,
+          -0.999999999999996,
+          -0.9999999999999989,
+          -1.2434497875801753e-14,
+          2.9999999999999947,
+          4.579669976578771e-16,
+          9.480914317516742e-15,
+          -6.230150943753454e-14
+        ],
+        "intercept": 3.183231456205249e-12
+      },
+      "Bailhongal": {
+        "feature_names": [
+          "Arrivals (Tonnes)",
+          "Arrivals_Lag1",
+          "Price_Lag1",
+          "Price_Lag2",
+          "Arrivals_MA3",
+          "Price_MA3",
+          "Price_Volatility",
+          "Month",
+          "Quarter"
+        ],
+        "task": "regression",
+        "r2_score": 1.0,
+        "cv_mean": 1.0,
+        "cv_std": 0.0,
+        "coefficients": [
+          2.1447028918875098e-16,
+          -6.106226635438361e-16,
+          -0.9999999999999981,
+          -0.9999999999999993,
+          -8.326672684688674e-17,
+          2.999999999999998,
+          2.5392014879610514e-16,
+          4.8497122116797353e-14,
+          -1.683791994722128e-13
+        ],
+        "intercept": -9.094947017729282e-13
       }
     }
   },
@@ -1640,6 +1797,63 @@
       ],
       "best_model": "Logistic Regression",
       "best_accuracy": 0.6533333333333333
+    }
+  },
+  "regression_comparisons": {
+    "Haveri": {
+      "ranking": [
+        [
+          "Linear Regression",
+          1.0,
+          1.0
+        ]
+      ],
+      "best_model": "Linear Regression",
+      "best_r2": 1.0
+    },
+    "Kalagategi": {
+      "ranking": [
+        [
+          "Linear Regression",
+          1.0,
+          1.0
+        ]
+      ],
+      "best_model": "Linear Regression",
+      "best_r2": 1.0
+    },
+    "Bidar": {
+      "ranking": [
+        [
+          "Linear Regression",
+          1.0,
+          1.0
+        ]
+      ],
+      "best_model": "Linear Regression",
+      "best_r2": 1.0
+    },
+    "Kalaburgi": {
+      "ranking": [
+        [
+          "Linear Regression",
+          1.0,
+          1.0
+        ]
+      ],
+      "best_model": "Linear Regression",
+      "best_r2": 1.0
+    },
+    "Bailhongal": {
+      "ranking": [
+        [
+          "Linear Regression",
+          1.0,
+          1.0
+        ]
+      ],
+      "best_model": "Linear Regression",
+      "best_r2": 1.0
     }
   },
   "correlation_data": [

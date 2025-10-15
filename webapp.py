@@ -1,4 +1,3 @@
-
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -132,18 +131,18 @@ class EnhancedSoybeanDashboard:
     def main_dashboard(self):
         """Enhanced main dashboard page"""
         st.title("🌱 Enhanced Soybean Market Analysis Dashboard")
-        st.markdown("### Comprehensive Analysis with Multiple ML Models and Detailed Cointegration")
+        st.markdown("### Comprehensive Analysis with Multiple ML Models (Classification & Regression) and Detailed Cointegration")
         
         # Executive Summary Cards
         if 'descriptive_stats' in self.results:
-            col1, col2, col3, col4, col5 = st.columns(5)
+            col1, col2, col3, col4, col5, col6 = st.columns(6)
             
             total_records = sum(stats['Count'] for stats in self.results['descriptive_stats'].values())
             avg_price = np.mean([stats['Mean_Price'] for stats in self.results['descriptive_stats'].values()])
             highest_market = max(self.results['descriptive_stats'].items(), key=lambda x: x[1]['Mean_Price'])[0]
             markets_analyzed = len(self.results['descriptive_stats'])
             
-            # Calculate total ML models
+            # Calculate total ML models (classification + regression)
             total_ml_models = 0
             if 'ml_models' in self.results:
                 for model_type in self.results['ml_models']:
@@ -190,9 +189,21 @@ class EnhancedSoybeanDashboard:
                 <div class="metric-card">
                     <h3>🤖 ML Models</h3>
                     <h2>{total_ml_models}</h2>
-                    <p>Trained models</p>
+                    <p>Total (Class + Reg)</p>
                 </div>
                 """, unsafe_allow_html=True)
+            
+            with col6:
+                if 'regression_comparisons' in self.results:
+                    r2s = [comp['best_r2'] for comp in self.results['regression_comparisons'].values() if 'best_r2' in comp]
+                    avg_r2 = np.mean(r2s) if r2s else 0
+                    st.markdown(f"""
+                    <div class="metric-card">
+                        <h3>📈 Avg R²</h3>
+                        <h2>{avg_r2:.2f}</h2>
+                        <p>Regression Performance</p>
+                    </div>
+                    """, unsafe_allow_html=True)
         
         st.markdown("---")
         
@@ -228,9 +239,9 @@ class EnhancedSoybeanDashboard:
                 """, unsafe_allow_html=True)
         
         with col2:
-            # ML Models Performance
+            # ML Models Performance (Classification)
             if 'model_comparisons' in self.results:
-                st.markdown("**🤖 ML Model Performance:**")
+                st.markdown("**🤖 Classification Model Performance:**")
                 
                 all_accuracies = []
                 for market, comp in self.results['model_comparisons'].items():
@@ -238,7 +249,7 @@ class EnhancedSoybeanDashboard:
                 
                 avg_accuracy = np.mean(all_accuracies) if all_accuracies else 0
                 
-                st.write(f"📊 **Average ML Accuracy**: {avg_accuracy:.1%}")
+                st.write(f"📊 **Average Accuracy**: {avg_accuracy:.1%}")
                 
                 # Show best models by market
                 for market, comp in list(self.results['model_comparisons'].items())[:3]:  # Show top 3 markets
@@ -246,6 +257,21 @@ class EnhancedSoybeanDashboard:
                     best_acc = comp['best_accuracy']
                     color = "🟢" if best_acc > 0.65 else "🟡" if best_acc > 0.55 else "🔴"
                     st.write(f"{color} **{market}**: {best_model} ({best_acc:.1%})")
+            
+            # Regression Performance
+            if 'regression_comparisons' in self.results:
+                st.markdown("**📈 Regression Model Performance:**")
+                
+                all_r2s = [comp['best_r2'] for comp in self.results['regression_comparisons'].values()]
+                avg_r2 = np.mean(all_r2s) if all_r2s else 0
+                
+                st.write(f"📊 **Average R²**: {avg_r2:.3f}")
+                
+                for market, comp in list(self.results['regression_comparisons'].items())[:3]:
+                    best_model = comp['best_model']
+                    best_r2 = comp['best_r2']
+                    color = "🟢" if best_r2 > 0.5 else "🟡" if best_r2 > 0.3 else "🔴"
+                    st.write(f"{color} **{market}**: {best_model} (R²={best_r2:.3f})")
         
         # Interactive Market Comparison
         st.subheader("📊 Enhanced Interactive Market Analysis")
@@ -788,14 +814,14 @@ class EnhancedSoybeanDashboard:
             st.warning("No ARIMA models available. Please run the analysis first.")
     
     def enhanced_ml_models(self):
-        """Enhanced ML models page with forms for all three models"""
+        """Enhanced ML models page with forms for all three models (Classification & Regression)"""
         st.title("🤖 Enhanced Machine Learning Models")
-        st.markdown("### Interactive Forms for Logistic Regression & Random Forest")
+        st.markdown("### Interactive Forms for Classification (Logistic Regression & Random Forest) and Regression (Linear Regression)")
         
         if 'ml_models' in self.results and any(self.results['ml_models'].values()):
             
-            # Model comparison overview
-            st.subheader("📊 Model Performance Overview")
+            # Model comparison overview - Classification
+            st.subheader("📊 Classification Model Performance Overview")
             
             if 'model_comparisons' in self.results:
                 comparison_data = []
@@ -820,13 +846,13 @@ class EnhancedSoybeanDashboard:
                 
                 # Performance visualization
                 fig_performance = px.box(comparison_df, x='Model', y='Test Accuracy',
-                                       title='Model Performance Distribution Across Markets',
+                                       title='Classification Model Performance Distribution Across Markets',
                                        color='Model')
                 fig_performance.update_layout(height=400)
                 st.plotly_chart(fig_performance, use_container_width=True)
                 
                 # Best models table
-                st.subheader("🏆 Best Models by Market")
+                st.subheader("🏆 Best Classification Models by Market")
                 best_models_data = []
                 for market, comp in self.results['model_comparisons'].items():
                     if comp['ranking']:
@@ -849,273 +875,552 @@ class EnhancedSoybeanDashboard:
                 best_models_df = pd.DataFrame(best_models_data)
                 st.dataframe(best_models_df, use_container_width=True)
             
+            # Regression Performance Overview
+            st.subheader("📈 Regression Model Performance Overview")
+            
+            if 'regression_comparisons' in self.results:
+                reg_comparison_data = []
+                for market, comp in self.results['regression_comparisons'].items():
+                    for rank, item in enumerate(comp['ranking'], 1):
+                        if isinstance(item, (list, tuple)):
+                            model_name = item[0]
+                            r2 = item[1]
+                            cv_score = item[2]
+                        else:
+                            continue
+                        reg_comparison_data.append({
+                            'Market': market,
+                            'Model': model_name,
+                            'Test R²': r2,
+                            'CV Score': cv_score,
+                            'Rank in Market': rank
+                        })
+                
+                reg_comparison_df = pd.DataFrame(reg_comparison_data)
+                
+                # Performance visualization
+                fig_reg_performance = px.box(reg_comparison_df, x='Model', y='Test R²',
+                                           title='Regression Model Performance Distribution Across Markets',
+                                           color='Model')
+                fig_reg_performance.update_layout(height=400)
+                st.plotly_chart(fig_reg_performance, use_container_width=True)
+                
+                # Best regression models table
+                st.subheader("🏆 Best Regression Models by Market")
+                best_reg_data = []
+                for market, comp in self.results['regression_comparisons'].items():
+                    if comp['ranking']:
+                        item = comp['ranking'][0]
+                        if isinstance(item, (list, tuple)):
+                            best_model = item[0]
+                            best_r2 = item[1]
+                            best_cv = item[2]
+                        else:
+                            best_model = comp['best_model']
+                            best_r2 = comp['best_r2']
+                            best_cv = 0
+                        best_reg_data.append({
+                            'Market': market,
+                            'Best Model': best_model,
+                            'R²': f"{best_r2:.3f}",
+                            'CV Score': f"{best_cv:.3f}"
+                        })
+                
+                best_reg_df = pd.DataFrame(best_reg_data)
+                st.dataframe(best_reg_df, use_container_width=True)
+            
             # Interactive prediction forms
             st.markdown("---")
             st.subheader("🔮 Interactive Prediction Forms")
             
-            # Market and model selection
-            col1, col2 = st.columns(2)
+            # Tabs for Classification and Regression
+            tab_class, tab_reg = st.tabs(["🔄 Classification (Direction)", "📈 Regression (Price Level)"])
             
-            with col1:
-                available_markets = []
-                for model_type in ['logistic_regression', 'random_forest']:
-                    if model_type in self.results['ml_models']:
-                        available_markets.extend(self.results['ml_models'][model_type].keys())
-                available_markets = list(set(available_markets))
+            with tab_class:
+                # Classification forms
+                col1, col2 = st.columns(2)
                 
-                selected_market = st.selectbox("Select Market:", available_markets)
-            
-            with col2:
-                available_models = []
-                if selected_market:
+                with col1:
+                    available_markets_class = []
                     for model_type in ['logistic_regression', 'random_forest']:
-                        if (model_type in self.results['ml_models'] and 
-                            selected_market in self.results['ml_models'][model_type] and
-                            self.results['ml_models'][model_type][selected_market] is not None):
-                            available_models.append(model_type.replace('_', ' ').title())
+                        if model_type in self.results['ml_models']:
+                            available_markets_class.extend(self.results['ml_models'][model_type].keys())
+                    available_markets_class = list(set(available_markets_class))
+                    
+                    selected_market_class = st.selectbox("Select Market:", available_markets_class, key="class_market")
                 
-                selected_model_type = st.selectbox("Select Model Type:", available_models)
-            
-            if selected_market and selected_model_type:
-                model_key = selected_model_type.lower().replace(' ', '_')
+                with col2:
+                    available_models_class = []
+                    if selected_market_class:
+                        for model_type in ['logistic_regression', 'random_forest']:
+                            if (model_type in self.results['ml_models'] and 
+                                selected_market_class in self.results['ml_models'][model_type] and
+                                self.results['ml_models'][model_type][selected_market_class] is not None):
+                                available_models_class.append(model_type.replace('_', ' ').title())
+                    
+                    selected_model_type_class = st.selectbox("Select Model Type:", available_models_class, key="class_model")
                 
-                if (model_key in self.results['ml_models'] and 
-                    selected_market in self.results['ml_models'][model_key] and
-                    self.results['ml_models'][model_key][selected_market] is not None):
+                if selected_market_class and selected_model_type_class:
+                    model_key = selected_model_type_class.lower().replace(' ', '_')
                     
-                    model_results = self.results['ml_models'][model_key][selected_market]
-                    
-                    # Model information
-                    st.markdown(f"""
-                    <div class="alert-info">
-                        <h4>📋 {selected_model_type} Model for {selected_market}</h4>
-                        <p><strong>Test Accuracy:</strong> {model_results['accuracy']:.1%}</p>
-                        <p><strong>Cross-Validation Score:</strong> {model_results['cv_mean']:.1%} ± {model_results['cv_std']:.1%}</p>
-                        <p><strong>Features Used:</strong> {len(model_results['feature_names'])} variables</p>
-                    </div>
-                    """, unsafe_allow_html=True)
-                    
-                    # Prediction form
-                    st.markdown(f"""
-                    <div class="model-form">
-                        <h4>🔮 {selected_model_type} Prediction Form</h4>
-                        <p>Enter market conditions to predict price movement direction</p>
-                    </div>
-                    """, unsafe_allow_html=True)
-                    
-                    # Feature input form
-                    feature_names = model_results['feature_names']
-                    feature_values = {}
-                    
-                    # Create input fields based on feature names
-                    col1, col2, col3 = st.columns(3)
-                    
-                    for i, feature in enumerate(feature_names):
-                        col = [col1, col2, col3][i % 3]
+                    if (model_key in self.results['ml_models'] and 
+                        selected_market_class in self.results['ml_models'][model_key] and
+                        self.results['ml_models'][model_key][selected_market_class] is not None):
                         
-                        with col:
-                            if 'Arrivals' in feature and 'MA' not in feature:
-                                if 'Lag' in feature:
-                                    feature_values[feature] = st.number_input(
-                                        f"{feature} (Tonnes):", 
-                                        min_value=0.0, max_value=1000.0, 
-                                        value=50.0, step=1.0, key=f"{feature}_{model_key}_{selected_market}"
-                                    )
-                                else:
-                                    feature_values[feature] = st.number_input(
-                                        f"{feature} (Tonnes):", 
-                                        min_value=0.0, max_value=1000.0, 
-                                        value=60.0, step=1.0, key=f"{feature}_{model_key}_{selected_market}"
-                                    )
-                            elif 'Price' in feature:
-                                if 'Lag' in feature:
-                                    feature_values[feature] = st.number_input(
-                                        f"{feature} (₹):", 
-                                        min_value=1000.0, max_value=10000.0, 
-                                        value=4000.0, step=10.0, key=f"{feature}_{model_key}_{selected_market}"
-                                    )
-                                elif 'MA' in feature:
-                                    feature_values[feature] = st.number_input(
-                                        f"{feature} (₹):", 
-                                        min_value=1000.0, max_value=10000.0, 
-                                        value=4100.0, step=10.0, key=f"{feature}_{model_key}_{selected_market}"
-                                    )
-                                elif 'Volatility' in feature:
-                                    feature_values[feature] = st.number_input(
-                                        f"{feature} (₹):", 
-                                        min_value=0.0, max_value=2000.0, 
-                                        value=100.0, step=1.0, key=f"{feature}_{model_key}_{selected_market}"
-                                    )
-                            elif 'MA' in feature and 'Arrivals' in feature:
-                                feature_values[feature] = st.number_input(
-                                    f"{feature} (Tonnes):", 
-                                    min_value=0.0, max_value=1000.0, 
-                                    value=55.0, step=1.0, key=f"{feature}_{model_key}_{selected_market}"
-                                )
-                            elif 'Month' in feature:
-                                feature_values[feature] = st.number_input(
-                                    f"{feature}:", 
-                                    min_value=1, max_value=12, 
-                                    value=6, step=1, key=f"{feature}_{model_key}_{selected_market}"
-                                )
-                            elif 'Quarter' in feature:
-                                feature_values[feature] = st.number_input(
-                                    f"{feature}:", 
-                                    min_value=1, max_value=4, 
-                                    value=2, step=1, key=f"{feature}_{model_key}_{selected_market}"
-                                )
-                            else:
-                                feature_values[feature] = st.number_input(
-                                    f"{feature}:", 
-                                    value=0.0, key=f"{feature}_{model_key}_{selected_market}"
-                                )
-                    
-                    # Prediction button
-                    if st.button(f"🎯 Predict with {selected_model_type}", type="primary", key=f"predict_{model_key}_{selected_market}"):
+                        model_results = self.results['ml_models'][model_key][selected_market_class]
                         
-                        # Prepare feature vector
-                        features_array = np.array([feature_values[feature] for feature in feature_names]).reshape(1, -1)
-                        
-                        # Simple prediction logic (since we don't have the actual models loaded)
-                        # This is a simulation based on the stored results
-                        
-                        if model_key == 'logistic_regression' and 'coefficients' in model_results:
-                            # Simulate logistic regression prediction
-                            coefficients = model_results['coefficients']
-                            # Normalize features (simple approximation)
-                            features_normalized = (features_array - np.mean(features_array)) / (np.std(features_array) + 1e-8)
-                            linear_combination = np.sum(features_normalized * coefficients)
-                            probability = 1 / (1 + np.exp(-linear_combination))
-                        
-                        elif model_key == 'random_forest' and 'feature_importance' in model_results:
-                            # Simulate tree-based model prediction
-                            importances = model_results['feature_importance']
-                            # Weighted average based on feature importance (approximation)
-                            weighted_features = features_array[0] * importances
-                            score = np.sum(weighted_features) / np.sum(importances)
-                            probability = 1 / (1 + np.exp(-(score - 0.5) * 2))  # Simple sigmoid transformation
-                        
-                        else:
-                            # Fallback: use model accuracy as base probability
-                            probability = model_results['accuracy']
-                        
-                        # Ensure probability is in valid range
-                        probability = max(0.1, min(0.9, probability))
-                        
-                        prediction = "📈 INCREASE" if probability > 0.5 else "📉 DECREASE"  
-                        confidence = max(probability, 1 - probability)
-                        
-                        # Display results
+                        # Model information
                         st.markdown(f"""
-                        <div class="prediction-result">
-                            <h4>🎯 {selected_model_type} Prediction Result</h4>
-                            <p><strong>Market:</strong> {selected_market}</p>
-                            <p><strong>Predicted Movement:</strong> {prediction}</p>
-                            <p><strong>Confidence:</strong> {confidence:.1%}</p>
-                            <p><strong>Probability of Increase:</strong> {probability:.1%}</p>
-                            <p><strong>Model Accuracy:</strong> {model_results['accuracy']:.1%}</p>
-                            <p><strong>Model Type:</strong> {selected_model_type}</p>
+                        <div class="alert-info">
+                            <h4>📋 {selected_model_type_class} Model for {selected_market_class}</h4>
+                            <p><strong>Test Accuracy:</strong> {model_results['accuracy']:.1%}</p>
+                            <p><strong>Cross-Validation Score:</strong> {model_results['cv_mean']:.1%} ± {model_results['cv_std']:.1%}</p>
+                            <p><strong>Features Used:</strong> {len(model_results['feature_names'])} variables</p>
                         </div>
                         """, unsafe_allow_html=True)
                         
-                        # Feature importance display
-                        if model_key == 'logistic_regression' and 'coefficients' in model_results:
-                            st.subheader("📊 Feature Influence (Logistic Regression Coefficients)")
-                            
-                            coef_data = []
-                            for feature, coef in zip(feature_names, model_results['coefficients']):
-                                coef_data.append({
-                                    'Feature': feature,
-                                    'Coefficient': coef,
-                                    'Impact': 'Positive' if coef > 0 else 'Negative',
-                                    'Magnitude': abs(coef)
-                                })
-                            
-                            coef_df = pd.DataFrame(coef_data).sort_values('Magnitude', ascending=False)
-                            
-                            fig_coef = px.bar(coef_df, x='Feature', y='Coefficient',
-                                            title='Feature Coefficients (Impact on Price Increase)',
-                                            color='Coefficient',
-                                            color_continuous_scale='RdBu_r')
-                            fig_coef.add_hline(y=0, line_dash="dash", line_color="black")
-                            fig_coef.update_layout(height=400, xaxis_tickangle=-45)
-                            st.plotly_chart(fig_coef, use_container_width=True)
+                        # Prediction form
+                        st.markdown(f"""
+                        <div class="model-form">
+                            <h4>🔮 {selected_model_type_class} Prediction Form</h4>
+                            <p>Enter market conditions to predict price movement direction</p>
+                        </div>
+                        """, unsafe_allow_html=True)
                         
-                        elif 'feature_importance' in model_results:
-                            st.subheader("📊 Feature Importance")
+                        # Feature input form (same as before for classification)
+                        feature_names = model_results['feature_names']
+                        feature_values = {}
+                        
+                        # Create input fields based on feature names
+                        col1, col2, col3 = st.columns(3)
+                        
+                        for i, feature in enumerate(feature_names):
+                            col = [col1, col2, col3][i % 3]
                             
-                            importance_data = []
-                            for feature, importance in zip(feature_names, model_results['feature_importance']):
-                                importance_data.append({
-                                    'Feature': feature,
-                                    'Importance': importance
-                                })
+                            with col:
+                                if 'Arrivals' in feature and 'MA' not in feature:
+                                    if 'Lag' in feature:
+                                        feature_values[feature] = st.number_input(
+                                            f"{feature} (Tonnes):", 
+                                            min_value=0.0, max_value=1000.0, 
+                                            value=50.0, step=1.0, key=f"class_{feature}_{model_key}_{selected_market_class}"
+                                        )
+                                    else:
+                                        feature_values[feature] = st.number_input(
+                                            f"{feature} (Tonnes):", 
+                                            min_value=0.0, max_value=1000.0, 
+                                            value=60.0, step=1.0, key=f"class_{feature}_{model_key}_{selected_market_class}"
+                                        )
+                                elif 'Price' in feature:
+                                    if 'Lag' in feature:
+                                        feature_values[feature] = st.number_input(
+                                            f"{feature} (₹):", 
+                                            min_value=1000.0, max_value=10000.0, 
+                                            value=4000.0, step=10.0, key=f"class_{feature}_{model_key}_{selected_market_class}"
+                                        )
+                                    elif 'MA' in feature:
+                                        feature_values[feature] = st.number_input(
+                                            f"{feature} (₹):", 
+                                            min_value=1000.0, max_value=10000.0, 
+                                            value=4100.0, step=10.0, key=f"class_{feature}_{model_key}_{selected_market_class}"
+                                        )
+                                    elif 'Volatility' in feature:
+                                        feature_values[feature] = st.number_input(
+                                            f"{feature} (₹):", 
+                                            min_value=0.0, max_value=2000.0, 
+                                            value=100.0, step=1.0, key=f"class_{feature}_{model_key}_{selected_market_class}"
+                                        )
+                                elif 'MA' in feature and 'Arrivals' in feature:
+                                    feature_values[feature] = st.number_input(
+                                        f"{feature} (Tonnes):", 
+                                        min_value=0.0, max_value=1000.0, 
+                                        value=55.0, step=1.0, key=f"class_{feature}_{model_key}_{selected_market_class}"
+                                    )
+                                elif 'Month' in feature:
+                                    feature_values[feature] = st.number_input(
+                                        f"{feature}:", 
+                                        min_value=1, max_value=12, 
+                                        value=6, step=1, key=f"class_{feature}_{model_key}_{selected_market_class}"
+                                    )
+                                elif 'Quarter' in feature:
+                                    feature_values[feature] = st.number_input(
+                                        f"{feature}:", 
+                                        min_value=1, max_value=4, 
+                                        value=2, step=1, key=f"class_{feature}_{model_key}_{selected_market_class}"
+                                    )
+                                else:
+                                    feature_values[feature] = st.number_input(
+                                        f"{feature}:", 
+                                        value=0.0, key=f"class_{feature}_{model_key}_{selected_market_class}"
+                                    )
+                        
+                        # Prediction button for classification
+                        if st.button(f"🎯 Predict Direction with {selected_model_type_class}", type="primary", key=f"class_predict_{model_key}_{selected_market_class}"):
                             
-                            importance_df = pd.DataFrame(importance_data).sort_values('Importance', ascending=False)
+                            # Prepare feature vector
+                            features_array = np.array([feature_values[feature] for feature in feature_names]).reshape(1, -1)
                             
-                            fig_importance = px.bar(importance_df, x='Feature', y='Importance',
-                                                  title='Feature Importance in Model Decision',
-                                                  color='Importance',
-                                                  color_continuous_scale='Viridis')
-                            fig_importance.update_layout(height=400, xaxis_tickangle=-45)
-                            st.plotly_chart(fig_importance, use_container_width=True)
-            
-            # Model comparison section
-            st.markdown("---")
-            st.subheader("📈 Detailed Model Comparison")
-            
-            if selected_market:
-                available_model_results = {}
+                            # Simple prediction logic (simulation)
+                            if model_key == 'logistic_regression' and 'coefficients' in model_results:
+                                # Simulate logistic regression prediction
+                                coefficients = model_results['coefficients']
+                                # Normalize features (simple approximation)
+                                features_normalized = (features_array - np.mean(features_array)) / (np.std(features_array) + 1e-8)
+                                linear_combination = np.sum(features_normalized * coefficients)
+                                probability = 1 / (1 + np.exp(-linear_combination))
+                            
+                            elif model_key == 'random_forest' and 'feature_importance' in model_results:
+                                # Simulate tree-based model prediction
+                                importances = model_results['feature_importance']
+                                # Weighted average based on feature importance (approximation)
+                                weighted_features = features_array[0] * importances
+                                score = np.sum(weighted_features) / np.sum(importances)
+                                probability = 1 / (1 + np.exp(-(score - 0.5) * 2))  # Simple sigmoid transformation
+                            
+                            else:
+                                # Fallback: use model accuracy as base probability
+                                probability = model_results['accuracy']
+                            
+                            # Ensure probability is in valid range
+                            probability = max(0.1, min(0.9, probability))
+                            
+                            prediction = "📈 INCREASE" if probability > 0.5 else "📉 DECREASE"  
+                            confidence = max(probability, 1 - probability)
+                            
+                            # Display results
+                            st.markdown(f"""
+                            <div class="prediction-result">
+                                <h4>🎯 {selected_model_type_class} Prediction Result</h4>
+                                <p><strong>Market:</strong> {selected_market_class}</p>
+                                <p><strong>Predicted Movement:</strong> {prediction}</p>
+                                <p><strong>Confidence:</strong> {confidence:.1%}</p>
+                                <p><strong>Probability of Increase:</strong> {probability:.1%}</p>
+                                <p><strong>Model Accuracy:</strong> {model_results['accuracy']:.1%}</p>
+                                <p><strong>Model Type:</strong> {selected_model_type_class}</p>
+                            </div>
+                            """, unsafe_allow_html=True)
+                            
+                            # Feature importance display (same as before)
+                            if model_key == 'logistic_regression' and 'coefficients' in model_results:
+                                st.subheader("📊 Feature Influence (Logistic Regression Coefficients)")
+                                
+                                coef_data = []
+                                for feature, coef in zip(feature_names, model_results['coefficients']):
+                                    coef_data.append({
+                                        'Feature': feature,
+                                        'Coefficient': coef,
+                                        'Impact': 'Positive' if coef > 0 else 'Negative',
+                                        'Magnitude': abs(coef)
+                                    })
+                                
+                                coef_df = pd.DataFrame(coef_data).sort_values('Magnitude', ascending=False)
+                                
+                                fig_coef = px.bar(coef_df, x='Feature', y='Coefficient',
+                                                title='Feature Coefficients (Impact on Price Increase)',
+                                                color='Coefficient',
+                                                color_continuous_scale='RdBu_r')
+                                fig_coef.add_hline(y=0, line_dash="dash", line_color="black")
+                                fig_coef.update_layout(height=400, xaxis_tickangle=-45)
+                                st.plotly_chart(fig_coef, use_container_width=True)
+                            
+                            elif 'feature_importance' in model_results:
+                                st.subheader("📊 Feature Importance")
+                                
+                                importance_data = []
+                                for feature, importance in zip(feature_names, model_results['feature_importance']):
+                                    importance_data.append({
+                                        'Feature': feature,
+                                        'Importance': importance
+                                    })
+                                
+                                importance_df = pd.DataFrame(importance_data).sort_values('Importance', ascending=False)
+                                
+                                fig_importance = px.bar(importance_df, x='Feature', y='Importance',
+                                                      title='Feature Importance in Model Decision',
+                                                      color='Importance',
+                                                      color_continuous_scale='Viridis')
+                                fig_importance.update_layout(height=400, xaxis_tickangle=-45)
+                                st.plotly_chart(fig_importance, use_container_width=True)
                 
-                for model_type in ['logistic_regression', 'random_forest']:
-                    if (model_type in self.results['ml_models'] and 
-                        selected_market in self.results['ml_models'][model_type] and
-                        self.results['ml_models'][model_type][selected_market] is not None):
-                        available_model_results[model_type] = self.results['ml_models'][model_type][selected_market]
+                # Classification Model comparison section
+                st.markdown("---")
+                st.subheader("📈 Detailed Classification Model Comparison")
                 
-                if available_model_results:
-                    # Performance metrics comparison
-                    metrics_data = []
-                    for model_type, results in available_model_results.items():
-                        metrics_data.append({
-                            'Model': model_type.replace('_', ' ').title(),
-                            'Test Accuracy': results['accuracy'],
-                            'CV Mean': results['cv_mean'],
-                            'CV Std': results['cv_std'],
-                            'Stability': 'High' if results['cv_std'] < 0.05 else 'Medium' if results['cv_std'] < 0.1 else 'Low'
-                        })
+                if selected_market_class:
+                    available_model_results_class = {}
                     
-                    metrics_df = pd.DataFrame(metrics_data)
+                    for model_type in ['logistic_regression', 'random_forest']:
+                        if (model_type in self.results['ml_models'] and 
+                            selected_market_class in self.results['ml_models'][model_type] and
+                            self.results['ml_models'][model_type][selected_market_class] is not None):
+                            available_model_results_class[model_type] = self.results['ml_models'][model_type][selected_market_class]
                     
-                    col1, col2 = st.columns(2)
-                    
-                    with col1:
-                        st.dataframe(metrics_df, use_container_width=True)
-                    
-                    with col2:
-                        # Radar chart for model comparison
-                        fig_radar = go.Figure()
+                    if available_model_results_class:
+                        # Performance metrics comparison
+                        metrics_data = []
+                        for model_type, results in available_model_results_class.items():
+                            metrics_data.append({
+                                'Model': model_type.replace('_', ' ').title(),
+                                'Test Accuracy': results['accuracy'],
+                                'CV Mean': results['cv_mean'],
+                                'CV Std': results['cv_std'],
+                                'Stability': 'High' if results['cv_std'] < 0.05 else 'Medium' if results['cv_std'] < 0.1 else 'Low'
+                            })
                         
-                        for _, row in metrics_df.iterrows():
-                            fig_radar.add_trace(go.Scatterpolar(
-                                r=[row['Test Accuracy'], row['CV Mean'], 1-row['CV Std']],  # 1-CV_Std for stability
-                                theta=['Test Accuracy', 'CV Score', 'Stability'],
-                                fill='toself',
-                                name=row['Model']
-                            ))
+                        metrics_df = pd.DataFrame(metrics_data)
                         
-                        fig_radar.update_layout(
-                            polar=dict(
-                                radialaxis=dict(
-                                    visible=True,
-                                    range=[0, 1]
-                                )),
-                            showlegend=True,
-                            title=f"Model Performance Comparison - {selected_market}",
-                            height=400
-                        )
+                        col1, col2 = st.columns(2)
                         
-                        st.plotly_chart(fig_radar, use_container_width=True)
+                        with col1:
+                            st.dataframe(metrics_df, use_container_width=True)
+                        
+                        with col2:
+                            # Radar chart for model comparison
+                            fig_radar = go.Figure()
+                            
+                            for _, row in metrics_df.iterrows():
+                                fig_radar.add_trace(go.Scatterpolar(
+                                    r=[row['Test Accuracy'], row['CV Mean'], 1-row['CV Std']],  # 1-CV_Std for stability
+                                    theta=['Test Accuracy', 'CV Score', 'Stability'],
+                                    fill='toself',
+                                    name=row['Model']
+                                ))
+                            
+                            fig_radar.update_layout(
+                                polar=dict(
+                                    radialaxis=dict(
+                                        visible=True,
+                                        range=[0, 1]
+                                    )),
+                                showlegend=True,
+                                title=f"Classification Model Performance Comparison - {selected_market_class}",
+                                height=400
+                            )
+                            
+                            st.plotly_chart(fig_radar, use_container_width=True)
+            
+            with tab_reg:
+                # Regression forms
+                col1, col2 = st.columns(2)
+                
+                with col1:
+                    available_markets_reg = []
+                    for model_type in ['linear_regression']:
+                        if model_type in self.results['ml_models']:
+                            available_markets_reg.extend(self.results['ml_models'][model_type].keys())
+                    available_markets_reg = list(set(available_markets_reg))
+                    
+                    selected_market_reg = st.selectbox("Select Market:", available_markets_reg, key="reg_market")
+                
+                with col2:
+                    available_models_reg = []
+                    if selected_market_reg:
+                        for model_type in ['linear_regression']:
+                            if (model_type in self.results['ml_models'] and 
+                                selected_market_reg in self.results['ml_models'][model_type] and
+                                self.results['ml_models'][model_type][selected_market_reg] is not None):
+                                available_models_reg.append(model_type.replace('_', ' ').title())
+                    
+                    selected_model_type_reg = st.selectbox("Select Model Type:", available_models_reg, key="reg_model")
+                
+                if selected_market_reg and selected_model_type_reg:
+                    model_key = selected_model_type_reg.lower().replace(' ', '_')
+                    
+                    if (model_key in self.results['ml_models'] and 
+                        selected_market_reg in self.results['ml_models'][model_key] and
+                        self.results['ml_models'][model_key][selected_market_reg] is not None):
+                        
+                        model_results = self.results['ml_models'][model_key][selected_market_reg]
+                        
+                        # Model information
+                        st.markdown(f"""
+                        <div class="alert-info">
+                            <h4>📋 {selected_model_type_reg} Model for {selected_market_reg}</h4>
+                            <p><strong>Test R² Score:</strong> {model_results['r2_score']:.3f}</p>
+                            <p><strong>Cross-Validation Score:</strong> {model_results['cv_mean']:.3f} ± {model_results['cv_std']:.3f}</p>
+                            <p><strong>Features Used:</strong> {len(model_results['feature_names'])} variables</p>
+                        </div>
+                        """, unsafe_allow_html=True)
+                        
+                        # Prediction form for regression
+                        st.markdown(f"""
+                        <div class="model-form">
+                            <h4>🔮 {selected_model_type_reg} Prediction Form</h4>
+                            <p>Enter market conditions to predict price level</p>
+                        </div>
+                        """, unsafe_allow_html=True)
+                        
+                        # Feature input form (similar to classification)
+                        feature_names = model_results['feature_names']
+                        feature_values = {}
+                        
+                        col1, col2, col3 = st.columns(3)
+                        
+                        for i, feature in enumerate(feature_names):
+                            col = [col1, col2, col3][i % 3]
+                            
+                            with col:
+                                if 'Arrivals' in feature and 'MA' not in feature:
+                                    if 'Lag' in feature:
+                                        feature_values[feature] = st.number_input(
+                                            f"{feature} (Tonnes):", 
+                                            min_value=0.0, max_value=1000.0, 
+                                            value=50.0, step=1.0, key=f"reg_{feature}_{model_key}_{selected_market_reg}"
+                                        )
+                                    else:
+                                        feature_values[feature] = st.number_input(
+                                            f"{feature} (Tonnes):", 
+                                            min_value=0.0, max_value=1000.0, 
+                                            value=60.0, step=1.0, key=f"reg_{feature}_{model_key}_{selected_market_reg}"
+                                        )
+                                elif 'Price' in feature:
+                                    if 'Lag' in feature:
+                                        feature_values[feature] = st.number_input(
+                                            f"{feature} (₹):", 
+                                            min_value=1000.0, max_value=10000.0, 
+                                            value=4000.0, step=10.0, key=f"reg_{feature}_{model_key}_{selected_market_reg}"
+                                        )
+                                    elif 'MA' in feature:
+                                        feature_values[feature] = st.number_input(
+                                            f"{feature} (₹):", 
+                                            min_value=1000.0, max_value=10000.0, 
+                                            value=4100.0, step=10.0, key=f"reg_{feature}_{model_key}_{selected_market_reg}"
+                                        )
+                                    elif 'Volatility' in feature:
+                                        feature_values[feature] = st.number_input(
+                                            f"{feature} (₹):", 
+                                            min_value=0.0, max_value=2000.0, 
+                                            value=100.0, step=1.0, key=f"reg_{feature}_{model_key}_{selected_market_reg}"
+                                        )
+                                elif 'MA' in feature and 'Arrivals' in feature:
+                                    feature_values[feature] = st.number_input(
+                                        f"{feature} (Tonnes):", 
+                                        min_value=0.0, max_value=1000.0, 
+                                        value=55.0, step=1.0, key=f"reg_{feature}_{model_key}_{selected_market_reg}"
+                                    )
+                                elif 'Month' in feature:
+                                    feature_values[feature] = st.number_input(
+                                        f"{feature}:", 
+                                        min_value=1, max_value=12, 
+                                        value=6, step=1, key=f"reg_{feature}_{model_key}_{selected_market_reg}"
+                                    )
+                                elif 'Quarter' in feature:
+                                    feature_values[feature] = st.number_input(
+                                        f"{feature}:", 
+                                        min_value=1, max_value=4, 
+                                        value=2, step=1, key=f"reg_{feature}_{model_key}_{selected_market_reg}"
+                                    )
+                                else:
+                                    feature_values[feature] = st.number_input(
+                                        f"{feature}:", 
+                                        value=0.0, key=f"reg_{feature}_{model_key}_{selected_market_reg}"
+                                    )
+                        
+                        # Prediction button for regression
+                        if st.button(f"🎯 Predict Price with {selected_model_type_reg}", type="primary", key=f"reg_predict_{model_key}_{selected_market_reg}"):
+                            
+                            # Prepare feature vector
+                            features_array = np.array([feature_values[feature] for feature in feature_names]).reshape(1, -1)
+                            
+                            # Simple prediction logic for linear regression (simulation)
+                            if model_key == 'linear_regression' and 'coefficients' in model_results and 'intercept' in model_results:
+                                coefficients = model_results['coefficients']
+                                intercept = model_results['intercept']
+                                predicted_price = np.sum(features_array * coefficients) + intercept  # Fixed: intercept is scalar
+                            else:
+                                # Fallback: use average price or something
+                                predicted_price = 4000.0
+                            
+                            # Display results
+                            st.markdown(f"""
+                            <div class="prediction-result">
+                                <h4>🎯 {selected_model_type_reg} Prediction Result</h4>
+                                <p><strong>Market:</strong> {selected_market_reg}</p>
+                                <p><strong>Predicted Price:</strong> ₹{predicted_price:.2f} / Quintal</p>
+                                <p><strong>Model R²:</strong> {model_results['r2_score']:.3f}</p>
+                                <p><strong>Model Type:</strong> {selected_model_type_reg} (Regression)</p>
+                            </div>
+                            """, unsafe_allow_html=True)
+                            
+                            # Feature coefficients for linear regression
+                            if model_key == 'linear_regression' and 'coefficients' in model_results:
+                                st.subheader("📊 Feature Coefficients (Linear Regression)")
+                                
+                                coef_data = []
+                                for feature, coef in zip(feature_names, model_results['coefficients']):
+                                    coef_data.append({
+                                        'Feature': feature,
+                                        'Coefficient': coef,
+                                        'Impact': 'Positive' if coef > 0 else 'Negative',
+                                        'Magnitude': abs(coef)
+                                    })
+                                
+                                coef_df = pd.DataFrame(coef_data).sort_values('Magnitude', ascending=False)
+                                
+                                fig_coef = px.bar(coef_df, x='Feature', y='Coefficient',
+                                                title='Feature Coefficients (Impact on Price)',
+                                                color='Coefficient',
+                                                color_continuous_scale='RdBu_r')
+                                fig_coef.add_hline(y=0, line_dash="dash", line_color="black")
+                                fig_coef.update_layout(height=400, xaxis_tickangle=-45)
+                                st.plotly_chart(fig_coef, use_container_width=True)
+                
+                # Regression Model comparison section
+                st.markdown("---")
+                st.subheader("📈 Detailed Regression Model Comparison")
+                
+                if selected_market_reg:
+                    available_model_results_reg = {}
+                    
+                    for model_type in ['linear_regression']:
+                        if (model_type in self.results['ml_models'] and 
+                            selected_market_reg in self.results['ml_models'][model_type] and
+                            self.results['ml_models'][model_type][selected_market_reg] is not None):
+                            available_model_results_reg[model_type] = self.results['ml_models'][model_type][selected_market_reg]
+                    
+                    if available_model_results_reg:
+                        # Performance metrics comparison
+                        metrics_data = []
+                        for model_type, results in available_model_results_reg.items():
+                            metrics_data.append({
+                                'Model': model_type.replace('_', ' ').title(),
+                                'Test R²': results['r2_score'],
+                                'CV Mean': results['cv_mean'],
+                                'CV Std': results['cv_std'],
+                                'Stability': 'High' if results['cv_std'] < 0.05 else 'Medium' if results['cv_std'] < 0.1 else 'Low'
+                            })
+                        
+                        metrics_df = pd.DataFrame(metrics_data)
+                        
+                        col1, col2 = st.columns(2)
+                        
+                        with col1:
+                            st.dataframe(metrics_df, use_container_width=True)
+                        
+                        with col2:
+                            # Radar chart for model comparison (adapted for R2)
+                            fig_radar = go.Figure()
+                            
+                            for _, row in metrics_df.iterrows():
+                                fig_radar.add_trace(go.Scatterpolar(
+                                    r=[row['Test R²'], row['CV Mean'], 1-row['CV Std']],
+                                    theta=['Test R²', 'CV Score', 'Stability'],
+                                    fill='toself',
+                                    name=row['Model']
+                                ))
+                            
+                            fig_radar.update_layout(
+                                polar=dict(
+                                    radialaxis=dict(
+                                        visible=True,
+                                        range=[0, 1]
+                                    )),
+                                showlegend=True,
+                                title=f"Regression Model Performance Comparison - {selected_market_reg}",
+                                height=400
+                            )
+                            
+                            st.plotly_chart(fig_radar, use_container_width=True)
         
         else:
             st.warning("No ML model results available. Please run the enhanced analysis first.")
@@ -1174,14 +1479,23 @@ class EnhancedSoybeanDashboard:
                 all_accuracies.extend([acc for _, acc, _ in comp['ranking']])
             avg_accuracy = np.mean(all_accuracies) if all_accuracies else 0
             
-            summary.append(f"\n🤖 MACHINE LEARNING:")
-            summary.append(f"• Average ML accuracy: {avg_accuracy:.1%}")
+            summary.append(f"\n🤖 CLASSIFICATION ML:")
+            summary.append(f"• Average accuracy: {avg_accuracy:.1%}")
             summary.append(f"• Models evaluated: Logistic Regression, Random Forest")
+        
+        if 'regression_comparisons' in self.results:
+            all_r2s = [comp['best_r2'] for comp in self.results['regression_comparisons'].values()]
+            avg_r2 = np.mean(all_r2s) if all_r2s else 0
+            
+            summary.append(f"\n📈 REGRESSION ML:")
+            summary.append(f"• Average R²: {avg_r2:.3f}")
+            summary.append(f"• Model evaluated: Linear Regression")
         
         # Recommendations
         summary.append(f"\n💡 KEY RECOMMENDATIONS:")
         summary.append("• Use ARIMA models for medium-term price forecasting")
-        summary.append("• Apply ML models for daily price movement prediction")  
+        summary.append("• Apply classification ML models for daily price movement prediction")  
+        summary.append("• Use Linear Regression for price level predictions")
         summary.append("• Consider market integration in trading strategies")
         summary.append("• Implement risk management based on volatility patterns")
         
@@ -1213,17 +1527,18 @@ def main():
     ### 🎯 Enhanced Analysis Features
     
     **New Additions:**
-    - ✅ Multiple ML Models (Logistic Regression & Random Forest)
+    - ✅ Multiple ML Models (Logistic Regression, Random Forest - Classification)
+    - ✅ Linear Regression (Regression for Price Prediction)
     - ✅ Comprehensive Cointegration Tables  
     - ✅ Detailed AIC Explanations
-    - ✅ Interactive Prediction Forms
+    - ✅ Interactive Prediction Forms (Direction & Price Level)
     - ✅ Enhanced Visualizations
     
     **Research Objectives:**
     1. Enhanced descriptive statistics
     2. Comprehensive Johansen cointegration
     3. ARIMA/SARIMA with model selection explanations
-    4. Multiple ML models comparison
+    4. Multiple ML models comparison (Class + Reg)
     
     **Markets Analyzed:**
     - Haveri
@@ -1233,8 +1548,9 @@ def main():
     - Bailhongal
     
     **ML Models:**
-    - 🔵 Logistic Regression
-    - 🌲 Random Forest
+    - 🔵 Logistic Regression (Class)
+    - 🌲 Random Forest (Class)
+    - 📈 Linear Regression (Reg)
     """)
     
     # Execute selected page
@@ -1245,7 +1561,7 @@ def main():
     st.markdown("""
     <div style='text-align: center; color: #666; font-size: 0.8em;'>
         <p>🌱 Enhanced Soybean Market Analysis Dashboard | Built with Advanced ML & Statistical Models</p>
-        <p>Featuring: Logistic Regression • Random Forest • Comprehensive Cointegration Analysis</p>
+        <p>Featuring: Logistic Regression • Random Forest • Linear Regression • Comprehensive Cointegration Analysis</p>
         <p>For research and educational purposes | © 2025</p>
     </div>
     """, unsafe_allow_html=True)
