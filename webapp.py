@@ -128,7 +128,7 @@ class EnhancedSoybeanDashboard:
             self.models = None
             self.report = ""
     
-    def main_dashboard(self):
+        def main_dashboard(self):
         """Enhanced main dashboard page"""
         st.title("🌱 Enhanced Soybean Market Analysis Dashboard")
         st.markdown("### Comprehensive Analysis with Multiple ML Models (Classification & Regression) and Detailed Cointegration")
@@ -310,6 +310,13 @@ class EnhancedSoybeanDashboard:
             fig_enhanced.update_layout(height=500)
             st.plotly_chart(fig_enhanced, use_container_width=True)
             
+            # Table for Risk-Return Profile
+            st.subheader("📋 Market Risk-Return Profile Table")
+            risk_return_df = df_markets[['Market', 'Average Price', 'CV (%)', 'Sample Size', 'Average Arrivals']].copy()
+            risk_return_df['Average Price'] = risk_return_df['Average Price'].round(2)
+            risk_return_df['CV (%)'] = risk_return_df['CV (%)'].round(2)
+            st.dataframe(risk_return_df, use_container_width=True)
+            
             # Distribution analysis
             col1, col2 = st.columns(2)
             
@@ -321,6 +328,12 @@ class EnhancedSoybeanDashboard:
                 fig_dist.add_hline(y=0, line_dash="dash", line_color="black")
                 fig_dist.update_layout(height=400)
                 st.plotly_chart(fig_dist, use_container_width=True)
+                
+                # Table for Skewness
+                st.subheader("📋 Skewness Table")
+                skewness_df = df_markets[['Market', 'Skewness']].copy()
+                skewness_df['Skewness'] = skewness_df['Skewness'].round(3)
+                st.dataframe(skewness_df, use_container_width=True)
             
             with col2:
                 fig_kurt = px.bar(df_markets, x='Market', y='Kurtosis',
@@ -330,6 +343,12 @@ class EnhancedSoybeanDashboard:
                 fig_kurt.add_hline(y=0, line_dash="dash", line_color="black")
                 fig_kurt.update_layout(height=400)
                 st.plotly_chart(fig_kurt, use_container_width=True)
+                
+                # Table for Kurtosis
+                st.subheader("📋 Kurtosis Table")
+                kurtosis_df = df_markets[['Market', 'Kurtosis']].copy()
+                kurtosis_df['Kurtosis'] = kurtosis_df['Kurtosis'].round(3)
+                st.dataframe(kurtosis_df, use_container_width=True)
     
     def enhanced_cointegration_analysis(self):
         """Enhanced cointegration analysis page"""
@@ -1567,4 +1586,5 @@ def main():
     """, unsafe_allow_html=True)
 
 if __name__ == "__main__":
+
     main()
