@@ -128,7 +128,7 @@ class EnhancedSoybeanDashboard:
             self.models = None
             self.report = ""
     
-        def main_dashboard(self):
+    def main_dashboard(self):
         """Enhanced main dashboard page"""
         st.title("🌱 Enhanced Soybean Market Analysis Dashboard")
         st.markdown("### Comprehensive Analysis with Multiple ML Models (Classification & Regression) and Detailed Cointegration")
@@ -1588,3 +1588,4 @@ def main():
 if __name__ == "__main__":
 
     main()
+
