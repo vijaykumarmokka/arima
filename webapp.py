@@ -352,136 +352,165 @@ class EnhancedSoybeanDashboard:
                 kurtosis_df['Kurtosis'] = kurtosis_df['Kurtosis'].round(3)
                 st.dataframe(kurtosis_df, use_container_width=True)
     
-    def enhanced_cointegration_analysis(self):
-        """Enhanced cointegration analysis page with full VECM pipeline"""
-        st.title("🔗 Comprehensive Cointegration Analysis (Weekly Data + VECM Pipeline)")
+def enhanced_cointegration_analysis(self):
+    """Enhanced cointegration analysis page with full VECM pipeline"""
+    st.title("🔗 Comprehensive Cointegration Analysis (Weekly Data + VECM Pipeline)")
+    
+    if 'cointegration_tables' in self.results:
+        coint_tables = self.results['cointegration_tables']
         
-        if 'cointegration_tables' in self.results:
-            coint_tables = self.results['cointegration_tables']
-            summary = coint_tables['summary_stats']
+        # Defensive access: Use .get() with default to avoid KeyError
+        default_summary = {
+            'Markets_Analyzed': self.markets,
+            'Number_of_Variables': len(self.markets),
+            'Number_of_Cointegrating_Relations': 0  # Default to no relations if missing
+        }
+        summary = coint_tables.get('summary_stats', default_summary)
+        
+        # Defensive access for relations
+        coint_relations = summary.get('Number_of_Cointegrating_Relations', 0)
+        
+        # Test Summary (now safe)
+        st.markdown(f"""
+        <div class="alert-info">
+            <h4>🔬 Johansen Cointegration Test Specifications</h4>
+            <ul>
+                <li><strong>Markets Analyzed:</strong> {', '.join(summary.get('Markets_Analyzed', self.markets))}</li>
+                <li><strong>Number of Variables:</strong> {summary.get('Number_of_Variables', len(self.markets))}</li>
+                <li><strong>Cointegrating Relations Found:</strong> {coint_relations}</li>
+                <li><strong>Data Frequency:</strong> Weekly</li>
+            </ul>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        # Tabs for different steps
+        tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
+            "📊 Stationarity Tests", "⏱️ Lag Selection", "🔄 VAR Model", 
+            "📈 Trace Statistics", "📊 Max Eigenvalue", "🔢 VECM Results", "📋 Interpretation"
+        ])
+        
+        with tab1:
+            st.subheader("Step 1: Stationarity Tests (ADF on Weekly Prices)")
             
-            # Test Summary
-            st.markdown(f"""
-            <div class="alert-info">
-                <h4>🔬 Johansen Cointegration Test Specifications</h4>
-                <ul>
-                    <li><strong>Markets Analyzed:</strong> {', '.join(summary['Markets_Analyzed'])}</li>
-                    <li><strong>Number of Variables:</strong> {summary['Number_of_Variables']}</li>
-                    <li><strong>Cointegrating Relations Found:</strong> {summary['Number_of_Cointegrating_Relations']}</li>
-                    <li><strong>Data Frequency:</strong> Weekly</li>
-                </ul>
-            </div>
-            """, unsafe_allow_html=True)
-            
-            # Tabs for different steps
-            tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
-                "📊 Stationarity Tests", "⏱️ Lag Selection", "🔄 VAR Model", 
-                "📈 Trace Statistics", "📊 Max Eigenvalue", "🔢 VECM Results", "📋 Interpretation"
-            ])
-            
-            with tab1:
-                st.subheader("Step 1: Stationarity Tests (ADF on Weekly Prices)")
+            # Defensive check for table
+            if 'stationarity_table' in coint_tables:
+                stationarity_df = pd.DataFrame(coint_tables['stationarity_table'])
+                st.dataframe(stationarity_df, use_container_width=True)
                 
-                if 'stationarity_table' in coint_tables:
-                    stationarity_df = pd.DataFrame(coint_tables['stationarity_table'])
-                    st.dataframe(stationarity_df, use_container_width=True)
-                    
-                    # Visualization
-                    fig_adf = px.bar(stationarity_df, x='Market', y='ADF_Statistic',
-                                   title='ADF Statistics (Lower = More Stationary)',
-                                   color='Stationary_at_5%',
-                                   color_discrete_map={'No (I(1))': 'red', 'Yes (I(0))': 'green'})
+                # Visualization (safe if df exists)
+                fig_adf = px.bar(stationarity_df, x='Market', y='ADF_Statistic',
+                               title='ADF Statistics (Lower = More Stationary)',
+                               color='Stationary_at_5%',
+                               color_discrete_map={'No (I(1))': 'red', 'Yes (I(0))': 'green'})
+                if 'Critical_Value_5%' in stationarity_df.columns:
                     fig_adf.add_hline(y=stationarity_df['Critical_Value_5%'].mean(), line_dash="dash", line_color="black", annotation_text="Avg Critical Value")
-                    fig_adf.update_layout(height=400)
-                    st.plotly_chart(fig_adf, use_container_width=True)
-                    
-                    st.markdown("""
-                    **📖 Interpretation:** All series are I(1) (non-stationary in levels), suitable for cointegration.
-                    """)
-            
-            with tab2:
-                st.subheader("Step 2: Lag Length Selection (VAR Criteria)")
+                fig_adf.update_layout(height=400)
+                st.plotly_chart(fig_adf, use_container_width=True)
                 
-                if 'lag_table' in coint_tables:
-                    lag_df = pd.DataFrame(coint_tables['lag_table'])
-                    st.dataframe(lag_df, use_container_width=True)
-                    
-                    # Visualization
-                    fig_lag = px.line(lag_df.melt(id_vars='Lag'), x='Lag', y='value', color='variable',
+                st.markdown("""
+                **📖 Interpretation:** All series are I(1) (non-stationary in levels), suitable for cointegration.
+                """)
+            else:
+                st.warning("Stationarity table not available in results.")
+        
+        with tab2:
+            st.subheader("Step 2: Lag Length Selection (VAR Criteria)")
+            
+            # Defensive check for table
+            if 'lag_table' in coint_tables:
+                lag_df = pd.DataFrame(coint_tables['lag_table'])
+                st.dataframe(lag_df, use_container_width=True)
+                
+                # Visualization (safe if df exists)
+                melted_lag = lag_df.melt(id_vars='Lag') if 'Lag' in lag_df.columns else pd.DataFrame()
+                if not melted_lag.empty:
+                    fig_lag = px.line(melted_lag, x='Lag', y='value', color='variable',
                                     title='Lag Selection Criteria (Lower = Better)',
                                     labels={'value': 'Criterion Value', 'variable': 'Criterion'})
                     fig_lag.update_layout(height=400)
                     st.plotly_chart(fig_lag, use_container_width=True)
-                    
-                    selected_lag = self.results.get('lag_selection', {}).get('selected_lag', 'N/A')
-                    st.markdown(f"**Selected Lag:** {selected_lag} (AIC minimization)")
-            
-            with tab3:
-                st.subheader("Step 3: VAR Model Summary")
                 
-                if 'var_summary' in self.results and 'table' in self.results['var_summary']:
-                    var_df = pd.DataFrame(self.results['var_summary']['table'])
-                    st.dataframe(var_df, use_container_width=True)
-                    
-                    # Visualization
+                # Defensive lag selection
+                lag_selection = self.results.get('lag_selection', {})
+                selected_lag = lag_selection.get('selected_lag', 'N/A')
+                st.markdown(f"**Selected Lag:** {selected_lag} (AIC minimization)")
+            else:
+                st.warning("Lag table not available in results.")
+        
+        with tab3:
+            st.subheader("Step 3: VAR Model Summary")
+            
+            # Defensive check for VAR summary
+            if 'var_summary' in self.results and 'table' in self.results['var_summary']:
+                var_df = pd.DataFrame(self.results['var_summary']['table'])
+                st.dataframe(var_df, use_container_width=True)
+                
+                # Visualization (safe if 'L1_Self_Coefficient' exists)
+                if 'L1_Self_Coefficient' in var_df.columns:
                     fig_var = px.bar(var_df, x='Market', y='L1_Self_Coefficient',
                                    title='VAR L1 Self-Lag Coefficients (Momentum)',
                                    color='L1_Self_Coefficient', color_continuous_scale='RdBu_r')
                     fig_var.add_hline(y=0, line_dash="dash")
                     fig_var.update_layout(height=400)
                     st.plotly_chart(fig_var, use_container_width=True)
+            else:
+                st.warning("VAR summary table not available in results.")
+        
+        with tab4:
+            st.subheader("Step 4: Trace Statistics Test Results")
             
-            with tab4:
-                st.subheader("Step 4: Trace Statistics Test Results")
-                
-                # Create comprehensive trace statistics table
+            # Defensive check for table
+            if 'trace_table' in coint_tables:
                 trace_df = pd.DataFrame(coint_tables['trace_table'])
                 
-                # Format the dataframe for better display
+                # Format the dataframe for better display (safe access)
                 display_df = trace_df[['Null_Hypothesis', 'Alternative', 'Trace_Statistic', 
-                                     'Critical_Value_5', 'Result_5']].copy()
+                                     'Critical_Value_5', 'Result_5']].copy() if all(col in trace_df.columns for col in ['Null_Hypothesis', 'Alternative', 'Trace_Statistic', 'Critical_Value_5', 'Result_5']) else pd.DataFrame()
                 
-                display_df.columns = ['Null Hypothesis', 'Alternative', 'Trace Statistic', 
-                                    'Critical Value (5%)', 'Result']
+                if not display_df.empty:
+                    display_df.columns = ['Null Hypothesis', 'Alternative', 'Trace Statistic', 
+                                        'Critical Value (5%)', 'Result']
+                    
+                    # Format numbers
+                    display_df['Trace Statistic'] = display_df['Trace Statistic'].apply(lambda x: f"{x:.4f}" if pd.notna(x) else "N/A")
+                    display_df['Critical Value (5%)'] = display_df['Critical Value (5%)'].apply(lambda x: f"{x:.4f}" if pd.notna(x) else "N/A")
+                    
+                    st.dataframe(display_df, use_container_width=True)
+                    
+                    # Visualization
+                    fig_trace = go.Figure()
+                    
+                    x_labels = [f"r ≤ {i}" for i in range(len(trace_df))]
+                    trace_stats = [float(x) for x in trace_df['Trace_Statistic'].values if pd.notna(x)] if 'Trace_Statistic' in trace_df else []
+                    critical_vals = [float(x) for x in trace_df['Critical_Value_5'].values if pd.notna(x)] if 'Critical_Value_5' in trace_df else []
+                    
+                    if x_labels and trace_stats:
+                        fig_trace.add_trace(go.Bar(
+                            x=x_labels,
+                            y=trace_stats,
+                            name='Trace Statistic',
+                            marker_color='lightblue'
+                        ))
+                    
+                    if x_labels and critical_vals:
+                        fig_trace.add_trace(go.Scatter(
+                            x=x_labels,
+                            y=critical_vals,
+                            mode='lines+markers',
+                            name='Critical Value (5%)',
+                            line=dict(color='red', width=3)
+                        ))
+                    
+                    fig_trace.update_layout(
+                        title='Trace Statistics vs Critical Values',
+                        xaxis_title='Null Hypothesis',
+                        yaxis_title='Statistic Value',
+                        height=400
+                    )
+                    
+                    st.plotly_chart(fig_trace, use_container_width=True)
                 
-                # Format numbers
-                display_df['Trace Statistic'] = display_df['Trace Statistic'].apply(lambda x: f"{x:.4f}")
-                display_df['Critical Value (5%)'] = display_df['Critical Value (5%)'].apply(lambda x: f"{x:.4f}")
-                
-                st.dataframe(display_df, use_container_width=True)
-                
-                # Visualization
-                fig_trace = go.Figure()
-                
-                x_labels = [f"r ≤ {i}" for i in range(len(trace_df))]
-                trace_stats = [float(x) for x in trace_df['Trace_Statistic'].values]
-                critical_vals = [float(x) for x in trace_df['Critical_Value_5'].values]
-                
-                fig_trace.add_trace(go.Bar(
-                    x=x_labels,
-                    y=trace_stats,
-                    name='Trace Statistic',
-                    marker_color='lightblue'
-                ))
-                
-                fig_trace.add_trace(go.Scatter(
-                    x=x_labels,
-                    y=critical_vals,
-                    mode='lines+markers',
-                    name='Critical Value (5%)',
-                    line=dict(color='red', width=3)
-                ))
-                
-                fig_trace.update_layout(
-                    title='Trace Statistics vs Critical Values',
-                    xaxis_title='Null Hypothesis',
-                    yaxis_title='Statistic Value',
-                    height=400
-                )
-                
-                st.plotly_chart(fig_trace, use_container_width=True)
-                
-                # Explanation
+                # Explanation (always show)
                 st.markdown("""
                 **📖 How to Read Trace Statistics:**
                 - **Null Hypothesis (r ≤ k)**: At most k cointegrating relationships exist
@@ -489,150 +518,170 @@ class EnhancedSoybeanDashboard:
                 - **Accept H₀**: No evidence for more than k cointegrating relationships
                 - **Decision Rule**: If Trace Statistic > Critical Value → Reject H₀
                 """)
+            else:
+                st.warning("Trace table not available in results.")
+        
+        with tab5:
+            st.subheader("Step 4: Maximum Eigenvalue Test Results")
             
-            with tab5:
-                st.subheader("Step 4: Maximum Eigenvalue Test Results")
-                
-                # Create maximum eigenvalue table
+            # Defensive check for table
+            if 'max_eigen_table' in coint_tables:
                 eigen_df = pd.DataFrame(coint_tables['max_eigen_table'])
                 
                 display_df = eigen_df[['Null_Hypothesis', 'Alternative', 'Max_Eigen_Statistic', 
-                                     'Critical_Value_5', 'Result_5']].copy()
+                                     'Critical_Value_5', 'Result_5']].copy() if all(col in eigen_df.columns for col in ['Null_Hypothesis', 'Alternative', 'Max_Eigen_Statistic', 'Critical_Value_5', 'Result_5']) else pd.DataFrame()
                 
-                display_df.columns = ['Null Hypothesis', 'Alternative', 'Max Eigen Statistic', 
-                                    'Critical Value (5%)', 'Result']
-                
-                # Format numbers
-                display_df['Max Eigen Statistic'] = display_df['Max Eigen Statistic'].apply(lambda x: f"{x:.4f}")
-                display_df['Critical Value (5%)'] = display_df['Critical Value (5%)'].apply(lambda x: f"{x:.4f}")
-                
-                st.dataframe(display_df, use_container_width=True)
-                
-                # Visualization
-                fig_eigen = go.Figure()
-                
-                x_labels = [f"r = {i}" for i in range(len(eigen_df))]
-                eigen_stats = [float(x) for x in eigen_df['Max_Eigen_Statistic'].values]
-                critical_vals = [float(x) for x in eigen_df['Critical_Value_5'].values]
-                
-                fig_eigen.add_trace(go.Bar(
-                    x=x_labels,
-                    y=eigen_stats,
-                    name='Max Eigen Statistic',
-                    marker_color='lightgreen'
-                ))
-                
-                fig_eigen.add_trace(go.Scatter(
-                    x=x_labels,
-                    y=critical_vals,
-                    mode='lines+markers',
-                    name='Critical Value (5%)',
-                    line=dict(color='red', width=3)
-                ))
-                
-                fig_eigen.update_layout(
-                    title='Maximum Eigenvalue Statistics vs Critical Values',
-                    xaxis_title='Null Hypothesis',
-                    yaxis_title='Statistic Value',
-                    height=400
-                )
-                
-                st.plotly_chart(fig_eigen, use_container_width=True)
+                if not display_df.empty:
+                    display_df.columns = ['Null Hypothesis', 'Alternative', 'Max Eigen Statistic', 
+                                        'Critical Value (5%)', 'Result']
+                    
+                    # Format numbers
+                    display_df['Max Eigen Statistic'] = display_df['Max Eigen Statistic'].apply(lambda x: f"{x:.4f}" if pd.notna(x) else "N/A")
+                    display_df['Critical Value (5%)'] = display_df['Critical Value (5%)'].apply(lambda x: f"{x:.4f}" if pd.notna(x) else "N/A")
+                    
+                    st.dataframe(display_df, use_container_width=True)
+                    
+                    # Visualization
+                    fig_eigen = go.Figure()
+                    
+                    x_labels = [f"r = {i}" for i in range(len(eigen_df))]
+                    eigen_stats = [float(x) for x in eigen_df['Max_Eigen_Statistic'].values if pd.notna(x)] if 'Max_Eigen_Statistic' in eigen_df else []
+                    critical_vals = [float(x) for x in eigen_df['Critical_Value_5'].values if pd.notna(x)] if 'Critical_Value_5' in eigen_df else []
+                    
+                    if x_labels and eigen_stats:
+                        fig_eigen.add_trace(go.Bar(
+                            x=x_labels,
+                            y=eigen_stats,
+                            name='Max Eigen Statistic',
+                            marker_color='lightgreen'
+                        ))
+                    
+                    if x_labels and critical_vals:
+                        fig_eigen.add_trace(go.Scatter(
+                            x=x_labels,
+                            y=critical_vals,
+                            mode='lines+markers',
+                            name='Critical Value (5%)',
+                            line=dict(color='red', width=3)
+                        ))
+                    
+                    fig_eigen.update_layout(
+                        title='Maximum Eigenvalue Statistics vs Critical Values',
+                        xaxis_title='Null Hypothesis',
+                        yaxis_title='Statistic Value',
+                        height=400
+                    )
+                    
+                    st.plotly_chart(fig_eigen, use_container_width=True)
+            else:
+                st.warning("Max Eigenvalue table not available in results.")
+        
+        with tab6:
+            st.subheader("Step 5: VECM Model Results")
             
-            with tab6:
-                st.subheader("Step 5: VECM Model Results")
+            # Defensive check for VECM summary
+            if 'vecm_summary' in self.results:
+                vecm_summary = self.results['vecm_summary']
+                rank = vecm_summary.get('rank', 0)
                 
-                if 'vecm_summary' in self.results:
-                    vecm_summary = self.results['vecm_summary']
-                    rank = vecm_summary['rank']
-                    
-                    st.markdown(f"**Cointegration Rank:** {rank}")
-                    
-                    # Beta vector
-                    beta = vecm_summary['beta']
+                st.markdown(f"**Cointegration Rank:** {rank}")
+                
+                # Beta vector (safe access)
+                beta = vecm_summary.get('beta', [])
+                if beta:
                     beta_df = pd.DataFrame({
                         'Market': self.markets[:len(beta)],
                         'Beta_Coefficient': [round(b, 4) for b in beta]
                     })
                     st.subheader("Cointegrating Vector (Beta, Normalized on First Market)")
                     st.dataframe(beta_df, use_container_width=True)
+                
+                # Alpha table (defensive)
+                if 'alpha_table' in vecm_summary:
+                    alpha_df = pd.DataFrame(vecm_summary['alpha_table'])
+                    st.subheader("Adjustment Coefficients (Alpha)")
+                    st.dataframe(alpha_df, use_container_width=True)
                     
-                    # Alpha table
-                    if 'alpha_table' in vecm_summary:
-                        alpha_df = pd.DataFrame(vecm_summary['alpha_table'])
-                        st.subheader("Adjustment Coefficients (Alpha)")
-                        st.dataframe(alpha_df, use_container_width=True)
-                        
-                        # Visualization
+                    # Visualization (safe if columns exist)
+                    if 'Market' in alpha_df.columns and 'Alpha_Adjustment' in alpha_df.columns:
                         fig_alpha = px.bar(alpha_df, x='Market', y='Alpha_Adjustment',
                                          title='Adjustment Speeds (Negative = Error Correction)',
                                          color='Significant_5%', color_discrete_map={'Yes': 'green', 'No': 'red'})
                         fig_alpha.add_hline(y=0, line_dash="dash")
                         fig_alpha.update_layout(height=400)
                         st.plotly_chart(fig_alpha, use_container_width=True)
+                else:
+                    st.info("Alpha table not available.")
+            else:
+                st.warning("VECM summary not available in results.")
+        
+        with tab7:
+            st.subheader("Economic Interpretation")
             
-            with tab7:
-                st.subheader("Economic Interpretation")
-                
-                interpretation = coint_tables['interpretation']
-                
-                st.markdown(f"""
-                <div class="alert-success">
-                    <h4>🎯 {interpretation['conclusion']}</h4>
-                    <p><strong>Economic Meaning:</strong> {interpretation['meaning']}</p>
+            # Defensive access for interpretation
+            default_interpretation = {
+                'conclusion': 'Analysis incomplete - Run full cointegration pipeline',
+                'meaning': 'Data structure incomplete',
+                'implications': ['Re-run analysis to generate full results.'],
+                'policy_implications': ['Ensure data completeness for policy insights.']
+            }
+            interpretation = coint_tables.get('interpretation', default_interpretation)
+            
+            st.markdown(f"""
+            <div class="alert-success">
+                <h4>🎯 {interpretation.get('conclusion', 'N/A')}</h4>
+                <p><strong>Economic Meaning:</strong> {interpretation.get('meaning', 'N/A')}</p>
+            </div>
+            """, unsafe_allow_html=True)
+            
+            col1, col2 = st.columns(2)
+            
+            with col1:
+                st.markdown("**📈 Market Implications:**")
+                for implication in interpretation.get('implications', []):
+                    st.write(f"• {implication}")
+            
+            with col2:
+                st.markdown("**🏛️ Policy Implications:**")
+                for policy in interpretation.get('policy_implications', []):
+                    st.write(f"• {policy}")
+            
+            # Additional insights (uses coint_relations, which is now safe)
+            st.markdown("---")
+            st.subheader("💡 Strategic Insights")
+            
+            if coint_relations == 0:
+                st.markdown("""
+                <div class="alert-warning">
+                    <h5>⚠️ Independent Markets</h5>
+                    <p><strong>Trading Strategy:</strong> Treat each market independently</p>
+                    <p><strong>Risk Management:</strong> Diversification across markets may be effective</p>
+                    <p><strong>Arbitrage Opportunities:</strong> May exist between markets</p>
                 </div>
                 """, unsafe_allow_html=True)
-                
-                col1, col2 = st.columns(2)
-                
-                with col1:
-                    st.markdown("**📈 Market Implications:**")
-                    for implication in interpretation['implications']:
-                        st.write(f"• {implication}")
-                
-                with col2:
-                    st.markdown("**🏛️ Policy Implications:**")
-                    for policy in interpretation['policy_implications']:
-                        st.write(f"• {policy}")
-                
-                # Additional insights
-                st.markdown("---")
-                st.subheader("💡 Strategic Insights")
-                
-                num_relations = summary['Number_of_Cointegrating_Relations']
-                
-                if num_relations == 0:
-                    st.markdown("""
-                    <div class="alert-warning">
-                        <h5>⚠️ Independent Markets</h5>
-                        <p><strong>Trading Strategy:</strong> Treat each market independently</p>
-                        <p><strong>Risk Management:</strong> Diversification across markets may be effective</p>
-                        <p><strong>Arbitrage Opportunities:</strong> May exist between markets</p>
-                    </div>
-                    """, unsafe_allow_html=True)
-                
-                elif num_relations == 1:
-                    st.markdown("""
-                    <div class="alert-info">
-                        <h5>📊 Moderate Integration</h5>
-                        <p><strong>Trading Strategy:</strong> Consider inter-market relationships</p>
-                        <p><strong>Risk Management:</strong> Some correlation risk exists</p>
-                        <p><strong>Price Discovery:</strong> Information flows moderately between markets</p>
-                    </div>
-                    """, unsafe_allow_html=True)
-                
-                else:
-                    st.markdown("""
-                    <div class="alert-success">
-                        <h5>✅ Strong Integration</h5>
-                        <p><strong>Trading Strategy:</strong> Treat as integrated market system</p>
-                        <p><strong>Risk Management:</strong> High correlation risk, limited diversification benefits</p>
-                        <p><strong>Price Discovery:</strong> Rapid information transmission across markets</p>
-                    </div>
-                    """, unsafe_allow_html=True)
-        
-        else:
-            st.warning("Cointegration analysis results not available.")
+            
+            elif coint_relations == 1:
+                st.markdown("""
+                <div class="alert-info">
+                    <h5>📊 Moderate Integration</h5>
+                    <p><strong>Trading Strategy:</strong> Consider inter-market relationships</p>
+                    <p><strong>Risk Management:</strong> Some correlation risk exists</p>
+                    <p><strong>Price Discovery:</strong> Information flows moderately between markets</p>
+                </div>
+                """, unsafe_allow_html=True)
+            
+            else:
+                st.markdown("""
+                <div class="alert-success">
+                    <h5>✅ Strong Integration</h5>
+                    <p><strong>Trading Strategy:</strong> Treat as integrated market system</p>
+                    <p><strong>Risk Management:</strong> High correlation risk, limited diversification benefits</p>
+                    <p><strong>Price Discovery:</strong> Rapid information transmission across markets</p>
+                </div>
+                """, unsafe_allow_html=True)
+    
+    else:
+        st.warning("Cointegration analysis results not available.")
     
     def enhanced_arima_analysis(self):
         """Enhanced ARIMA analysis with detailed explanations"""
@@ -1644,3 +1693,4 @@ def main():
 if __name__ == "__main__":
 
     main()
+
