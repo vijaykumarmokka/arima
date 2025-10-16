@@ -88,126 +88,15 @@
   },
   "correlation_matrix": null,
   "regression_results": {},
-  "cointegration_results": {
-    "trace_stats": "[         nan          nan 700.40556671 337.86431577   6.44404122]",
-    "max_eigen_stats": "[         nan          nan 362.54125094 331.42027455   6.44404122]",
-    "critical_values_trace": "[[65.8202 69.8189 77.8202]\n [44.4929 47.8545 54.6815]\n [27.0669 29.7961 35.4628]\n [13.4294 15.4943 19.9349]\n [ 2.7055  3.8415  6.6349]]",
-    "critical_values_max_eigen": "[[31.2379 33.8777 39.3693]\n [25.1236 27.5858 32.7172]\n [18.8928 21.1314 25.865 ]\n [12.2971 14.2639 18.52  ]\n [ 2.7055  3.8415  6.6349]]",
-    "eigenvalues": "[1.         1.         1.         1.         0.41550289]",
-    "markets": [
-      "Haveri",
-      "Kalagategi",
-      "Bidar",
-      "Kalaburgi",
-      "Bailhongal"
-    ]
+  "cointegration_results": {},
+  "cointegration_tables": {},
+  "stationarity_tests": {},
+  "lag_selection": {
+    "criteria": {}
   },
-  "cointegration_tables": {
-    "trace_table": [
-      {
-        "Null_Hypothesis": "r \u2264 0",
-        "Alternative": "r > 0",
-        "Trace_Statistic": NaN,
-        "Critical_Value_5": 69.8189,
-        "Result_5": "Accept H0"
-      },
-      {
-        "Null_Hypothesis": "r \u2264 1",
-        "Alternative": "r > 1",
-        "Trace_Statistic": NaN,
-        "Critical_Value_5": 47.8545,
-        "Result_5": "Accept H0"
-      },
-      {
-        "Null_Hypothesis": "r \u2264 2",
-        "Alternative": "r > 2",
-        "Trace_Statistic": 700.4055667097945,
-        "Critical_Value_5": 29.7961,
-        "Result_5": "Reject H0"
-      },
-      {
-        "Null_Hypothesis": "r \u2264 3",
-        "Alternative": "r > 3",
-        "Trace_Statistic": 337.86431576779074,
-        "Critical_Value_5": 15.4943,
-        "Result_5": "Reject H0"
-      },
-      {
-        "Null_Hypothesis": "r \u2264 4",
-        "Alternative": "r > 4",
-        "Trace_Statistic": 6.444041218925259,
-        "Critical_Value_5": 3.8415,
-        "Result_5": "Reject H0"
-      }
-    ],
-    "max_eigen_table": [
-      {
-        "Null_Hypothesis": "r = 0",
-        "Alternative": "r = 1",
-        "Max_Eigen_Statistic": NaN,
-        "Critical_Value_5": 33.8777,
-        "Result_5": "Accept H0"
-      },
-      {
-        "Null_Hypothesis": "r = 1",
-        "Alternative": "r = 2",
-        "Max_Eigen_Statistic": NaN,
-        "Critical_Value_5": 27.5858,
-        "Result_5": "Accept H0"
-      },
-      {
-        "Null_Hypothesis": "r = 2",
-        "Alternative": "r = 3",
-        "Max_Eigen_Statistic": 362.54125094200367,
-        "Critical_Value_5": 21.1314,
-        "Result_5": "Reject H0"
-      },
-      {
-        "Null_Hypothesis": "r = 3",
-        "Alternative": "r = 4",
-        "Max_Eigen_Statistic": 331.42027454886545,
-        "Critical_Value_5": 14.2639,
-        "Result_5": "Reject H0"
-      },
-      {
-        "Null_Hypothesis": "r = 4",
-        "Alternative": "r = 5",
-        "Max_Eigen_Statistic": 6.444041218925259,
-        "Critical_Value_5": 3.8415,
-        "Result_5": "Reject H0"
-      }
-    ],
-    "summary_stats": {
-      "Number_of_Variables": 5,
-      "Markets_Analyzed": [
-        "Haveri",
-        "Kalagategi",
-        "Bidar",
-        "Kalaburgi",
-        "Bailhongal"
-      ],
-      "Eigenvalues": [
-        1.0000000000003748,
-        1.000000000000132,
-        0.9999999999999243,
-        0.9999999999989873,
-        0.41550288557610515
-      ],
-      "Number_of_Cointegrating_Relations": 3
-    },
-    "interpretation": {
-      "conclusion": "3 Cointegrating Relationships",
-      "meaning": "Markets are highly integrated",
-      "implications": [
-        "Strong market integration",
-        "Rapid price transmission",
-        "Very limited arbitrage opportunities"
-      ],
-      "policy_implications": [
-        "Regional policy coordination is essential",
-        "High market efficiency"
-      ]
-    }
+  "var_summary": {},
+  "vecm_summary": {
+    "beta": []
   },
   "arima_models": {
     "Haveri": {
