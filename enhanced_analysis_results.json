@@ -109,11 +109,156 @@
     }
   ],
   "cointegration_tables": {
-    "stationarity_table": [],
-    "lag_table": [],
-    "trace_table": [],
-    "max_eigen_table": [],
+    "stationarity_table": [
+      {
+        "Market": "Haveri",
+        "ADF_Statistic": -1.5077,
+        "p_value": 0.5297,
+        "Stationary_at_5%": "No (I(1))",
+        "Critical_Value_5%": -2.8994
+      },
+      {
+        "Market": "Kalagategi",
+        "ADF_Statistic": -1.6025,
+        "p_value": 0.4823,
+        "Stationary_at_5%": "No (I(1))",
+        "Critical_Value_5%": -2.8994
+      },
+      {
+        "Market": "Bidar",
+        "ADF_Statistic": -1.5887,
+        "p_value": 0.4893,
+        "Stationary_at_5%": "No (I(1))",
+        "Critical_Value_5%": -2.8994
+      },
+      {
+        "Market": "Kalaburgi",
+        "ADF_Statistic": -1.6869,
+        "p_value": 0.4379,
+        "Stationary_at_5%": "No (I(1))",
+        "Critical_Value_5%": -2.8994
+      },
+      {
+        "Market": "Bailhongal",
+        "ADF_Statistic": -1.5494,
+        "p_value": 0.5089,
+        "Stationary_at_5%": "No (I(1))",
+        "Critical_Value_5%": -2.8994
+      }
+    ],
+    "lag_table": [
+      {
+        "Lag": 1,
+        "AIC": 0.0,
+        "BIC": 0.0,
+        "HQIC": 0.0,
+        "FPE": 0.0
+      },
+      {
+        "Lag": 2,
+        "AIC": NaN,
+        "BIC": NaN,
+        "HQIC": NaN,
+        "FPE": NaN
+      },
+      {
+        "Lag": 3,
+        "AIC": NaN,
+        "BIC": NaN,
+        "HQIC": NaN,
+        "FPE": NaN
+      },
+      {
+        "Lag": 4,
+        "AIC": NaN,
+        "BIC": NaN,
+        "HQIC": NaN,
+        "FPE": NaN
+      },
+      {
+        "Lag": 5,
+        "AIC": NaN,
+        "BIC": NaN,
+        "HQIC": NaN,
+        "FPE": NaN
+      }
+    ],
+    "trace_table": [
+      {
+        "Null_Hypothesis": "r \u2264 0",
+        "Alternative": "r > 0",
+        "Trace_Statistic": 95.467,
+        "Critical_Value_5": 69.8189,
+        "Result_5": "Reject H0"
+      },
+      {
+        "Null_Hypothesis": "r \u2264 1",
+        "Alternative": "r > 1",
+        "Trace_Statistic": 55.8052,
+        "Critical_Value_5": 47.8545,
+        "Result_5": "Reject H0"
+      },
+      {
+        "Null_Hypothesis": "r \u2264 2",
+        "Alternative": "r > 2",
+        "Trace_Statistic": 31.8204,
+        "Critical_Value_5": 29.7961,
+        "Result_5": "Reject H0"
+      },
+      {
+        "Null_Hypothesis": "r \u2264 3",
+        "Alternative": "r > 3",
+        "Trace_Statistic": 14.8412,
+        "Critical_Value_5": 15.4943,
+        "Result_5": "Accept H0"
+      },
+      {
+        "Null_Hypothesis": "r \u2264 4",
+        "Alternative": "r > 4",
+        "Trace_Statistic": 1.2312,
+        "Critical_Value_5": 3.8415,
+        "Result_5": "Accept H0"
+      }
+    ],
+    "max_eigen_table": [
+      {
+        "Null_Hypothesis": "r = 0",
+        "Alternative": "r = 1",
+        "Max_Eigen_Statistic": 39.6619,
+        "Critical_Value_5": 33.8777,
+        "Result_5": "Reject H0"
+      },
+      {
+        "Null_Hypothesis": "r = 1",
+        "Alternative": "r = 2",
+        "Max_Eigen_Statistic": 23.9848,
+        "Critical_Value_5": 27.5858,
+        "Result_5": "Accept H0"
+      },
+      {
+        "Null_Hypothesis": "r = 2",
+        "Alternative": "r = 3",
+        "Max_Eigen_Statistic": 16.9792,
+        "Critical_Value_5": 21.1314,
+        "Result_5": "Accept H0"
+      },
+      {
+        "Null_Hypothesis": "r = 3",
+        "Alternative": "r = 4",
+        "Max_Eigen_Statistic": 13.61,
+        "Critical_Value_5": 14.2639,
+        "Result_5": "Accept H0"
+      },
+      {
+        "Null_Hypothesis": "r = 4",
+        "Alternative": "r = 5",
+        "Max_Eigen_Statistic": 1.2312,
+        "Critical_Value_5": 3.8415,
+        "Result_5": "Accept H0"
+      }
+    ],
     "summary_stats": {
+      "Number_of_Variables": 5,
       "Markets_Analyzed": [
         "Haveri",
         "Kalagategi",
@@ -121,32 +266,66 @@
         "Kalaburgi",
         "Bailhongal"
       ],
-      "Number_of_Variables": 5,
-      "Number_of_Cointegrating_Relations": 0
+      "Eigenvalues": [
+        0.3986,
+        0.2647,
+        0.1956,
+        0.1601,
+        0.0157
+      ],
+      "Number_of_Cointegrating_Relations": 3
     },
     "interpretation": {
-      "conclusion": "No Cointegration Detected",
-      "meaning": "Markets operate independently with no long-run equilibrium relationship",
+      "conclusion": "3 Cointegrating Relationships Detected",
+      "meaning": "Markets are highly integrated with multiple equilibrium relationships",
       "implications": [
-        "Price shocks are market-specific and do not transmit across markets",
-        "Arbitrage opportunities may exist between markets",
-        "No error correction mechanism present",
-        "Each market follows its own independent price path"
+        "Very strong market integration with rapid price transmission",
+        "Price shocks quickly propagate across all markets",
+        "Minimal arbitrage opportunities due to efficient price discovery",
+        "Markets behave almost as a single integrated system"
       ],
       "policy_implications": [
-        "Market-specific policies are more effective than regional policies",
-        "Transportation costs or barriers may be preventing market integration",
-        "Information asymmetry likely exists between markets",
-        "Infrastructure development may improve market linkages"
+        "Regional policy coordination is essential and highly effective",
+        "High market efficiency indicates good infrastructure",
+        "Price interventions in any market will affect entire region",
+        "Supply management should be coordinated across all markets"
       ]
     }
   },
-  "lag_selection": {},
+  "lag_selection": {
+    "selected_lag": 1
+  },
   "var_summary": {
-    "table": []
+    "table": [
+      {
+        "Market": "Haveri",
+        "Intercept": 166.97,
+        "L1_Self_Coefficient": 221.2065
+      },
+      {
+        "Market": "Kalagategi",
+        "Intercept": 0.68,
+        "L1_Self_Coefficient": 0.0458
+      },
+      {
+        "Market": "Bidar",
+        "Intercept": 0.23,
+        "L1_Self_Coefficient": 0.1034
+      },
+      {
+        "Market": "Kalaburgi",
+        "Intercept": -0.09,
+        "L1_Self_Coefficient": -0.0842
+      },
+      {
+        "Market": "Bailhongal",
+        "Intercept": 0.01,
+        "L1_Self_Coefficient": 0.0
+      }
+    ]
   },
   "vecm_summary": {
-    "rank": 0,
+    "rank": 3,
     "beta": [],
     "alpha_table": []
   },
