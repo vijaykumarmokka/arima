@@ -86,17 +86,69 @@
       "CV_Price": 12.43100394564969
     }
   },
-  "correlation_matrix": null,
-  "regression_results": {},
-  "cointegration_results": {},
-  "cointegration_tables": {},
-  "stationarity_tests": {},
-  "lag_selection": {
-    "criteria": {}
+  "correlation_data": [
+    {
+      "Market": "Haveri",
+      "Price_Arrivals_Correlation": -0.1979575033963872
+    },
+    {
+      "Market": "Kalagategi",
+      "Price_Arrivals_Correlation": -0.1622476517189619
+    },
+    {
+      "Market": "Bidar",
+      "Price_Arrivals_Correlation": -0.036382008971178444
+    },
+    {
+      "Market": "Kalaburgi",
+      "Price_Arrivals_Correlation": -0.13969619425760837
+    },
+    {
+      "Market": "Bailhongal",
+      "Price_Arrivals_Correlation": -0.2810091575921659
+    }
+  ],
+  "cointegration_tables": {
+    "stationarity_table": [],
+    "lag_table": [],
+    "trace_table": [],
+    "max_eigen_table": [],
+    "summary_stats": {
+      "Markets_Analyzed": [
+        "Haveri",
+        "Kalagategi",
+        "Bidar",
+        "Kalaburgi",
+        "Bailhongal"
+      ],
+      "Number_of_Variables": 5,
+      "Number_of_Cointegrating_Relations": 0
+    },
+    "interpretation": {
+      "conclusion": "No Cointegration Detected",
+      "meaning": "Markets operate independently with no long-run equilibrium relationship",
+      "implications": [
+        "Price shocks are market-specific and do not transmit across markets",
+        "Arbitrage opportunities may exist between markets",
+        "No error correction mechanism present",
+        "Each market follows its own independent price path"
+      ],
+      "policy_implications": [
+        "Market-specific policies are more effective than regional policies",
+        "Transportation costs or barriers may be preventing market integration",
+        "Information asymmetry likely exists between markets",
+        "Infrastructure development may improve market linkages"
+      ]
+    }
   },
-  "var_summary": {},
+  "lag_selection": {},
+  "var_summary": {
+    "table": []
+  },
   "vecm_summary": {
-    "beta": []
+    "rank": 0,
+    "beta": [],
+    "alpha_table": []
   },
   "arima_models": {
     "Haveri": {
@@ -1120,9 +1172,9 @@
       "selected_model": "ARIMA(2,1,2)",
       "aic_value": 4289.699981475062,
       "why_this_model": [
-        "AR(p=2): Uses past {p} price values",
-        "I(d=1): Data differenced {d} time(s)",
-        "MA(q=2): Uses past {q} forecast errors"
+        "AR(p=2): Uses past 2 price values to capture momentum",
+        "I(d=1): Data differenced 1 time(s) to achieve stationarity",
+        "MA(q=2): Uses past 2 forecast errors for error correction"
       ],
       "model_complexity": "Moderate",
       "total_models_tested": 16
@@ -1131,9 +1183,9 @@
       "selected_model": "ARIMA(2,1,2)",
       "aic_value": 4259.053269255703,
       "why_this_model": [
-        "AR(p=2): Uses past {p} price values",
-        "I(d=1): Data differenced {d} time(s)",
-        "MA(q=2): Uses past {q} forecast errors"
+        "AR(p=2): Uses past 2 price values to capture momentum",
+        "I(d=1): Data differenced 1 time(s) to achieve stationarity",
+        "MA(q=2): Uses past 2 forecast errors for error correction"
       ],
       "model_complexity": "Moderate",
       "total_models_tested": 16
@@ -1142,9 +1194,9 @@
       "selected_model": "ARIMA(2,1,2)",
       "aic_value": 5376.275810349012,
       "why_this_model": [
-        "AR(p=2): Uses past {p} price values",
-        "I(d=1): Data differenced {d} time(s)",
-        "MA(q=2): Uses past {q} forecast errors"
+        "AR(p=2): Uses past 2 price values to capture momentum",
+        "I(d=1): Data differenced 1 time(s) to achieve stationarity",
+        "MA(q=2): Uses past 2 forecast errors for error correction"
       ],
       "model_complexity": "Moderate",
       "total_models_tested": 16
@@ -1153,9 +1205,9 @@
       "selected_model": "ARIMA(2,1,3)",
       "aic_value": 5576.321608114846,
       "why_this_model": [
-        "AR(p=2): Uses past {p} price values",
-        "I(d=1): Data differenced {d} time(s)",
-        "MA(q=3): Uses past {q} forecast errors"
+        "AR(p=2): Uses past 2 price values to capture momentum",
+        "I(d=1): Data differenced 1 time(s) to achieve stationarity",
+        "MA(q=3): Uses past 3 forecast errors for error correction"
       ],
       "model_complexity": "Moderate",
       "total_models_tested": 16
@@ -1164,30 +1216,17 @@
       "selected_model": "ARIMA(3,1,3)",
       "aic_value": 1817.4841637071872,
       "why_this_model": [
-        "AR(p=3): Uses past {p} price values",
-        "I(d=1): Data differenced {d} time(s)",
-        "MA(q=3): Uses past {q} forecast errors"
+        "AR(p=3): Uses past 3 price values to capture momentum",
+        "I(d=1): Data differenced 1 time(s) to achieve stationarity",
+        "MA(q=3): Uses past 3 forecast errors for error correction"
       ],
       "model_complexity": "Complex",
       "total_models_tested": 16
     }
   },
-  "forecasts": {},
   "ml_models": {
     "logistic_regression": {
       "Haveri": {
-        "feature_names": [
-          "Arrivals (Tonnes)",
-          "Arrivals_Lag1",
-          "Price_Lag1",
-          "Price_Lag2",
-          "Arrivals_MA3",
-          "Price_MA3",
-          "Price_Volatility",
-          "Month",
-          "Quarter"
-        ],
-        "task": "classification",
         "accuracy": 0.746031746031746,
         "cv_mean": 0.694017094017094,
         "cv_std": 0.0459952958874315,
@@ -1201,9 +1240,7 @@
           0.1975216936560805,
           -0.002421608954378403,
           0.06262839129067241
-        ]
-      },
-      "Kalagategi": {
+        ],
         "feature_names": [
           "Arrivals (Tonnes)",
           "Arrivals_Lag1",
@@ -1215,7 +1252,9 @@
           "Month",
           "Quarter"
         ],
-        "task": "classification",
+        "task": "classification"
+      },
+      "Kalagategi": {
         "accuracy": 0.6529411764705882,
         "cv_mean": 0.6632752169413263,
         "cv_std": 0.01899301386989706,
@@ -1229,9 +1268,7 @@
           0.04716731609058242,
           -0.10236415794507019,
           0.14618365432037042
-        ]
-      },
-      "Bidar": {
+        ],
         "feature_names": [
           "Arrivals (Tonnes)",
           "Arrivals_Lag1",
@@ -1243,7 +1280,9 @@
           "Month",
           "Quarter"
         ],
-        "task": "classification",
+        "task": "classification"
+      },
+      "Bidar": {
         "accuracy": 0.637546468401487,
         "cv_mean": 0.6294820717131474,
         "cv_std": 0.010389167179605805,
@@ -1257,9 +1296,7 @@
           0.10131093434395294,
           0.08331299876037962,
           -0.10187693319088202
-        ]
-      },
-      "Kalaburgi": {
+        ],
         "feature_names": [
           "Arrivals (Tonnes)",
           "Arrivals_Lag1",
@@ -1271,7 +1308,9 @@
           "Month",
           "Quarter"
         ],
-        "task": "classification",
+        "task": "classification"
+      },
+      "Kalaburgi": {
         "accuracy": 0.7698744769874477,
         "cv_mean": 0.7361127944087584,
         "cv_std": 0.03353698347218874,
@@ -1285,9 +1324,7 @@
           0.1639219574042565,
           0.2305168313242036,
           -0.2766968312755248
-        ]
-      },
-      "Bailhongal": {
+        ],
         "feature_names": [
           "Arrivals (Tonnes)",
           "Arrivals_Lag1",
@@ -1299,7 +1336,9 @@
           "Month",
           "Quarter"
         ],
-        "task": "classification",
+        "task": "classification"
+      },
+      "Bailhongal": {
         "accuracy": 0.6533333333333333,
         "cv_mean": 0.6371428571428572,
         "cv_std": 0.03790428331834742,
@@ -1313,11 +1352,7 @@
           0.1866655113920998,
           -0.1348833330022541,
           0.14008025642231656
-        ]
-      }
-    },
-    "random_forest": {
-      "Haveri": {
+        ],
         "feature_names": [
           "Arrivals (Tonnes)",
           "Arrivals_Lag1",
@@ -1329,7 +1364,11 @@
           "Month",
           "Quarter"
         ],
-        "task": "classification",
+        "task": "classification"
+      }
+    },
+    "random_forest": {
+      "Haveri": {
         "accuracy": 0.623015873015873,
         "cv_mean": 0.6478632478632479,
         "cv_std": 0.037993351745116005,
@@ -1343,9 +1382,7 @@
           0.15869551710777002,
           0.0476284119694562,
           0.02204873276391074
-        ]
-      },
-      "Kalagategi": {
+        ],
         "feature_names": [
           "Arrivals (Tonnes)",
           "Arrivals_Lag1",
@@ -1357,7 +1394,9 @@
           "Month",
           "Quarter"
         ],
-        "task": "classification",
+        "task": "classification"
+      },
+      "Kalagategi": {
         "accuracy": 0.5852941176470589,
         "cv_mean": 0.568800254756787,
         "cv_std": 0.0395452314096684,
@@ -1371,9 +1410,7 @@
           0.12950763189185122,
           0.053771494048158563,
           0.016292211276386644
-        ]
-      },
-      "Bidar": {
+        ],
         "feature_names": [
           "Arrivals (Tonnes)",
           "Arrivals_Lag1",
@@ -1385,7 +1422,9 @@
           "Month",
           "Quarter"
         ],
-        "task": "classification",
+        "task": "classification"
+      },
+      "Bidar": {
         "accuracy": 0.5892193308550185,
         "cv_mean": 0.5888446215139442,
         "cv_std": 0.013892904999332812,
@@ -1399,9 +1438,7 @@
           0.16891298529982524,
           0.04388550293889281,
           0.01618773010144362
-        ]
-      },
-      "Kalaburgi": {
+        ],
         "feature_names": [
           "Arrivals (Tonnes)",
           "Arrivals_Lag1",
@@ -1413,7 +1450,9 @@
           "Month",
           "Quarter"
         ],
-        "task": "classification",
+        "task": "classification"
+      },
+      "Kalaburgi": {
         "accuracy": 0.6213389121338913,
         "cv_mean": 0.6373651678584414,
         "cv_std": 0.02259772813974552,
@@ -1427,9 +1466,7 @@
           0.14189075844708762,
           0.05057964147546951,
           0.017875276082183433
-        ]
-      },
-      "Bailhongal": {
+        ],
         "feature_names": [
           "Arrivals (Tonnes)",
           "Arrivals_Lag1",
@@ -1441,7 +1478,9 @@
           "Month",
           "Quarter"
         ],
-        "task": "classification",
+        "task": "classification"
+      },
+      "Bailhongal": {
         "accuracy": 0.6533333333333333,
         "cv_mean": 0.5599999999999999,
         "cv_std": 0.05883217223421143,
@@ -1455,11 +1494,7 @@
           0.11989703194707842,
           0.05466052443453992,
           0.019043603416617726
-        ]
-      }
-    },
-    "linear_regression": {
-      "Haveri": {
+        ],
         "feature_names": [
           "Arrivals (Tonnes)",
           "Arrivals_Lag1",
@@ -1471,7 +1506,11 @@
           "Month",
           "Quarter"
         ],
-        "task": "regression",
+        "task": "classification"
+      }
+    },
+    "linear_regression": {
+      "Haveri": {
         "r2_score": 1.0,
         "cv_mean": 1.0,
         "cv_std": 0.0,
@@ -1486,9 +1525,7 @@
           -2.5409447664697955e-14,
           4.110617350520408e-14
         ],
-        "intercept": -9.094947017729282e-13
-      },
-      "Kalagategi": {
+        "intercept": -9.094947017729282e-13,
         "feature_names": [
           "Arrivals (Tonnes)",
           "Arrivals_Lag1",
@@ -1500,7 +1537,9 @@
           "Month",
           "Quarter"
         ],
-        "task": "regression",
+        "task": "regression"
+      },
+      "Kalagategi": {
         "r2_score": 1.0,
         "cv_mean": 1.0,
         "cv_std": 0.0,
@@ -1515,9 +1554,7 @@
           -2.6010660639230743e-14,
           9.430669678338333e-14
         ],
-        "intercept": 9.094947017729282e-13
-      },
-      "Bidar": {
+        "intercept": 9.094947017729282e-13,
         "feature_names": [
           "Arrivals (Tonnes)",
           "Arrivals_Lag1",
@@ -1529,7 +1566,9 @@
           "Month",
           "Quarter"
         ],
-        "task": "regression",
+        "task": "regression"
+      },
+      "Bidar": {
         "r2_score": 1.0,
         "cv_mean": 1.0,
         "cv_std": 0.0,
@@ -1544,9 +1583,7 @@
           -1.4422870450031544e-14,
           5.926043076392995e-14
         ],
-        "intercept": 1.8189894035458565e-12
-      },
-      "Kalaburgi": {
+        "intercept": 1.8189894035458565e-12,
         "feature_names": [
           "Arrivals (Tonnes)",
           "Arrivals_Lag1",
@@ -1558,7 +1595,9 @@
           "Month",
           "Quarter"
         ],
-        "task": "regression",
+        "task": "regression"
+      },
+      "Kalaburgi": {
         "r2_score": 1.0,
         "cv_mean": 1.0,
         "cv_std": 0.0,
@@ -1573,9 +1612,7 @@
           9.480914317516742e-15,
           -6.230150943753454e-14
         ],
-        "intercept": 3.183231456205249e-12
-      },
-      "Bailhongal": {
+        "intercept": 3.183231456205249e-12,
         "feature_names": [
           "Arrivals (Tonnes)",
           "Arrivals_Lag1",
@@ -1587,7 +1624,9 @@
           "Month",
           "Quarter"
         ],
-        "task": "regression",
+        "task": "regression"
+      },
+      "Bailhongal": {
         "r2_score": 1.0,
         "cv_mean": 1.0,
         "cv_std": 0.0,
@@ -1602,7 +1641,19 @@
           4.8497122116797353e-14,
           -1.683791994722128e-13
         ],
-        "intercept": -9.094947017729282e-13
+        "intercept": -9.094947017729282e-13,
+        "feature_names": [
+          "Arrivals (Tonnes)",
+          "Arrivals_Lag1",
+          "Price_Lag1",
+          "Price_Lag2",
+          "Arrivals_MA3",
+          "Price_MA3",
+          "Price_Volatility",
+          "Month",
+          "Quarter"
+        ],
+        "task": "regression"
       }
     }
   },
@@ -1744,27 +1795,5 @@
       "best_model": "Linear Regression",
       "best_r2": 1.0
     }
-  },
-  "correlation_data": [
-    {
-      "Market": "Haveri",
-      "Price_Arrivals_Correlation": -0.1979575033963872
-    },
-    {
-      "Market": "Kalagategi",
-      "Price_Arrivals_Correlation": -0.1622476517189619
-    },
-    {
-      "Market": "Bidar",
-      "Price_Arrivals_Correlation": -0.036382008971178444
-    },
-    {
-      "Market": "Kalaburgi",
-      "Price_Arrivals_Correlation": -0.13969619425760837
-    },
-    {
-      "Market": "Bailhongal",
-      "Price_Arrivals_Correlation": -0.2810091575921659
-    }
-  ]
+  }
 }
