@@ -778,7 +778,7 @@ class EnhancedSoybeanDashboard:
                     if 'models_tested' in model_info and len(model_info['models_tested']) > 1:
                         st.subheader("🏆 Top 10 Models Comparison")
                         
-                        models_df = pd.DataFrame(model_info['models_tested'][:10])
+                        models_df = pd.DataFrame(model_info['models_tested'][:16])
                         models_df = models_df.sort_values('AIC').reset_index(drop=True)
                         models_df['Rank'] = range(1, len(models_df) + 1)
                         models_df['Model'] = models_df['order'].apply(lambda x: f'ARIMA({x[0]},{x[1]},{x[2]})')
@@ -1693,5 +1693,6 @@ def main():
 if __name__ == "__main__":
 
     main()
+
 
 
