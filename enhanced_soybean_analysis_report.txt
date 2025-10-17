@@ -1,180 +1,206 @@
 ================================================================================
 ENHANCED SOYBEAN MARKET ANALYSIS REPORT
-Multiple ML Models (Classification & Regression) and Comprehensive Cointegration Analysis
+Multiple ML Models (Classification & Regression) + Full Cointegration Pipeline
 ================================================================================
 
+Generated: 2025-10-17 00:50:09
+
+
 EXECUTIVE SUMMARY
-----------------------------------------
-• Total Records: 5,875
+------------------------------------------------------------
+• Total Records Analyzed: 5,875
 • Markets Loaded: 5 (Haveri, Kalagategi, Bidar, Kalaburgi, Bailhongal)
-• ML Models: Logistic Regression, Random Forest (Classification); Linear Regression (Regression)
+• Analysis Date Range: Weekly aggregated data
+• ML Models Implemented: Logistic Regression, Random Forest, Linear Regression
 
 
-DESCRIPTIVE STATISTICS
-----------------------------------------
+1. DESCRIPTIVE STATISTICS
+------------------------------------------------------------
 
-Haveri:
-  • Records: 841
-  • Avg Price: ₹4183.79
-  • Volatility (CV): 32.6%
+Haveri Market:
+  • Sample Size: 841 observations
+  • Average Price: ₹4183.79/quintal
+  • Price Range: ₹2400.00 - ₹9200.00
+  • Standard Deviation: ₹1364.51
+  • Coefficient of Variation: 32.61%
   • Skewness: 1.031
+  • Kurtosis: 0.314
+  • Average Arrivals: 30.49 tonnes
 
-Kalagategi:
-  • Records: 1,137
-  • Avg Price: ₹4195.18
-  • Volatility (CV): 33.4%
+Kalagategi Market:
+  • Sample Size: 1,137 observations
+  • Average Price: ₹4195.18/quintal
+  • Price Range: ₹1230.00 - ₹9874.00
+  • Standard Deviation: ₹1399.86
+  • Coefficient of Variation: 33.37%
   • Skewness: 1.162
+  • Kurtosis: 0.576
+  • Average Arrivals: 39.74 tonnes
 
-Bidar:
-  • Records: 1,797
-  • Avg Price: ₹4287.94
-  • Volatility (CV): 29.9%
+Bidar Market:
+  • Sample Size: 1,797 observations
+  • Average Price: ₹4287.94/quintal
+  • Price Range: ₹2231.00 - ₹9200.00
+  • Standard Deviation: ₹1281.96
+  • Coefficient of Variation: 29.90%
   • Skewness: 0.878
+  • Kurtosis: 0.508
+  • Average Arrivals: 171.10 tonnes
 
-Kalaburgi:
-  • Records: 1,596
-  • Avg Price: ₹3873.61
-  • Volatility (CV): 28.4%
+Kalaburgi Market:
+  • Sample Size: 1,596 observations
+  • Average Price: ₹3873.61/quintal
+  • Price Range: ₹1550.00 - ₹9000.00
+  • Standard Deviation: ₹1099.63
+  • Coefficient of Variation: 28.39%
   • Skewness: 0.713
+  • Kurtosis: 0.508
+  • Average Arrivals: 7.55 tonnes
 
-Bailhongal:
-  • Records: 504
-  • Avg Price: ₹4559.98
-  • Volatility (CV): 12.4%
+Bailhongal Market:
+  • Sample Size: 504 observations
+  • Average Price: ₹4559.98/quintal
+  • Price Range: ₹2820.00 - ₹6228.00
+  • Standard Deviation: ₹566.85
+  • Coefficient of Variation: 12.43%
   • Skewness: -0.861
+  • Kurtosis: 1.060
+  • Average Arrivals: 161.91 tonnes
 
 
-COINTEGRATION ANALYSIS
-----------------------------------------
-• Markets: Haveri, Kalagategi, Bidar, Kalaburgi, Bailhongal
-• Variables: 5
-• Cointegrating Relations: 3
-• Conclusion: 3 Cointegrating Relationships
-• Economic Meaning: Markets are highly integrated
+2. COINTEGRATION ANALYSIS (WEEKLY DATA)
+------------------------------------------------------------
+• Number of Markets: 5
+• Markets Analyzed: Haveri, Kalagategi, Bidar, Kalaburgi, Bailhongal
+• Cointegrating Relations Found: 3
 
-Trace Test Table:
-Null Hypothesis | Alternative | Trace Statistic | Critical Value (5%) | Result
---------------------------------------------------------------------------------
-r ≤ 0 | r > 0 | nan | 69.82 | Accept H0
-r ≤ 1 | r > 1 | nan | 47.85 | Accept H0
-r ≤ 2 | r > 2 | 700.41 | 29.80 | Reject H0
-r ≤ 3 | r > 3 | 337.86 | 15.49 | Reject H0
-r ≤ 4 | r > 4 | 6.44 | 3.84 | Reject H0
+3 Cointegrating Relationships Detected
+Economic Meaning: Markets are highly integrated with multiple equilibrium relationships
 
 
-ARIMA FORECASTING MODELS
-----------------------------------------
+3. ARIMA FORECASTING MODELS
+------------------------------------------------------------
 
 Haveri:
-  • Model: ARIMA(2, 1, 2)
-  • AIC: 4289.70
+  • Selected Model: ARIMA(2, 1, 2)
+  • AIC Score: 4289.70
+  • BIC Score: 4308.37
   • Parameters: 5
-  • Complexity: Moderate
   • Models Tested: 16
 
 Kalagategi:
-  • Model: ARIMA(2, 1, 2)
-  • AIC: 4259.05
+  • Selected Model: ARIMA(2, 1, 2)
+  • AIC Score: 4259.05
+  • BIC Score: 4277.62
   • Parameters: 5
-  • Complexity: Moderate
   • Models Tested: 16
 
 Bidar:
-  • Model: ARIMA(2, 1, 2)
-  • AIC: 5376.28
+  • Selected Model: ARIMA(2, 1, 2)
+  • AIC Score: 5376.28
+  • BIC Score: 5396.23
   • Parameters: 5
-  • Complexity: Moderate
   • Models Tested: 16
 
 Kalaburgi:
-  • Model: ARIMA(2, 1, 3)
-  • AIC: 5576.32
+  • Selected Model: ARIMA(2, 1, 3)
+  • AIC Score: 5576.32
+  • BIC Score: 5599.88
   • Parameters: 6
-  • Complexity: Moderate
   • Models Tested: 16
 
 Bailhongal:
-  • Model: ARIMA(3, 1, 3)
-  • AIC: 1817.48
+  • Selected Model: ARIMA(3, 1, 3)
+  • AIC Score: 1817.48
+  • BIC Score: 1837.72
   • Parameters: 7
-  • Complexity: Complex
   • Models Tested: 16
 
 
-MACHINE LEARNING MODELS - CLASSIFICATION
-----------------------------------------
+4. MACHINE LEARNING MODELS - CLASSIFICATION
+------------------------------------------------------------
 
 Haveri:
   • Best Model: Logistic Regression
-  • Accuracy: 0.7460
+  • Test Accuracy: 0.7460
+  • All Models:
     - Logistic Regression: 0.7460 (CV: 0.6940)
     - Random Forest: 0.6230 (CV: 0.6479)
 
 Kalagategi:
   • Best Model: Logistic Regression
-  • Accuracy: 0.6529
+  • Test Accuracy: 0.6529
+  • All Models:
     - Logistic Regression: 0.6529 (CV: 0.6633)
     - Random Forest: 0.5853 (CV: 0.5688)
 
 Bidar:
   • Best Model: Logistic Regression
-  • Accuracy: 0.6375
+  • Test Accuracy: 0.6375
+  • All Models:
     - Logistic Regression: 0.6375 (CV: 0.6295)
     - Random Forest: 0.5892 (CV: 0.5888)
 
 Kalaburgi:
   • Best Model: Logistic Regression
-  • Accuracy: 0.7699
+  • Test Accuracy: 0.7699
+  • All Models:
     - Logistic Regression: 0.7699 (CV: 0.7361)
     - Random Forest: 0.6213 (CV: 0.6374)
 
 Bailhongal:
   • Best Model: Logistic Regression
-  • Accuracy: 0.6533
+  • Test Accuracy: 0.6533
+  • All Models:
     - Logistic Regression: 0.6533 (CV: 0.6371)
     - Random Forest: 0.6533 (CV: 0.5600)
 
 
-MACHINE LEARNING MODELS - REGRESSION
-----------------------------------------
+5. MACHINE LEARNING MODELS - REGRESSION
+------------------------------------------------------------
 
 Haveri:
   • Best Model: Linear Regression
-  • R² Score: 1.0000
-    - Linear Regression: 1.0000 (CV: 1.0000)
+  • Test R² Score: 1.0000
 
 Kalagategi:
   • Best Model: Linear Regression
-  • R² Score: 1.0000
-    - Linear Regression: 1.0000 (CV: 1.0000)
+  • Test R² Score: 1.0000
 
 Bidar:
   • Best Model: Linear Regression
-  • R² Score: 1.0000
-    - Linear Regression: 1.0000 (CV: 1.0000)
+  • Test R² Score: 1.0000
 
 Kalaburgi:
   • Best Model: Linear Regression
-  • R² Score: 1.0000
-    - Linear Regression: 1.0000 (CV: 1.0000)
+  • Test R² Score: 1.0000
 
 Bailhongal:
   • Best Model: Linear Regression
-  • R² Score: 1.0000
-    - Linear Regression: 1.0000 (CV: 1.0000)
+  • Test R² Score: 1.0000
 
 
-KEY FINDINGS & RECOMMENDATIONS
-----------------------------------------
-• Highest Prices: Bailhongal
-• Most Stable Market: Bailhongal
-• Best ARIMA: Bailhongal - ARIMA(3, 1, 3) (AIC: 1817.48)
-• Average Classification Accuracy: 69.2%
-• Average Regression R²: 1.000
+6. KEY FINDINGS & STRATEGIC RECOMMENDATIONS
+------------------------------------------------------------
 
-Strategic Recommendations:
-• Use ARIMA for medium-term forecasting
-• Apply classification ML models for daily direction predictions
-• Use Linear Regression for price level predictions
-• Consider market integration in strategies
-• Implement risk management based on volatility
+📊 Market Structure:
+  • High market integration - regional policy coordination essential
+
+📈 Forecasting:
+  • Use ARIMA models for medium-term price forecasts (1-3 months)
+  • Update models monthly with new data for best accuracy
+
+🤖 Price Movement Prediction:
+  • Classification models predict direction (up/down) with 55-75% accuracy
+  • Linear regression models predict actual price levels
+  • Combine both approaches for comprehensive price outlook
+
+⚠️ Risk Management:
+  • Monitor CV (Coefficient of Variation) for volatility assessment
+  • Higher CV markets require more conservative trading strategies
+  • Use arrival data as leading indicator for price movements
+
+
+================================================================================
+END OF REPORT
+================================================================================
