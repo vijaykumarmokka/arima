@@ -905,7 +905,7 @@ class EnhancedSoybeanDashboard:
                             forecasts = model_info['forecast'][:available_periods]
                             
                             fig = go.Figure()
-                            fig.add_trace(go.Scatter(
+                            fig.add_trace(go.Bar(
                                 x=months, y=forecasts,
                                 mode='lines+markers',
                                 name=f'ARIMA{model_info["best_params"]} Forecast',
@@ -1693,6 +1693,7 @@ def main():
 if __name__ == "__main__":
 
     main()
+
 
 
 
