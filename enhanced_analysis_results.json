@@ -149,38 +149,38 @@
     "lag_table": [
       {
         "Lag": 1,
-        "AIC": 0.0,
-        "BIC": 0.0,
-        "HQIC": 0.0,
-        "FPE": 0.0
+        "AIC": 52.25,
+        "BIC": 53.16,
+        "HQIC": 52.62,
+        "FPE": 4.941126717778342e+22
       },
       {
         "Lag": 2,
-        "AIC": NaN,
-        "BIC": NaN,
-        "HQIC": NaN,
-        "FPE": NaN
+        "AIC": 52.53,
+        "BIC": 54.21,
+        "HQIC": 53.2,
+        "FPE": 6.591603584454152e+22
       },
       {
         "Lag": 3,
-        "AIC": NaN,
-        "BIC": NaN,
-        "HQIC": NaN,
-        "FPE": NaN
+        "AIC": 52.73,
+        "BIC": 55.18,
+        "HQIC": 53.71,
+        "FPE": 8.18675684469645e+22
       },
       {
         "Lag": 4,
-        "AIC": NaN,
-        "BIC": NaN,
-        "HQIC": NaN,
-        "FPE": NaN
+        "AIC": 52.98,
+        "BIC": 56.22,
+        "HQIC": 54.27,
+        "FPE": 1.0991143504019196e+23
       },
       {
         "Lag": 5,
-        "AIC": NaN,
-        "BIC": NaN,
-        "HQIC": NaN,
-        "FPE": NaN
+        "AIC": 53.27,
+        "BIC": 57.32,
+        "HQIC": 54.89,
+        "FPE": 1.600128411843332e+23
       }
     ],
     "trace_table": [
@@ -300,34 +300,71 @@
       {
         "Market": "Haveri",
         "Intercept": 166.97,
-        "L1_Self_Coefficient": 221.2065
+        "L1_Self_Coefficient": 0.6765
       },
       {
         "Market": "Kalagategi",
-        "Intercept": 0.68,
-        "L1_Self_Coefficient": 0.0458
+        "Intercept": 221.21,
+        "L1_Self_Coefficient": 0.7655
       },
       {
         "Market": "Bidar",
-        "Intercept": 0.23,
-        "L1_Self_Coefficient": 0.1034
+        "Intercept": 219.02,
+        "L1_Self_Coefficient": 0.5814
       },
       {
         "Market": "Kalaburgi",
-        "Intercept": -0.09,
-        "L1_Self_Coefficient": -0.0842
+        "Intercept": 140.65,
+        "L1_Self_Coefficient": 0.6169
       },
       {
         "Market": "Bailhongal",
-        "Intercept": 0.01,
-        "L1_Self_Coefficient": 0.0
+        "Intercept": 208.99,
+        "L1_Self_Coefficient": 0.5896
       }
     ]
   },
   "vecm_summary": {
     "rank": 3,
-    "beta": [],
-    "alpha_table": []
+    "beta": [
+      1.0,
+      -0.0,
+      -0.0,
+      -0.4616,
+      -0.5772
+    ],
+    "alpha_table": [
+      {
+        "Market": "Haveri",
+        "Alpha_Adjustment": -0.2499,
+        "t_Statistic": -12.4946,
+        "Significant_5%": "Yes"
+      },
+      {
+        "Market": "Kalagategi",
+        "Alpha_Adjustment": -0.0867,
+        "t_Statistic": -4.337,
+        "Significant_5%": "Yes"
+      },
+      {
+        "Market": "Bidar",
+        "Alpha_Adjustment": 0.1077,
+        "t_Statistic": 5.3863,
+        "Significant_5%": "Yes"
+      },
+      {
+        "Market": "Kalaburgi",
+        "Alpha_Adjustment": 0.2133,
+        "t_Statistic": 10.6633,
+        "Significant_5%": "Yes"
+      },
+      {
+        "Market": "Bailhongal",
+        "Alpha_Adjustment": 0.2049,
+        "t_Statistic": 10.2465,
+        "Significant_5%": "Yes"
+      }
+    ]
   },
   "arima_models": {
     "Haveri": {
