@@ -884,7 +884,7 @@ class EnhancedSoybeanDashboard:
             st.subheader("🛠️ Interactive ARIMA Forecasting Tool")
             
             forecast_market = st.selectbox("Choose Market:", list(self.results['arima_models'].keys()), key='arima_forecast_tool')
-            forecast_periods = st.slider("Forecast Periods (Months):", 1, 24, 6)
+            forecast_periods = st.slider("Forecast Periods (Months):", 1, 12, 6)
             
             if st.button("Generate ARIMA Forecast", type="primary"):
                 if forecast_market in self.results['arima_models']:
@@ -1693,6 +1693,7 @@ def main():
 if __name__ == "__main__":
 
     main()
+
 
 
 
