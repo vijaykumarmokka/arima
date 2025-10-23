@@ -12,6 +12,10 @@ import seaborn as sns
 import io
 import base64
 
+# ===== NEW: Import model comparison module =====
+import model_comparison
+# ===============================================
+
 # Configure Streamlit page
 st.set_page_config(
     page_title="Enhanced Soybean Market Analysis Dashboard",
@@ -1825,6 +1829,9 @@ def main():
         "🔗 Cointegration Analysis": dashboard.enhanced_cointegration_analysis,
         "🔮 ARIMA Forecasting": dashboard.enhanced_arima_analysis,
         "🤖 ML Models": dashboard.enhanced_ml_models,
+        # ===== NEW: Model Comparison Page =====
+        "📊 Model Comparison": lambda: model_comparison.model_comparison_page(dashboard.results, dashboard.markets),
+        # =====================================
        
     }
     
@@ -1842,12 +1849,14 @@ def main():
     - ✅ Detailed AIC Explanations
     - ✅ Interactive Prediction Forms (Direction & Price Level)
     - ✅ Enhanced Visualizations
+    - ✅ **Model Comparison Table (6 Regression Models)** ⭐ NEW
     
     **Research Objectives:**
     1. Enhanced descriptive statistics
     2. Comprehensive Johansen cointegration (Weekly + Stationarity/Lag/VAR/VECM)
     3. ARIMA/SARIMA with model selection explanations
     4. Multiple ML models comparison (Class + Reg)
+    5. **Regression model comparison (Linear, Quadratic, Cubic, Exponential, Logistic, Gompertz)** ⭐ NEW
     
     **Markets Analyzed:**
     - Haveri
@@ -1860,6 +1869,10 @@ def main():
     - 🔵 Logistic Regression (Class)
     - 🌲 Random Forest (Class)
     - 📈 Linear Regression (Reg)
+    
+    **Regression Models:** ⭐ NEW
+    - 📈 Linear, Quadratic, Cubic
+    - 📈 Exponential, Logistic, Gompertz
     """)
     
     # Execute selected page
@@ -1871,6 +1884,7 @@ def main():
     <div style='text-align: center; color: #666; font-size: 0.8em;'>
         <p>🌱 Enhanced Soybean Market Analysis Dashboard | Built with Advanced ML & Statistical Models</p>
         <p>Featuring: Logistic Regression • Random Forest • Linear Regression • Comprehensive Cointegration Analysis (Weekly VECM)</p>
+        <p><b>NEW:</b> 6 Regression Model Comparison (Linear, Quadratic, Cubic, Exponential, Logistic, Gompertz) with Statistical Tests</p>
         <p>For research and educational purposes | © 2025</p>
     </div>
     """, unsafe_allow_html=True)
