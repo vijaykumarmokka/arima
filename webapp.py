@@ -11,10 +11,8 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import io
 import base64
-
-# ===== NEW: Import model comparison module =====
-import model_comparison
-# ===============================================
+from scipy import stats
+from scipy.optimize import curve_fit
 
 # Configure Streamlit page
 st.set_page_config(
@@ -1753,6 +1751,176 @@ class EnhancedSoybeanDashboard:
         
         return formatted
     
+    def model_comparison_page(self):
+        """Model Comparison Analysis Page"""
+        st.title("📊 Regression Model Comparison Analysis")
+        st.markdown("""
+        <div style='background-color: #f0f7ff; padding: 0.8rem; border-radius: 5px; border-left: 3px solid #007bff; margin: 1rem 0;'>
+        <b>Model Comparison:</b> This analysis shows parameter estimates for 6 regression models (Linear, Quadratic, Cubic, 
+        Exponential, Logistic, Gompertz) fitted to both arrivals and prices data.
+        <br><br>
+        <b>Significance Levels:</b> ** = 1% (p < 0.01), * = 5% (p < 0.05), NS = Not Significant
+        </div>
+        """, unsafe_allow_html=True)
+        
+        if 'model_comparison' not in self.results or not self.results['model_comparison']:
+            st.warning("⚠️ Model comparison data not found in analysis results!")
+            st.info("""
+            **To generate model comparison data:**
+            1. Add the `objective_6_model_comparison()` method to your Jupyter notebook
+            2. Run the complete analysis
+            3. The results will be saved to enhanced_analysis_results.json
+            4. Reload this webapp
+            
+            See COMPLETE_ANALYSIS_CODE.py for the code to add.
+            """)
+            return
+        
+        # Market selection
+        available_markets = list(self.results['model_comparison'].keys())
+        selected_market = st.selectbox("Select Market:", available_markets)
+        
+        if selected_market in self.results['model_comparison']:
+            results = self.results['model_comparison'][selected_market]
+            
+            st.markdown(f"### 📋 Parameter Estimates for {selected_market}")
+            
+            # Create two columns for arrivals and prices
+            col1, col2 = st.columns(2)
+            
+            models = ['Linear', 'Quadratic', 'Cubic', 'Exponential', 'Logistic', 'Gompertz']
+            
+            def format_param(value, decimals=2):
+                if pd.isna(value) or value is None:
+                    return '-'
+                return f"{value:.{decimals}f}"
+            
+            def format_pvalue(value):
+                if pd.isna(value) or value is None:
+                    return '-'
+                formatted = f"{value:.2f}"
+                if value < 0.01:
+                    return f"{formatted}**"
+                elif value < 0.05:
+                    return f"{formatted}*"
+                else:
+                    return f"{formatted}NS"
+            
+            with col1:
+                st.markdown("#### 🚚 Arrivals (Tonnes)")
+                arrivals_data = []
+                
+                for model in models:
+                    res = results['arrivals'][model]
+                    row = {
+                        'Model': model,
+                        'β₀': format_param(res['params'][0]),
+                        'β₁': format_param(res['params'][1], 3) if len(res['params']) > 1 else '-',
+                        'β₂': format_param(res['params'][2], 3) if len(res['params']) > 2 else '-',
+                        'β₃': format_param(res['params'][3], 4) if len(res['params']) > 3 else '-',
+                        'R²': format_param(res['r2'], 4),
+                        'RMSE': format_param(res['rmse'], 2),
+                        'Runs(p)': format_pvalue(res['runs_pval']),
+                        'Shapiro(p)': format_pvalue(res['shapiro_pval'])
+                    }
+                    arrivals_data.append(row)
+                
+                df_arr = pd.DataFrame(arrivals_data)
+                st.dataframe(df_arr, use_container_width=True, hide_index=True)
+            
+            with col2:
+                st.markdown("#### 💰 Prices (₹/Q)")
+                prices_data = []
+                
+                for model in models:
+                    res = results['prices'][model]
+                    row = {
+                        'Model': model,
+                        'β₀': format_param(res['params'][0]),
+                        'β₁': format_param(res['params'][1], 3) if len(res['params']) > 1 else '-',
+                        'β₂': format_param(res['params'][2], 3) if len(res['params']) > 2 else '-',
+                        'β₃': format_param(res['params'][3], 4) if len(res['params']) > 3 else '-',
+                        'R²': format_param(res['r2'], 4),
+                        'RMSE': format_param(res['rmse'], 2),
+                        'Runs(p)': format_pvalue(res['runs_pval']),
+                        'Shapiro(p)': format_pvalue(res['shapiro_pval'])
+                    }
+                    prices_data.append(row)
+                
+                df_pr = pd.DataFrame(prices_data)
+                st.dataframe(df_pr, use_container_width=True, hide_index=True)
+            
+            # Best model summary
+            st.markdown("---")
+            st.markdown("### 🎯 Model Selection Summary")
+            
+            col1, col2, col3, col4 = st.columns(4)
+            
+            arr_r2 = {m: results['arrivals'][m]['r2'] for m in models if not pd.isna(results['arrivals'][m]['r2'])}
+            pr_r2 = {m: results['prices'][m]['r2'] for m in models if not pd.isna(results['prices'][m]['r2'])}
+            
+            if arr_r2:
+                best_arr = max(arr_r2.items(), key=lambda x: x[1])
+                with col1:
+                    st.metric("Best Arrivals Model", best_arr[0], f"R² = {best_arr[1]:.4f}")
+            
+            if pr_r2:
+                best_pr = max(pr_r2.items(), key=lambda x: x[1])
+                with col2:
+                    st.metric("Best Price Model", best_pr[0], f"R² = {best_pr[1]:.4f}")
+            
+            if arr_r2:
+                with col3:
+                    st.metric("Avg Arrivals R²", f"{np.mean(list(arr_r2.values())):.4f}")
+            
+            if pr_r2:
+                with col4:
+                    st.metric("Avg Prices R²", f"{np.mean(list(pr_r2.values())):.4f}")
+            
+            # Visualization
+            st.markdown("### 📊 Model Performance Comparison")
+            
+            fig = go.Figure()
+            
+            fig.add_trace(go.Bar(
+                name='Arrivals R²',
+                x=models,
+                y=[results['arrivals'][m]['r2'] for m in models],
+                marker_color='lightblue'
+            ))
+            
+            fig.add_trace(go.Bar(
+                name='Prices R²',
+                x=models,
+                y=[results['prices'][m]['r2'] for m in models],
+                marker_color='lightcoral'
+            ))
+            
+            fig.update_layout(
+                title=f'Model Performance (R²) - {selected_market}',
+                xaxis_title='Model Type',
+                yaxis_title='R² Score',
+                barmode='group',
+                height=500
+            )
+            
+            st.plotly_chart(fig, use_container_width=True)
+            
+            # Notes
+            st.markdown("""
+            <div style='background-color: #f0f7ff; padding: 0.8rem; border-radius: 5px; margin: 1rem 0;'>
+            <b>Notes:</b>
+            <ul>
+            <li>** and * indicates significant at 1% and 5% level</li>
+            <li>NS = Not Significant</li>
+            <li><b>R²</b>: Coefficient of determination (higher is better)</li>
+            <li><b>RMSE</b>: Root Mean Square Error (lower is better)</li>
+            <li><b>Runs Test</b>: Tests for randomness of residuals</li>
+            <li><b>Shapiro-Wilk Test</b>: Tests for normality of residuals</li>
+            </ul>
+            </div>
+            """, unsafe_allow_html=True)
+    
     def create_summary_report(self):
         """Create a concise summary report"""
         summary = []
@@ -1829,9 +1997,7 @@ def main():
         "🔗 Cointegration Analysis": dashboard.enhanced_cointegration_analysis,
         "🔮 ARIMA Forecasting": dashboard.enhanced_arima_analysis,
         "🤖 ML Models": dashboard.enhanced_ml_models,
-        # ===== NEW: Model Comparison Page =====
-        "📊 Model Comparison": lambda: model_comparison.model_comparison_page(dashboard.results, dashboard.markets),
-        # =====================================
+        "📊 Model Comparison": dashboard.model_comparison_page,  # NEW!
        
     }
     
@@ -1849,14 +2015,14 @@ def main():
     - ✅ Detailed AIC Explanations
     - ✅ Interactive Prediction Forms (Direction & Price Level)
     - ✅ Enhanced Visualizations
-    - ✅ **Model Comparison Table (6 Regression Models)** ⭐ NEW
+    - ✅ **Model Comparison (6 Regression Models)** ⭐ NEW!
     
     **Research Objectives:**
     1. Enhanced descriptive statistics
     2. Comprehensive Johansen cointegration (Weekly + Stationarity/Lag/VAR/VECM)
     3. ARIMA/SARIMA with model selection explanations
     4. Multiple ML models comparison (Class + Reg)
-    5. **Regression model comparison (Linear, Quadratic, Cubic, Exponential, Logistic, Gompertz)** ⭐ NEW
+    5. **Model Comparison (Linear, Quadratic, Cubic, Exponential, Logistic, Gompertz)** ⭐ NEW!
     
     **Markets Analyzed:**
     - Haveri
@@ -1870,7 +2036,7 @@ def main():
     - 🌲 Random Forest (Class)
     - 📈 Linear Regression (Reg)
     
-    **Regression Models:** ⭐ NEW
+    **Regression Models:** ⭐ NEW!
     - 📈 Linear, Quadratic, Cubic
     - 📈 Exponential, Logistic, Gompertz
     """)
@@ -1884,7 +2050,7 @@ def main():
     <div style='text-align: center; color: #666; font-size: 0.8em;'>
         <p>🌱 Enhanced Soybean Market Analysis Dashboard | Built with Advanced ML & Statistical Models</p>
         <p>Featuring: Logistic Regression • Random Forest • Linear Regression • Comprehensive Cointegration Analysis (Weekly VECM)</p>
-        <p><b>NEW:</b> 6 Regression Model Comparison (Linear, Quadratic, Cubic, Exponential, Logistic, Gompertz) with Statistical Tests</p>
+        <p><b>NEW:</b> Model Comparison Table - 6 Regression Models (Linear, Quadratic, Cubic, Exponential, Logistic, Gompertz) with Statistical Tests</p>
         <p>For research and educational purposes | © 2025</p>
     </div>
     """, unsafe_allow_html=True)
