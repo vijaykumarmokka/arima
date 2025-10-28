@@ -290,10 +290,66 @@ class EnhancedSoybeanDashboard:
             self.models = None
             self.report = ""
     
-    # ========================================================================
-    # PREDICTION METHODS FOR MODEL GRAPHS
-    # ========================================================================
+
+    def load_raw_data_from_excel(self):
+        """Load REAL data from Excel files"""
+        import os
+        
+        self.raw_data = {}
+        self.data_loaded = False
+        
+        # Map of filenames (case-insensitive)
+        file_mapping = {
+            'Haveri': 'haveri.xlsx',
+            'Kalagategi': 'kalagategi.xlsx',
+            'Bidar': 'Bidar.xlsx',
+            'Kalaburgi': 'kalaburgi.xlsx',
+            'Bailhongal': 'bailhongal.xlsx'
+        }
+        
+        for market, filename in file_mapping.items():
+            try:
+                # Try current directory first
+                if os.path.exists(filename):
+                    df = pd.read_excel(filename, sheet_name='Agmarknet_Price_And_Arrival_Rep', header=1)
+                elif os.path.exists(filename.lower()):
+                    df = pd.read_excel(filename.lower(), sheet_name='Agmarknet_Price_And_Arrival_Rep', header=1)
+                elif os.path.exists(f'data/{filename}'):
+                    df = pd.read_excel(f'data/{filename}', sheet_name='Agmarknet_Price_And_Arrival_Rep', header=1)
+                else:
+                    continue
+                
+                # Extract year from Reported Date
+                df['Year'] = pd.to_datetime(df['Reported Date']).dt.year
+                self.raw_data[market] = df
+                self.data_loaded = True
+                
+            except Exception as e:
+                st.warning(f"Could not load {filename}: {e}")
+        
+        if self.data_loaded:
+            st.sidebar.success(f"✅ Loaded real data for {len(self.raw_data)} markets")
+        else:
+            st.sidebar.error("⚠️ Could not load Excel files. Place them in the same directory as the app.")
     
+    def get_actual_yearly_data(self, market, variable):
+        """Get actual yearly aggregated data"""
+        if market not in self.raw_data:
+            return None, None
+        
+        df = self.raw_data[market]
+        
+        if variable == 'arrivals':
+            yearly = df.groupby('Year')['Arrivals (Tonnes)'].mean()
+        else:  # prices
+            yearly = df.groupby('Year')['Modal Price (Rs./Quintal)'].mean()
+        
+        years = yearly.index.values
+        values = yearly.values
+        
+        return years, values
+    
+    # Prediction methods
     def predict_linear(self, t, params):
         """Linear model: Y = a + bt"""
         return params[1] + params[0] * t
@@ -319,14 +375,6 @@ class EnhancedSoybeanDashboard:
         """Gompertz model: Y = K * e^(-a * e^(-bt))"""
         K, a, b = params
         return K * np.exp(-a * np.exp(b * t))
-    
-    def reconstruct_actual_values(self, predicted_values, r2, rmse):
-        """Reconstruct actual values from predictions for visualization"""
-        n = len(predicted_values)
-        np.random.seed(42)
-        residuals = np.random.normal(0, rmse, n)
-        actual_values = predicted_values + residuals
-        return actual_values
 
 
     def main_dashboard(self):
@@ -2272,17 +2320,34 @@ class EnhancedSoybeanDashboard:
             """, unsafe_allow_html=True)
     
     def complete_model_graphs_page(self):
-        """Complete Model Graphs Page - All 60 graphs"""
+        """Complete Model Graphs Page - Using REAL DATA from Excel files"""
         st.title("📈 Complete Model Comparison Graphs")
-        st.markdown("### All Markets × All Models × All Variables")
+        st.markdown("### All Markets × All Models × All Variables (REAL DATA)")
         st.markdown("---")
+        
+        # Load raw data
+        if not hasattr(self, 'raw_data'):
+            self.load_raw_data_from_excel()
+        
+        if not hasattr(self, 'data_loaded') or not self.data_loaded:
+            st.error("⚠️ Excel files not found!")
+            st.info("""
+            **Please place these Excel files in the same directory as the app:**
+            - haveri.xlsx
+            - kalagategi.xlsx
+            - Bidar.xlsx
+            - kalaburgi.xlsx
+            - bailhongal.xlsx
+            
+            Each file should have a sheet named 'Agmarknet_Price_And_Arrival_Rep'
+            """)
+            return
         
         if 'model_comparison' not in self.results:
             st.error("⚠️ Model comparison data not found.")
             return
         
         model_comparison = self.results['model_comparison']
-        descriptive_stats = self.results['descriptive_stats']
         
         predict_functions = {
             'Linear': self.predict_linear,
@@ -2297,6 +2362,7 @@ class EnhancedSoybeanDashboard:
         variables = ['arrivals', 'prices']
         models = ['Linear', 'Quadratic', 'Cubic', 'Exponential', 'Logistic', 'Gompertz']
         
+        st.success(f"✅ Using REAL data from {len(self.raw_data)} Excel files")
         st.info(f"📊 **Total Graphs:** {len(markets)} markets × {len(variables)} variables × {len(models)} models = **{len(markets) * len(variables) * len(models)} graphs**")
         
         market_tabs = st.tabs(markets)
@@ -2305,14 +2371,18 @@ class EnhancedSoybeanDashboard:
             with market_tabs[market_idx]:
                 st.header(f"🏪 {market} Market")
                 
-                n_points = descriptive_stats[market]['Count']
-                time_points = np.arange(n_points)
-                
                 var_tabs = st.tabs(['📦 Arrivals', '💰 Prices'])
                 
                 for var_idx, variable in enumerate(variables):
                     with var_tabs[var_idx]:
                         st.subheader(f"{variable.capitalize()} Models")
+                        
+                        # Get REAL actual data from Excel files
+                        years, actual_values = self.get_actual_yearly_data(market, variable)
+                        
+                        if years is None or actual_values is None:
+                            st.warning(f"⚠️ Data not available for {market} {variable}")
+                            continue
                         
                         model_data = model_comparison[market][variable]
                         
@@ -2321,11 +2391,13 @@ class EnhancedSoybeanDashboard:
                             best_model, best_r2 = max(valid_models, key=lambda x: x[1])
                             st.success(f"🏆 **Best Model:** {best_model} (R² = {best_r2:.4f})")
                         
+                        # Normalize time for predictions
+                        t_normalized = np.arange(len(years))
+                        
                         for model_name in models:
                             model_info = model_data[model_name]
                             
                             if not model_info.get('fitted', False):
-                                st.warning(f"⚠️ {model_name} model not fitted")
                                 continue
                             
                             params = model_info['params']
@@ -2334,11 +2406,11 @@ class EnhancedSoybeanDashboard:
                             
                             try:
                                 predict_fn = predict_functions[model_name]
-                                predicted_values = predict_fn(time_points, params)
-                                actual_values = self.reconstruct_actual_values(predicted_values, r2, rmse)
+                                predicted_values = predict_fn(t_normalized, params)
                                 
+                                # Create plot with REAL data
                                 fig = plot_model_fit_matplotlib(
-                                    years=time_points,
+                                    years=years,
                                     actual_values=actual_values,
                                     predicted_values=predicted_values,
                                     model_name=model_name,
@@ -2356,14 +2428,14 @@ class EnhancedSoybeanDashboard:
                                 buf.seek(0)
                                 
                                 st.download_button(
-                                    label=f"📥 Download {model_name} Plot",
+                                    label=f"📥 Download {model_name}",
                                     data=buf,
-                                    file_name=f"{market}_{variable}_{model_name}_plot.png",
+                                    file_name=f"{market}_{variable}_{model_name}.png",
                                     mime="image/png",
                                     key=f"dl_{market}_{variable}_{model_name}"
                                 )
                                 
-                                with st.expander(f"📊 {model_name} Statistics"):
+                                with st.expander(f"📊 {model_name} Details"):
                                     col1, col2, col3, col4 = st.columns(4)
                                     with col1:
                                         st.metric("R²", f"{r2:.4f}")
@@ -2372,23 +2444,23 @@ class EnhancedSoybeanDashboard:
                                     with col3:
                                         runs_pval = model_info.get('runs_pval')
                                         sig = "**" if runs_pval and runs_pval < 0.01 else "*" if runs_pval and runs_pval < 0.05 else "NS"
-                                        st.metric("Runs Test", sig if runs_pval else "N/A")
+                                        st.metric("Runs", sig if runs_pval else "N/A")
                                     with col4:
                                         shapiro_pval = model_info.get('shapiro_pval')
                                         sig = "**" if shapiro_pval and shapiro_pval < 0.01 else "*" if shapiro_pval and shapiro_pval < 0.05 else "NS"
-                                        st.metric("Shapiro Test", sig if shapiro_pval else "N/A")
+                                        st.metric("Shapiro", sig if shapiro_pval else "N/A")
                                     
                                     st.write("**Parameters:**")
                                     for i, param in enumerate(params):
                                         st.write(f"β{i}: {param:.6f}")
+                                    st.write(f"**Years:** {years[0]} - {years[-1]} ({len(years)} points)")
                                 
                                 st.markdown("---")
                             
                             except Exception as e:
                                 st.error(f"Error: {str(e)}")
-                                continue
                         
-                        st.subheader("📋 Model Comparison")
+                        st.subheader("📋 Model Rankings")
                         comparison_data = []
                         for model_name in models:
                             model_info = model_data[model_name]
@@ -2399,10 +2471,10 @@ class EnhancedSoybeanDashboard:
                                 )
                                 rank_num = [x[0] for x in rank].index(model_name) + 1
                                 comparison_data.append({
+                                    'Rank': rank_num,
                                     'Model': model_name,
                                     'R²': f"{model_info['r2']:.4f}",
                                     'RMSE': f"{model_info['rmse']:.2f}",
-                                    'Rank': rank_num,
                                     'Status': '🏆' if rank_num == 1 else '✓'
                                 })
                         
