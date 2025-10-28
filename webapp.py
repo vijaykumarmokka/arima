@@ -300,11 +300,11 @@ class EnhancedSoybeanDashboard:
         
         # Map of filenames (case-insensitive)
         file_mapping = {
-            'Haveri': 'haveri.xlsx',
+            'haveri': 'haveri.xlsx',
             'Kalagategi': 'kalagategi.xlsx',
             'Bidar': 'Bidar.xlsx',
             'Kalaburgi': 'kalaburgi.xlsx',
-            'Bailhongal': 'bailhongal.xlsx'
+            'bailhongal': 'bailhongal.xlsx'
         }
         
         for market, filename in file_mapping.items():
@@ -2621,6 +2621,7 @@ def main():
 if __name__ == "__main__":
 
     main()
+
 
 
 
