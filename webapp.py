@@ -2174,7 +2174,7 @@ class EnhancedSoybeanDashboard:
                 
                 # OPTION 2: Load from Excel file (uncomment and modify)
                 try:
-                      market_file = f'data/{selected_market}.xlsx'
+                      market_file = f'{selected_market}.xlsx'
                       df = pd.read_excel(market_file, sheet_name='Agmarknet_Price_And_Arrival_Rep', header=1)
                       df['Year'] = pd.to_datetime(df['Price Date']).dt.year
                       if plot_variable == 'prices':
@@ -2621,6 +2621,7 @@ def main():
 if __name__ == "__main__":
 
     main()
+
 
 
 
