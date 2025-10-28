@@ -2186,7 +2186,7 @@ class EnhancedSoybeanDashboard:
                 except Exception as e:
                       st.error(f"Error loading data: {e}")
                       years = None
-                     actual_values = None
+                      actual_values = None
                 
                 # OPTION 3: Placeholder data for demonstration (REMOVE IN PRODUCTION)
                 # Generate sample years and values
@@ -2621,6 +2621,7 @@ def main():
 if __name__ == "__main__":
 
     main()
+
 
 
 
