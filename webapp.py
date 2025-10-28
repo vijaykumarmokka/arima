@@ -292,45 +292,58 @@ class EnhancedSoybeanDashboard:
     
 
     def load_raw_data_from_excel(self):
-        """Load REAL data from Excel files"""
+        """Load REAL data from Excel files - CASE INSENSITIVE"""
         import os
+        import glob
         
         self.raw_data = {}
         self.data_loaded = False
         
-        # Map of filenames (case-insensitive)
-        file_mapping = {
-            'haveri': 'haveri.xlsx',
-            'Kalagategi': 'kalagategi.xlsx',
-            'Bidar': 'Bidar.xlsx',
-            'Kalaburgi': 'kalaburgi.xlsx',
-            'bailhongal': 'bailhongal.xlsx'
-        }
+        # Market names as they appear in JSON results
+        markets = ['Haveri', 'Kalagategi', 'Bidar', 'Kalaburgi', 'Bailhongal']
         
-        for market, filename in file_mapping.items():
-            try:
-                # Try current directory first
+        for market in markets:
+            loaded = False
+            
+            # Try multiple filename variations (case insensitive)
+            possible_names = [
+                f'{market}.xlsx',
+                f'{market.lower()}.xlsx',
+                f'{market.upper()}.xlsx',
+                f'data/{market}.xlsx',
+                f'data/{market.lower()}.xlsx',
+                f'data/{market.upper()}.xlsx'
+            ]
+            
+            for filename in possible_names:
                 if os.path.exists(filename):
-                    df = pd.read_excel(filename, sheet_name='Agmarknet_Price_And_Arrival_Rep', header=1)
-                elif os.path.exists(filename.lower()):
-                    df = pd.read_excel(filename.lower(), sheet_name='Agmarknet_Price_And_Arrival_Rep', header=1)
-                elif os.path.exists(f'{filename}'):
-                    df = pd.read_excel(f'{filename}', sheet_name='Agmarknet_Price_And_Arrival_Rep', header=1)
-                else:
-                    continue
-                
-                # Extract year from Reported Date
-                df['Year'] = pd.to_datetime(df['Reported Date']).dt.year
-                self.raw_data[market] = df
-                self.data_loaded = True
-                
-            except Exception as e:
-                st.warning(f"Could not load {filename}: {e}")
+                    try:
+                        df = pd.read_excel(filename, sheet_name='Agmarknet_Price_And_Arrival_Rep', header=1)
+                        
+                        # Handle both 'Reported Date' and 'Price Date' columns
+                        if 'Reported Date' in df.columns:
+                            df['Year'] = pd.to_datetime(df['Reported Date']).dt.year
+                        elif 'Price Date' in df.columns:
+                            df['Year'] = pd.to_datetime(df['Price Date']).dt.year
+                        else:
+                            st.warning(f"⚠️ {market}: No date column found")
+                            continue
+                        
+                        self.raw_data[market] = df
+                        self.data_loaded = True
+                        loaded = True
+                        break
+                        
+                    except Exception as e:
+                        st.warning(f"Error loading {filename}: {e}")
+            
+            if not loaded:
+                st.sidebar.warning(f"⚠️ Could not find file for {market}")
         
         if self.data_loaded:
             st.sidebar.success(f"✅ Loaded real data for {len(self.raw_data)} markets")
         else:
-            st.sidebar.error("⚠️ Could not load Excel files. Place them in the same directory as the app.")
+            st.sidebar.error("⚠️ No Excel files found. Place them in the same directory.")
     
     def get_actual_yearly_data(self, market, variable):
         """Get actual yearly aggregated data"""
@@ -339,15 +352,19 @@ class EnhancedSoybeanDashboard:
         
         df = self.raw_data[market]
         
-        if variable == 'arrivals':
-            yearly = df.groupby('Year')['Arrivals (Tonnes)'].mean()
-        else:  # prices
-            yearly = df.groupby('Year')['Modal Price (Rs./Quintal)'].mean()
-        
-        years = yearly.index.values
-        values = yearly.values
-        
-        return years, values
+        try:
+            if variable == 'arrivals':
+                yearly = df.groupby('Year')['Arrivals (Tonnes)'].mean()
+            else:  # prices
+                yearly = df.groupby('Year')['Modal Price (Rs./Quintal)'].mean()
+            
+            years = yearly.index.values
+            values = yearly.values
+            
+            return years, values
+        except Exception as e:
+            st.error(f"Error getting data for {market} {variable}: {e}")
+            return None, None
     
     # Prediction methods
     def predict_linear(self, t, params):
@@ -2163,7 +2180,7 @@ class EnhancedSoybeanDashboard:
                 # IMPORTANT: This is where you need to load your actual time-series data
                 # Replace this placeholder with your actual data loading code
                 
-                #st.info("ℹ️ Using sample data for demonstration. Replace with actual data loading in production.")
+                st.info("ℹ️ Using sample data for demonstration. Replace with actual data loading in production.")
                 
                 # OPTION 1: If you have the data in self.data (uncomment and modify)
                 # if hasattr(self, 'data') and selected_market in self.data:
@@ -2173,20 +2190,20 @@ class EnhancedSoybeanDashboard:
                 #     actual_values = yearly.values
                 
                 # OPTION 2: Load from Excel file (uncomment and modify)
-                try:
-                      market_file = f'{selected_market}.xlsx'
-                      df = pd.read_excel(market_file, sheet_name='Agmarknet_Price_And_Arrival_Rep', header=1)
-                      df['Year'] = pd.to_datetime(df['Price Date']).dt.year
-                      if plot_variable == 'prices':
-                          yearly = df.groupby('Year')['Modal Price (Rs./Quintal)'].mean()
-                      else:
-                          yearly = df.groupby('Year')['Arrivals (Tonnes)'].mean()
-                      years = yearly.index.values
-                      actual_values = yearly.values
-                except Exception as e:
-                      st.error(f"Error loading data: {e}")
-                      years = None
-                      actual_values = None
+                # try:
+                #     market_file = f'data/{selected_market}.xlsx'
+                #     df = pd.read_excel(market_file, sheet_name='Agmarknet_Price_And_Arrival_Rep', header=1)
+                #     df['Year'] = pd.to_datetime(df['Price Date']).dt.year
+                #     if plot_variable == 'prices':
+                #         yearly = df.groupby('Year')['Modal Price (Rs./Quintal)'].mean()
+                #     else:
+                #         yearly = df.groupby('Year')['Arrivals (Tonnes)'].mean()
+                #     years = yearly.index.values
+                #     actual_values = yearly.values
+                # except Exception as e:
+                #     st.error(f"Error loading data: {e}")
+                #     years = None
+                #     actual_values = None
                 
                 # OPTION 3: Placeholder data for demonstration (REMOVE IN PRODUCTION)
                 # Generate sample years and values
@@ -2320,7 +2337,7 @@ class EnhancedSoybeanDashboard:
             """, unsafe_allow_html=True)
     
     def complete_model_graphs_page(self):
-        """Complete Model Graphs Page - Using REAL DATA from Excel files"""
+        """Complete Model Graphs - REAL DATA from Excel files"""
         st.title("📈 Complete Model Comparison Graphs")
         st.markdown("### All Markets × All Models × All Variables (REAL DATA)")
         st.markdown("---")
@@ -2332,19 +2349,19 @@ class EnhancedSoybeanDashboard:
         if not hasattr(self, 'data_loaded') or not self.data_loaded:
             st.error("⚠️ Excel files not found!")
             st.info("""
-            **Please place these Excel files in the same directory as the app:**
-            - haveri.xlsx
-            - kalagategi.xlsx
-            - Bidar.xlsx
-            - kalaburgi.xlsx
-            - bailhongal.xlsx
+            **Place these files in the same directory as this app:**
+            - haveri.xlsx (or Haveri.xlsx)
+            - kalagategi.xlsx (or Kalagategi.xlsx)
+            - Bidar.xlsx (or bidar.xlsx)
+            - kalaburgi.xlsx (or Kalaburgi.xlsx)
+            - bailhongal.xlsx (or Bailhongal.xlsx)
             
-            Each file should have a sheet named 'Agmarknet_Price_And_Arrival_Rep'
+            **Note:** Filenames are case-insensitive
             """)
             return
         
         if 'model_comparison' not in self.results:
-            st.error("⚠️ Model comparison data not found.")
+            st.error("⚠️ Model comparison data not found in results.")
             return
         
         model_comparison = self.results['model_comparison']
@@ -2363,7 +2380,7 @@ class EnhancedSoybeanDashboard:
         models = ['Linear', 'Quadratic', 'Cubic', 'Exponential', 'Logistic', 'Gompertz']
         
         st.success(f"✅ Using REAL data from {len(self.raw_data)} Excel files")
-        st.info(f"📊 **Total Graphs:** {len(markets)} markets × {len(variables)} variables × {len(models)} models = **{len(markets) * len(variables) * len(models)} graphs**")
+        st.info(f"📊 **Total Graphs:** {len(markets)} × {len(variables)} × {len(models)} = **{len(markets) * len(variables) * len(models)} graphs**")
         
         market_tabs = st.tabs(markets)
         
@@ -2377,7 +2394,7 @@ class EnhancedSoybeanDashboard:
                     with var_tabs[var_idx]:
                         st.subheader(f"{variable.capitalize()} Models")
                         
-                        # Get REAL actual data from Excel files
+                        # Get REAL actual data
                         years, actual_values = self.get_actual_yearly_data(market, variable)
                         
                         if years is None or actual_values is None:
@@ -2408,7 +2425,7 @@ class EnhancedSoybeanDashboard:
                                 predict_fn = predict_functions[model_name]
                                 predicted_values = predict_fn(t_normalized, params)
                                 
-                                # Create plot with REAL data
+                                # Plot with REAL data
                                 fig = plot_model_fit_matplotlib(
                                     years=years,
                                     actual_values=actual_values,
@@ -2458,7 +2475,7 @@ class EnhancedSoybeanDashboard:
                                 st.markdown("---")
                             
                             except Exception as e:
-                                st.error(f"Error: {str(e)}")
+                                st.error(f"Error plotting {model_name}: {str(e)}")
                         
                         st.subheader("📋 Model Rankings")
                         comparison_data = []
@@ -2621,10 +2638,3 @@ def main():
 if __name__ == "__main__":
 
     main()
-
-
-
-
-
-
-
