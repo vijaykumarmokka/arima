@@ -14,6 +14,166 @@ import base64
 from scipy import stats
 from scipy.optimize import curve_fit
 
+# ============================================================================
+# NEW: PUBLICATION-QUALITY PLOTTING FUNCTIONS
+# ============================================================================
+# These functions create matplotlib plots matching your reference images
+
+def format_equation(model_type, params, variable='Y_t', time_var='t'):
+    """
+    Format model equation for display on plots
+    
+    Parameters:
+    -----------
+    model_type : str
+        Type of model ('Linear', 'Quadratic', 'Cubic', 'Exponential', 'Logistic', 'Gompertz')
+    params : list
+        Model parameters
+    variable : str
+        Dependent variable name (default: 'Y_t')
+    time_var : str
+        Independent variable name (default: 't')
+    
+    Returns:
+    --------
+    str : LaTeX-formatted equation string
+    """
+    
+    if model_type == 'Linear':
+        # Y = a + bt
+        return f"${variable} = {params[1]:.2f} + {params[0]:.2f}{time_var}$"
+    
+    elif model_type == 'Quadratic':
+        # Y = a + bt + ct²
+        sign2 = '+' if params[1] >= 0 else ''
+        sign3 = '+' if params[2] >= 0 else ''
+        return f"${variable} = {params[0]:.2f} {sign2} {params[1]:.2f}{time_var} {sign3} {params[2]:.2f}{time_var}^2$"
+    
+    elif model_type == 'Cubic':
+        # Y = a + bt + ct² + dt³
+        sign2 = '+' if params[1] >= 0 else ''
+        sign3 = '+' if params[2] >= 0 else ''
+        sign4 = '+' if params[3] >= 0 else ''
+        return f"${variable} = {params[0]:.2f} {sign2} {params[1]:.2f}{time_var} {sign3} {params[2]:.2f}{time_var}^2 {sign4} {params[3]:.2f}{time_var}^3$"
+    
+    elif model_type == 'Exponential':
+        # Y = a * e^(bt)
+        return f"${variable} = {params[0]:.2f} \\times e^{{{params[1]:.4f}{time_var}}}$"
+    
+    elif model_type == 'Logistic':
+        # Y = K / (1 + a * e^(-bt))
+        return f"${variable} = \\frac{{{params[0]:.2f}}}{{1 + {params[1]:.4f}e^{{{params[2]:.2f}{time_var}}}}}$"
+    
+    elif model_type == 'Gompertz':
+        # Y = K * e^(-a * e^(-bt))
+        return f"${variable} = {params[0]:.2f} \\times e^{{-{params[1]:.4f}e^{{{params[2]:.2f}{time_var}}}}}$"
+    
+    return f"${variable} = f({time_var})$"
+
+
+def plot_model_fit_matplotlib(years, actual_values, predicted_values, model_name, 
+                               params, r2, market_name, variable_name):
+    """
+    Create publication-quality matplotlib plot matching your reference images
+    
+    Parameters:
+    -----------
+    years : array-like
+        Years/time points for x-axis
+    actual_values : array-like
+        Observed actual values (blue dots)
+    predicted_values : array-like
+        Model predicted values (orange line)
+    model_name : str
+        Name of model (Linear, Quadratic, Cubic, etc.)
+    params : list
+        Model parameters for equation
+    r2 : float
+        R-squared value
+    market_name : str
+        Name of market
+    variable_name : str
+        Variable being plotted (arrivals/prices)
+    
+    Returns:
+    --------
+    matplotlib.figure.Figure
+        The created figure object
+    """
+    
+    # Create figure with white background
+    fig, ax = plt.subplots(figsize=(10, 6), facecolor='white')
+    
+    # Plot predicted line (ORANGE like your image)
+    ax.plot(years, predicted_values, 
+            color='#ff7f0e',      # Orange color
+            linewidth=2.5, 
+            label='Predicted Price', 
+            zorder=2)
+    
+    # Plot actual points (BLUE dots like your image)
+    ax.scatter(years, actual_values, 
+               color='#1f77b4',    # Blue color
+               s=70,               # Point size
+               alpha=0.9, 
+               label='Actual Price', 
+               zorder=3,
+               edgecolors='navy', 
+               linewidth=0.5)
+    
+    # Add equation text box (top right)
+    equation_text = format_equation(model_name, params)
+    ax.text(0.97, 0.95, equation_text, 
+            transform=ax.transAxes,
+            fontsize=11,
+            verticalalignment='top',
+            horizontalalignment='right',
+            bbox=dict(boxstyle='round,pad=0.5', 
+                     facecolor='white', 
+                     edgecolor='gray', 
+                     alpha=0.9))
+    
+    # Add R² text box (below equation)
+    r2_text = f"$R^2 = {r2:.4f}$"
+    ax.text(0.97, 0.87, r2_text,
+            transform=ax.transAxes,
+            fontsize=11,
+            verticalalignment='top',
+            horizontalalignment='right',
+            bbox=dict(boxstyle='round,pad=0.5', 
+                     facecolor='white', 
+                     edgecolor='gray', 
+                     alpha=0.9))
+    
+    # Set axis labels
+    ylabel = f"{variable_name.capitalize()}(Rs/Q)" if "price" in variable_name.lower() else f"{variable_name.capitalize()}(Tonnes)"
+    ax.set_xlabel('Year', fontsize=12, fontweight='bold')
+    ax.set_ylabel(ylabel, fontsize=12, fontweight='bold')
+    
+    # Add grid
+    ax.grid(True, alpha=0.25, linestyle='-', linewidth=0.5, color='gray')
+    ax.set_axisbelow(True)
+    
+    # Add legend
+    ax.legend(loc='upper left', fontsize=10, framealpha=0.95, 
+              edgecolor='gray', fancybox=True)
+    
+    # Style spines
+    for spine in ['top', 'right']:
+        ax.spines[spine].set_visible(False)
+    for spine in ['left', 'bottom']:
+        ax.spines[spine].set_color('gray')
+        ax.spines[spine].set_linewidth(0.8)
+    
+    # Tight layout
+    plt.tight_layout()
+    
+    return fig
+
+# ============================================================================
+# END OF NEW PLOTTING FUNCTIONS
+# ============================================================================
+
 # Configure Streamlit page
 st.set_page_config(
     page_title="Enhanced Soybean Market Analysis Dashboard",
@@ -1877,8 +2037,159 @@ class EnhancedSoybeanDashboard:
                 with col4:
                     st.metric("Avg Prices R²", f"{np.mean(list(pr_r2.values())):.4f}")
             
+            # =========================================================================
+            # NEW: PUBLICATION-QUALITY MATPLOTLIB PLOT SECTION
+            # =========================================================================
+            st.markdown("---")
+            st.markdown("### 📊 Best Model Visualization (Publication Quality)")
+            st.markdown("*High-resolution plot matching publication standards*")
+            
+            # Variable selection for the plot
+            plot_variable = st.radio(
+                "Select variable to plot:",
+                ['arrivals', 'prices'],
+                horizontal=True,
+                key="plot_variable_select"
+            )
+            
+            # Determine best model for selected variable
+            if plot_variable == 'arrivals' and arr_r2:
+                best_model_name = max(arr_r2.items(), key=lambda x: x[1])[0]
+                model_data = results['arrivals'][best_model_name]
+                variable_r2_dict = arr_r2
+            elif plot_variable == 'prices' and pr_r2:
+                best_model_name = max(pr_r2.items(), key=lambda x: x[1])[0]
+                model_data = results['prices'][best_model_name]
+                variable_r2_dict = pr_r2
+            else:
+                st.warning("No data available for selected variable")
+                best_model_name = None
+            
+            if best_model_name:
+                # Get model parameters
+                params = model_data['params']
+                r2 = model_data['r2']
+                
+                # =====================================================================
+                # DATA LOADING SECTION
+                # =====================================================================
+                # IMPORTANT: This is where you need to load your actual time-series data
+                # Replace this placeholder with your actual data loading code
+                
+                st.info("ℹ️ Using sample data for demonstration. Replace with actual data loading in production.")
+                
+                # OPTION 1: If you have the data in self.data (uncomment and modify)
+                # if hasattr(self, 'data') and selected_market in self.data:
+                #     df = self.data[selected_market]
+                #     yearly = df.groupby('Year')[plot_variable].mean()
+                #     years = yearly.index.values
+                #     actual_values = yearly.values
+                
+                # OPTION 2: Load from Excel file (uncomment and modify)
+                # try:
+                #     market_file = f'data/{selected_market}.xlsx'
+                #     df = pd.read_excel(market_file, sheet_name='Agmarknet_Price_And_Arrival_Rep', header=1)
+                #     df['Year'] = pd.to_datetime(df['Price Date']).dt.year
+                #     if plot_variable == 'prices':
+                #         yearly = df.groupby('Year')['Modal Price (Rs./Quintal)'].mean()
+                #     else:
+                #         yearly = df.groupby('Year')['Arrivals (Tonnes)'].mean()
+                #     years = yearly.index.values
+                #     actual_values = yearly.values
+                # except Exception as e:
+                #     st.error(f"Error loading data: {e}")
+                #     years = None
+                #     actual_values = None
+                
+                # OPTION 3: Placeholder data for demonstration (REMOVE IN PRODUCTION)
+                # Generate sample years and values
+                years = np.arange(2007, 2024)
+                if plot_variable == 'arrivals':
+                    # Sample arrivals data
+                    actual_values = np.random.randint(100, 200, len(years))
+                else:
+                    # Sample prices data
+                    actual_values = np.random.randint(3000, 5000, len(years))
+                
+                # =====================================================================
+                # END OF DATA LOADING SECTION
+                # =====================================================================
+                
+                if years is not None and actual_values is not None:
+                    # Calculate predicted values based on model type
+                    t = np.arange(len(years))
+                    
+                    if best_model_name == 'Linear':
+                        predicted_values = params[1] + params[0] * t
+                    elif best_model_name == 'Quadratic':
+                        predicted_values = params[0] + params[1] * t + params[2] * t**2
+                    elif best_model_name == 'Cubic':
+                        predicted_values = params[0] + params[1] * t + params[2] * t**2 + params[3] * t**3
+                    elif best_model_name == 'Exponential':
+                        predicted_values = params[0] * np.exp(params[1] * t)
+                    elif best_model_name == 'Logistic':
+                        predicted_values = params[0] / (1 + params[1] * np.exp(params[2] * t))
+                    elif best_model_name == 'Gompertz':
+                        predicted_values = params[0] * np.exp(-params[1] * np.exp(params[2] * t))
+                    else:
+                        predicted_values = np.zeros_like(t)
+                    
+                    # Create the publication-quality plot
+                    try:
+                        fig_pub = plot_model_fit_matplotlib(
+                            years=years,
+                            actual_values=actual_values,
+                            predicted_values=predicted_values,
+                            model_name=best_model_name,
+                            params=params,
+                            r2=r2,
+                            market_name=selected_market,
+                            variable_name=plot_variable
+                        )
+                        
+                        # Display the plot
+                        st.pyplot(fig_pub)
+                        
+                        # Add download button for high-quality export
+                        buf = io.BytesIO()
+                        fig_pub.savefig(buf, format='png', dpi=300, bbox_inches='tight', facecolor='white')
+                        buf.seek(0)
+                        
+                        st.download_button(
+                            label="📥 Download High-Quality PNG (300 DPI)",
+                            data=buf,
+                            file_name=f"{selected_market}_{plot_variable}_{best_model_name}_model.png",
+                            mime="image/png",
+                            help="Download publication-ready plot in high resolution"
+                        )
+                        
+                        # Close the figure to free memory
+                        plt.close(fig_pub)
+                        
+                        # Show model information
+                        st.markdown(f"""
+                        <div style='background-color: #e8f4f8; padding: 1rem; border-radius: 5px; margin: 1rem 0;'>
+                        <b>📈 Plot Information:</b><br>
+                        <b>Best Model:</b> {best_model_name}<br>
+                        <b>R² Score:</b> {r2:.4f}<br>
+                        <b>Market:</b> {selected_market}<br>
+                        <b>Variable:</b> {plot_variable.capitalize()}<br>
+                        <b>Time Period:</b> {years[0]} - {years[-1]}
+                        </div>
+                        """, unsafe_allow_html=True)
+                        
+                    except Exception as e:
+                        st.error(f"Error creating plot: {e}")
+                        st.info("Please check that all data is properly loaded and parameters are correct.")
+            
+            # =========================================================================
+            # END OF NEW PUBLICATION-QUALITY PLOT SECTION
+            # =========================================================================
+            
             # Visualization
-            st.markdown("### 📊 Model Performance Comparison")
+            st.markdown("---")
+            st.markdown("### 📊 Interactive Model Comparison (All Models)")
+            st.markdown("*Interactive bar chart comparing R² scores across all models*")
             
             fig = go.Figure()
             
@@ -2058,11 +2369,3 @@ def main():
 if __name__ == "__main__":
 
     main()
-
-
-
-
-
-
-
-
