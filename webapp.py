@@ -2183,7 +2183,7 @@ class EnhancedSoybeanDashboard:
                           yearly = df.groupby('Year')['Arrivals (Tonnes)'].mean()
                       years = yearly.index.values
                       actual_values = yearly.values
-                  except Exception as e:
+                except Exception as e:
                       st.error(f"Error loading data: {e}")
                       years = None
                      actual_values = None
@@ -2621,5 +2621,6 @@ def main():
 if __name__ == "__main__":
 
     main()
+
 
 
