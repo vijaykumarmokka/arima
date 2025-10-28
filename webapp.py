@@ -314,8 +314,8 @@ class EnhancedSoybeanDashboard:
                     df = pd.read_excel(filename, sheet_name='Agmarknet_Price_And_Arrival_Rep', header=1)
                 elif os.path.exists(filename.lower()):
                     df = pd.read_excel(filename.lower(), sheet_name='Agmarknet_Price_And_Arrival_Rep', header=1)
-                elif os.path.exists(f'data/{filename}'):
-                    df = pd.read_excel(f'data/{filename}', sheet_name='Agmarknet_Price_And_Arrival_Rep', header=1)
+                elif os.path.exists(f'{filename}'):
+                    df = pd.read_excel(f'{filename}', sheet_name='Agmarknet_Price_And_Arrival_Rep', header=1)
                 else:
                     continue
                 
@@ -2621,6 +2621,7 @@ def main():
 if __name__ == "__main__":
 
     main()
+
 
 
 
