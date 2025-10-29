@@ -2205,15 +2205,6 @@ class EnhancedSoybeanDashboard:
                 #     years = None
                 #     actual_values = None
                 
-                # OPTION 3: Placeholder data for demonstration (REMOVE IN PRODUCTION)
-                # Generate sample years and values
-                years = np.arange(2007, 2024)
-                if plot_variable == 'arrivals':
-                    # Sample arrivals data
-                    actual_values = np.random.randint(100, 200, len(years))
-                else:
-                    # Sample prices data
-                    actual_values = np.random.randint(3000, 5000, len(years))
                 
                 # =====================================================================
                 # END OF DATA LOADING SECTION
@@ -2638,3 +2629,4 @@ def main():
 if __name__ == "__main__":
 
     main()
+
