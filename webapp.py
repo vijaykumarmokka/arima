@@ -2341,7 +2341,7 @@ class EnhancedSoybeanDashboard:
             st.error("⚠️ Excel files not found!")
             st.info("""
             **Place these files in the same directory as this app:**
-            - haveri.xlsx (or Haveri.xlsx)
+            - haveri.xlsx (or haveri.xlsx)
             - kalagategi.xlsx (or Kalagategi.xlsx)
             - Bidar.xlsx (or bidar.xlsx)
             - kalaburgi.xlsx (or kalaburgi.xlsx)
@@ -2629,6 +2629,7 @@ def main():
 if __name__ == "__main__":
 
     main()
+
 
 
 
