@@ -300,7 +300,7 @@ class EnhancedSoybeanDashboard:
         self.data_loaded = False
         
         # Market names as they appear in JSON results
-        markets = ['Haveri', 'Kalagategi', 'Bidar', 'Kalaburgi', 'Bailhongal']
+        markets = ['haveri', 'kalagategi', 'Bidar', 'kalaburgi', 'bailhongal']
         
         for market in markets:
             loaded = False
@@ -2344,7 +2344,7 @@ class EnhancedSoybeanDashboard:
             - haveri.xlsx (or Haveri.xlsx)
             - kalagategi.xlsx (or Kalagategi.xlsx)
             - Bidar.xlsx (or bidar.xlsx)
-            - kalaburgi.xlsx (or Kalaburgi.xlsx)
+            - kalaburgi.xlsx (or kalaburgi.xlsx)
             - bailhongal.xlsx (or Bailhongal.xlsx)
             
             **Note:** Filenames are case-insensitive
@@ -2596,11 +2596,11 @@ def main():
     5. **Model Comparison (Linear, Quadratic, Cubic, Exponential, Logistic, Gompertz)** ⭐ NEW!
     
     **Markets Analyzed:**
-    - Haveri
-    - Kalagategi  
+    - haveri
+    - kalagategi  
     - Bidar
-    - Kalaburgi
-    - Bailhongal
+    - kalaburgi
+    - bailhongal
     
     **ML Models:**
     - 🔵 Logistic Regression (Class)
@@ -2629,6 +2629,7 @@ def main():
 if __name__ == "__main__":
 
     main()
+
 
 
 
