@@ -2190,7 +2190,7 @@ class EnhancedSoybeanDashboard:
                 #     actual_values = yearly.values
                 
                 # OPTION 2: Load from Excel file (uncomment and modify)
-                  try:
+                   try:
                       market_file = f'data/{selected_market}.xlsx'
                       df = pd.read_excel(market_file, sheet_name='Agmarknet_Price_And_Arrival_Rep', header=1)
                       df['Year'] = pd.to_datetime(df['Price Date']).dt.year
@@ -2629,5 +2629,6 @@ def main():
 if __name__ == "__main__":
 
     main()
+
 
 
