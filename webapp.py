@@ -21,7 +21,7 @@ from scipy.optimize import curve_fit
 
 def format_equation(model_type, params, variable='Y_t', time_var='t'):
     """
-    Format model equation for display on plots
+    Format model equation for display on plots - FIXED VERSION
     
     Parameters:
     -----------
@@ -39,34 +39,43 @@ def format_equation(model_type, params, variable='Y_t', time_var='t'):
     str : LaTeX-formatted equation string
     """
     
+    def format_param(val, decimals=2):
+        """Format parameter with scientific notation if needed"""
+        if abs(val) < 0.01 or abs(val) > 1000:
+            return f"{val:.2e}"
+        else:
+            return f"{val:.{decimals}f}"
+    
     if model_type == 'Linear':
         # Y = a + bt
-        return f"${variable} = {params[1]:.2f} + {params[0]:.2f}{time_var}$"
+        return f"${variable} = {format_param(params[1])} + {format_param(params[0])}{time_var}$"
     
     elif model_type == 'Quadratic':
         # Y = a + bt + ct²
         sign2 = '+' if params[1] >= 0 else ''
         sign3 = '+' if params[2] >= 0 else ''
-        return f"${variable} = {params[0]:.2f} {sign2} {params[1]:.2f}{time_var} {sign3} {params[2]:.2f}{time_var}^2$"
+        return f"${variable} = {format_param(params[0])} {sign2} {format_param(params[1])}{time_var} {sign3} {format_param(params[2])}{time_var}^2$"
     
     elif model_type == 'Cubic':
         # Y = a + bt + ct² + dt³
         sign2 = '+' if params[1] >= 0 else ''
         sign3 = '+' if params[2] >= 0 else ''
         sign4 = '+' if params[3] >= 0 else ''
-        return f"${variable} = {params[0]:.2f} {sign2} {params[1]:.2f}{time_var} {sign3} {params[2]:.2f}{time_var}^2 {sign4} {params[3]:.2f}{time_var}^3$"
+        return f"${variable} = {format_param(params[0])} {sign2} {format_param(params[1])}{time_var} {sign3} {format_param(params[2])}{time_var}^2 {sign4} {format_param(params[3])}{time_var}^3$"
     
     elif model_type == 'Exponential':
         # Y = a * e^(bt)
-        return f"${variable} = {params[0]:.2f} \\times e^{{{params[1]:.4f}{time_var}}}$"
+        return f"${variable} = {format_param(params[0])} \\times e^{{{format_param(params[1], 4)}{time_var}}}$"
     
     elif model_type == 'Logistic':
-        # Y = K / (1 + a * e^(-bt))
-        return f"${variable} = \\frac{{{params[0]:.2f}}}{{1 + {params[1]:.4f}e^{{{params[2]:.2f}{time_var}}}}}$"
+        # Y = K / (1 + a * e^(-bt))  -- FIXED: proper sign handling
+        b_sign = '-' if params[2] > 0 else ''
+        return f"${variable} = \\frac{{{format_param(params[0])}}}{{1 + {format_param(params[1], 4)}e^{{{b_sign}{format_param(abs(params[2]), 4)}{time_var}}}}}$"
     
     elif model_type == 'Gompertz':
-        # Y = K * e^(-a * e^(-bt))
-        return f"${variable} = {params[0]:.2f} \\times e^{{-{params[1]:.4f}e^{{{params[2]:.2f}{time_var}}}}}$"
+        # Y = K * e^(-a * e^(-bt))  -- FIXED: proper sign handling
+        b_sign = '-' if params[2] > 0 else ''
+        return f"${variable} = {format_param(params[0])} \\times e^{{-{format_param(params[1], 4)}e^{{{b_sign}{format_param(abs(params[2]), 4)}{time_var}}}}}$"
     
     return f"${variable} = f({time_var})$"
 
@@ -74,7 +83,7 @@ def format_equation(model_type, params, variable='Y_t', time_var='t'):
 def plot_model_fit_matplotlib(years, actual_values, predicted_values, model_name, 
                                params, r2, market_name, variable_name):
     """
-    Create publication-quality matplotlib plot matching your reference images
+    Create publication-quality matplotlib plot - CORRECTED VERSION
     
     Parameters:
     -----------
@@ -104,14 +113,14 @@ def plot_model_fit_matplotlib(years, actual_values, predicted_values, model_name
     # Create figure with white background
     fig, ax = plt.subplots(figsize=(10, 6), facecolor='white')
     
-    # Plot predicted line (ORANGE like your image)
+    # Plot predicted line (ORANGE)
     ax.plot(years, predicted_values, 
             color='#ff7f0e',      # Orange color
             linewidth=2.5, 
             label='Predicted Price', 
             zorder=2)
     
-    # Plot actual points (BLUE dots like your image)
+    # Plot actual points (BLUE dots)
     ax.scatter(years, actual_values, 
                color='#1f77b4',    # Blue color
                s=70,               # Point size
@@ -121,7 +130,7 @@ def plot_model_fit_matplotlib(years, actual_values, predicted_values, model_name
                edgecolors='navy', 
                linewidth=0.5)
     
-    # Add equation text box (top right)
+    # Add equation text box (top right) - USES CORRECTED FORMAT
     equation_text = format_equation(model_name, params)
     ax.text(0.97, 0.95, equation_text, 
             transform=ax.transAxes,
@@ -2638,6 +2647,7 @@ def main():
 if __name__ == "__main__":
 
     main()
+
 
 
 
