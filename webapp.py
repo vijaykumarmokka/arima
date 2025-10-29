@@ -282,7 +282,7 @@ class EnhancedSoybeanDashboard:
             except:
                 self.report = "Report not available"
                 
-            self.markets = ['Haveri', 'Kalagategi', 'Bidar', 'Kalaburgi', 'Bailhongal']
+            self.markets = ['haveri', 'kalagategi', 'Bidar', 'kalaburgi', 'bailhongal']
             
         except Exception as e:
             st.error(f"Error loading data: {e}")
@@ -2629,6 +2629,7 @@ def main():
 if __name__ == "__main__":
 
     main()
+
 
 
 
