@@ -2190,20 +2190,29 @@ class EnhancedSoybeanDashboard:
                 #     actual_values = yearly.values
                 
                 # OPTION 2: Load from Excel file (uncomment and modify)
+                # OPTION 2: Load from Excel file (corrected version)
                 try:
-                      market_file = f'{selected_market}.xlsx'
-                      df = pd.read_excel(market_file, sheet_name='Agmarknet_Price_And_Arrival_Rep', header=1)
-                      df['Year'] = pd.to_datetime(df['Price Date']).dt.year
-                      if plot_variable == 'prices':
-                          yearly = df.groupby('Year')['Modal Price (Rs./Quintal)'].mean()
-                      else:
-                          yearly = df.groupby('Year')['Arrivals (Tonnes)'].mean()
-                      years = yearly.index.values
-                      actual_values = yearly.values
+                    market_file = f'{selected_market}.xlsx'
+                    df = pd.read_excel(market_file, sheet_name='Agmarknet_Price_And_Arrival_Rep', header=1)
+                    
+                    # Handle both 'Reported Date' and 'Price Date' columns
+                    if 'Reported Date' in df.columns:
+                        df['Year'] = pd.to_datetime(df['Reported Date']).dt.year
+                    elif 'Price Date' in df.columns:
+                        df['Year'] = pd.to_datetime(df['Price Date']).dt.year
+                    else:
+                        raise ValueError("No date column found (neither 'Reported Date' nor 'Price Date')")
+                    
+                    if plot_variable == 'prices':
+                        yearly = df.groupby('Year')['Modal Price (Rs./Quintal)'].mean()
+                    else:
+                        yearly = df.groupby('Year')['Arrivals (Tonnes)'].mean()
+                    years = yearly.index.values
+                    actual_values = yearly.values
                 except Exception as e:
-                      st.error(f"Error loading data: {e}")
-                      years = None
-                      actual_values = None
+                    st.error(f"Error loading data: {e}")
+                    years = None
+                    actual_values = None
                 
                 
                 # =====================================================================
@@ -2629,6 +2638,7 @@ def main():
 if __name__ == "__main__":
 
     main()
+
 
 
 
