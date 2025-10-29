@@ -2190,7 +2190,7 @@ class EnhancedSoybeanDashboard:
                 #     actual_values = yearly.values
                 
                 # OPTION 2: Load from Excel file (uncomment and modify)
-                   try:
+                try:
                       market_file = f'data/{selected_market}.xlsx'
                       df = pd.read_excel(market_file, sheet_name='Agmarknet_Price_And_Arrival_Rep', header=1)
                       df['Year'] = pd.to_datetime(df['Price Date']).dt.year
@@ -2200,7 +2200,7 @@ class EnhancedSoybeanDashboard:
                           yearly = df.groupby('Year')['Arrivals (Tonnes)'].mean()
                       years = yearly.index.values
                       actual_values = yearly.values
-                  except Exception as e:
+                except Exception as e:
                       st.error(f"Error loading data: {e}")
                       years = None
                       actual_values = None
@@ -2629,6 +2629,7 @@ def main():
 if __name__ == "__main__":
 
     main()
+
 
 
 
