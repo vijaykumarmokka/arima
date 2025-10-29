@@ -39,12 +39,12 @@ def format_equation(model_type, params, variable='Y_t', time_var='t'):
     str : LaTeX-formatted equation string
     """
     
+    
     def format_param(val, decimals=2):
         """Format parameter with scientific notation if needed"""
         if abs(val) < 0.01 or abs(val) > 1000:
             return f"{val:.2e}"
-        else:
-            return f"{val:.{decimals}f}"
+        return f"{val:.{decimals}f}"
     
     if model_type == 'Linear':
         # Y = a + bt
@@ -67,13 +67,12 @@ def format_equation(model_type, params, variable='Y_t', time_var='t'):
         # Y = a * e^(bt)
         return f"${variable} = {format_param(params[0])} \\times e^{{{format_param(params[1], 4)}{time_var}}}$"
     
+    
     elif model_type == 'Logistic':
-        # Y = K / (1 + a * e^(-bt))  -- FIXED: proper sign handling
         b_sign = '-' if params[2] > 0 else ''
         return f"${variable} = \\frac{{{format_param(params[0])}}}{{1 + {format_param(params[1], 4)}e^{{{b_sign}{format_param(abs(params[2]), 4)}{time_var}}}}}$"
     
     elif model_type == 'Gompertz':
-        # Y = K * e^(-a * e^(-bt))  -- FIXED: proper sign handling
         b_sign = '-' if params[2] > 0 else ''
         return f"${variable} = {format_param(params[0])} \\times e^{{-{format_param(params[1], 4)}e^{{{b_sign}{format_param(abs(params[2]), 4)}{time_var}}}}}$"
     
@@ -395,12 +394,12 @@ class EnhancedSoybeanDashboard:
     def predict_logistic(self, t, params):
         """Logistic model: Y = K / (1 + a * e^(-bt))"""
         K, a, b = params
-        return K / (1 + a * np.exp(b * t))
-    
+        return K / (1 + a * np.exp(-b * t))
+        
     def predict_gompertz(self, t, params):
         """Gompertz model: Y = K * e^(-a * e^(-bt))"""
         K, a, b = params
-        return K * np.exp(-a * np.exp(b * t))
+        return K * np.exp(-a * np.exp(-b * t))
 
 
     def main_dashboard(self):
@@ -2647,6 +2646,7 @@ def main():
 if __name__ == "__main__":
 
     main()
+
 
 
 
