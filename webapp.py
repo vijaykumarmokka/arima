@@ -2270,167 +2270,204 @@ class EnhancedSoybeanDashboard:
             """, unsafe_allow_html=True)
     
     def complete_model_graphs_page(self):
-        """Complete Model Graphs - REAL DATA from Excel files"""
-        st.title("📈 Complete Model Comparison Graphs")
-        st.markdown("### All Markets × All Models × All Variables (REAL DATA)")
-        st.markdown("---")
+    """Complete Model Graphs - FIXED VERSION with normalized time [0,1]"""
+    st.title("📈 Complete Model Comparison Graphs")
+    st.markdown("### All Markets × All Models × All Variables (REAL DATA)")
+    st.markdown("### ✅ FIXED: Uses normalized time [0, 1] matching Jupyter notebook")
+    st.markdown("---")
+    
+    # Load raw data
+    if not hasattr(self, 'raw_data'):
+        self.load_raw_data_from_excel()
+    
+    if not hasattr(self, 'data_loaded') or not self.data_loaded:
+        st.error("⚠️ Excel files not found!")
+        st.info("""
+        **Place these files in the same directory as this app:**
+        - haveri.xlsx (or Haveri.xlsx)
+        - kalagategi.xlsx (or Kalagategi.xlsx)
+        - Bidar.xlsx (or bidar.xlsx)
+        - kalaburgi.xlsx (or Kalaburgi.xlsx)
+        - bailhongal.xlsx (or Bailhongal.xlsx)
         
-        # Load raw data
-        if not hasattr(self, 'raw_data'):
-            self.load_raw_data_from_excel()
-        
-        if not hasattr(self, 'data_loaded') or not self.data_loaded:
-            st.error("⚠️ Excel files not found!")
-            st.info("""
-            **Place these files in the same directory as this app:**
-            - haveri.xlsx
-            - kalagategi.xlsx
-            - Bidar.xlsx
-            - kalaburgi.xlsx
-            - bailhongal.xlsx
+        **Note:** Filenames are case-insensitive
+        """)
+        return
+    
+    if 'model_comparison' not in self.results:
+        st.error("⚠️ Model comparison data not found in results.")
+        return
+    
+    model_comparison = self.results['model_comparison']
+    
+    predict_functions = {
+        'Linear': self.predict_linear,
+        'Quadratic': self.predict_quadratic,
+        'Cubic': self.predict_cubic,
+        'Exponential': self.predict_exponential,
+        'Logistic': self.predict_logistic,
+        'Gompertz': self.predict_gompertz
+    }
+    
+    markets = list(model_comparison.keys())
+    variables = ['arrivals', 'prices']
+    models = ['Linear', 'Quadratic', 'Cubic', 'Exponential', 'Logistic', 'Gompertz']
+    
+    st.success(f"✅ Using REAL data from {len(self.raw_data)} Excel files")
+    st.info(f"📊 **Total Graphs:** {len(markets)} × {len(variables)} × {len(models)} = **{len(markets) * len(variables) * len(models)} graphs**")
+    
+    market_tabs = st.tabs(markets)
+    
+    for market_idx, market in enumerate(markets):
+        with market_tabs[market_idx]:
+            st.header(f"🏪 {market} Market")
             
-            **Note:** Filenames are case-insensitive
-            """)
-            return
-        
-        if 'model_comparison' not in self.results:
-            st.error("⚠️ Model comparison data not found in results.")
-            return
-        
-        model_comparison = self.results['model_comparison']
-        
-        predict_functions = {
-            'Linear': self.predict_linear,
-            'Quadratic': self.predict_quadratic,
-            'Cubic': self.predict_cubic,
-            'Exponential': self.predict_exponential,
-            'Logistic': self.predict_logistic,
-            'Gompertz': self.predict_gompertz
-        }
-        
-        markets = list(model_comparison.keys())
-        variables = ['arrivals', 'prices']
-        models = ['Linear', 'Quadratic', 'Cubic', 'Exponential', 'Logistic', 'Gompertz']
-        
-        st.success(f"✅ Using REAL data from {len(self.raw_data)} Excel files")
-        st.info(f"📊 **Total Graphs:** {len(markets)} × {len(variables)} × {len(models)} = **{len(markets) * len(variables) * len(models)} graphs**")
-        
-        market_tabs = st.tabs(markets)
-        
-        for market_idx, market in enumerate(markets):
-            with market_tabs[market_idx]:
-                st.header(f"🏪 {market} Market")
-                
-                var_tabs = st.tabs(['📦 Arrivals', '💰 Prices'])
-                
-                for var_idx, variable in enumerate(variables):
-                    with var_tabs[var_idx]:
-                        st.subheader(f"{variable.capitalize()} Models")
+            var_tabs = st.tabs(['📦 Arrivals', '💰 Prices'])
+            
+            for var_idx, variable in enumerate(variables):
+                with var_tabs[var_idx]:
+                    st.subheader(f"{variable.capitalize()} Models")
+                    
+                    # Get REAL actual data
+                    years, actual_values = self.get_actual_yearly_data(market, variable)
+                    
+                    if years is None or actual_values is None:
+                        st.warning(f"⚠️ Data not available for {market} {variable}")
+                        continue
+                    
+                    # Debug info
+                    with st.expander(f"🔍 Debug: {market} {variable}"):
+                        st.write(f"**Years:** {years[0]} to {years[-1]} ({len(years)} points)")
+                        st.write(f"**Value range:** {actual_values.min():.2f} to {actual_values.max():.2f}")
+                        st.write(f"**Mean:** {actual_values.mean():.2f}")
+                        st.write(f"**Zeros?** {(actual_values == 0).sum()}")
+                    
+                    # Check for zeros
+                    if np.all(actual_values == 0):
+                        st.error(f"❌ All values are ZERO!")
+                        continue
+                    
+                    model_data = model_comparison[market][variable]
+                    
+                    valid_models = [(m, model_data[m]['r2']) for m in models if model_data[m].get('fitted', False)]
+                    if valid_models:
+                        best_model, best_r2 = max(valid_models, key=lambda x: x[1])
+                        st.success(f"🏆 **Best Model:** {best_model} (R² = {best_r2:.4f})")
+                    
+                    # ===================================================
+                    # CRITICAL FIX: Create normalized time [0, 1]
+                    # This matches the Jupyter notebook exactly!
+                    # ===================================================
+                    n_points = len(years)
+                    x = np.arange(n_points)  # [0, 1, 2, 3, ...]
+                    t_normalized = (x - x.min()) / (x.max() - x.min() + 1e-10)  # [0, 1]
+                    
+                    st.info(f"📊 Data: {n_points} years | Normalized time: [0.0, 1.0]")
+                    
+                    for model_name in models:
+                        model_info = model_data[model_name]
                         
-                        # Get REAL actual data
-                        years, actual_values = self.get_actual_yearly_data(market, variable)
-                        
-                        if years is None or actual_values is None:
-                            st.warning(f"⚠️ Data not available for {market} {variable}")
+                        if not model_info.get('fitted', False):
                             continue
                         
-                        model_data = model_comparison[market][variable]
+                        params = model_info['params']
+                        r2 = model_info['r2']
+                        rmse = model_info['rmse']
                         
-                        valid_models = [(m, model_data[m]['r2']) for m in models if model_data[m].get('fitted', False)]
-                        if valid_models:
-                            best_model, best_r2 = max(valid_models, key=lambda x: x[1])
-                            st.success(f"🏆 **Best Model:** {best_model} (R² = {best_r2:.4f})")
+                        # Check for NaN
+                        if np.isnan(r2) or any(np.isnan(params)):
+                            st.warning(f"⚠️ {model_name}: Invalid parameters")
+                            continue
                         
-                        # Normalize time for predictions
-                        t_normalized = np.arange(len(years))
-                        
-                        for model_name in models:
-                            model_info = model_data[model_name]
+                        try:
+                            # ===============================================
+                            # CRITICAL: Predict using NORMALIZED time [0, 1]
+                            # ===============================================
+                            predict_fn = predict_functions[model_name]
+                            predicted_values = predict_fn(t_normalized, params)
                             
-                            if not model_info.get('fitted', False):
+                            # Validate predictions
+                            if np.any(np.isnan(predicted_values)) or np.any(np.isinf(predicted_values)):
+                                st.warning(f"⚠️ {model_name}: Invalid predictions")
                                 continue
                             
-                            params = model_info['params']
-                            r2 = model_info['r2']
-                            rmse = model_info['rmse']
+                            # Plot with REAL data
+                            fig = plot_model_fit_matplotlib(
+                                years=years,
+                                actual_values=actual_values,
+                                predicted_values=predicted_values,
+                                model_name=model_name,
+                                params=params,
+                                r2=r2,
+                                market_name=market,
+                                variable_name=variable
+                            )
                             
-                            try:
-                                predict_fn = predict_functions[model_name]
-                                predicted_values = predict_fn(t_normalized, params)
-                                
-                                # Plot with REAL data
-                                fig = plot_model_fit_matplotlib(
-                                    years=years,
-                                    actual_values=actual_values,
-                                    predicted_values=predicted_values,
-                                    model_name=model_name,
-                                    params=params,
-                                    r2=r2,
-                                    market_name=market,
-                                    variable_name=variable
-                                )
-                                
-                                st.pyplot(fig)
-                                plt.close(fig)
-                                
-                                buf = io.BytesIO()
-                                fig.savefig(buf, format='png', dpi=300, bbox_inches='tight')
-                                buf.seek(0)
-                                
-                                st.download_button(
-                                    label=f"📥 Download {model_name}",
-                                    data=buf,
-                                    file_name=f"{market}_{variable}_{model_name}.png",
-                                    mime="image/png",
-                                    key=f"dl_{market}_{variable}_{model_name}"
-                                )
-                                
-                                with st.expander(f"📊 {model_name} Details"):
-                                    col1, col2, col3, col4 = st.columns(4)
-                                    with col1:
-                                        st.metric("R²", f"{r2:.4f}")
-                                    with col2:
-                                        st.metric("RMSE", f"{rmse:.2f}")
-                                    with col3:
-                                        runs_pval = model_info.get('runs_pval')
-                                        sig = "**" if runs_pval and runs_pval < 0.01 else "*" if runs_pval and runs_pval < 0.05 else "NS"
-                                        st.metric("Runs", sig if runs_pval else "N/A")
-                                    with col4:
-                                        shapiro_pval = model_info.get('shapiro_pval')
-                                        sig = "**" if shapiro_pval and shapiro_pval < 0.01 else "*" if shapiro_pval and shapiro_pval < 0.05 else "NS"
-                                        st.metric("Shapiro", sig if shapiro_pval else "N/A")
-                                    
-                                    st.write("**Parameters:**")
-                                    for i, param in enumerate(params):
-                                        st.write(f"β{i}: {param:.6f}")
-                                    st.write(f"**Years:** {years[0]} - {years[-1]} ({len(years)} points)")
-                                
-                                st.markdown("---")
+                            st.pyplot(fig)
+                            plt.close(fig)
                             
-                            except Exception as e:
-                                st.error(f"Error plotting {model_name}: {str(e)}")
+                            buf = io.BytesIO()
+                            fig.savefig(buf, format='png', dpi=300, bbox_inches='tight')
+                            buf.seek(0)
+                            
+                            st.download_button(
+                                label=f"📥 Download {model_name}",
+                                data=buf,
+                                file_name=f"{market}_{variable}_{model_name}_FIXED.png",
+                                mime="image/png",
+                                key=f"dl_{market}_{variable}_{model_name}"
+                            )
+                            
+                            with st.expander(f"📊 {model_name} Details"):
+                                col1, col2, col3, col4 = st.columns(4)
+                                with col1:
+                                    st.metric("R²", f"{r2:.4f}")
+                                with col2:
+                                    st.metric("RMSE", f"{rmse:.2f}")
+                                with col3:
+                                    runs_pval = model_info.get('runs_pval')
+                                    sig = "**" if runs_pval and runs_pval < 0.01 else "*" if runs_pval and runs_pval < 0.05 else "NS"
+                                    st.metric("Runs", sig if runs_pval else "N/A")
+                                with col4:
+                                    shapiro_pval = model_info.get('shapiro_pval')
+                                    sig = "**" if shapiro_pval and shapiro_pval < 0.01 else "*" if shapiro_pval and shapiro_pval < 0.05 else "NS"
+                                    st.metric("Shapiro", sig if shapiro_pval else "N/A")
+                                
+                                st.write("**Parameters:**")
+                                for i, param in enumerate(params):
+                                    st.write(f"β{i}: {param:.6f}")
+                                
+                                st.markdown("**Data Summary:**")
+                                st.write(f"• Years: {years[0]} - {years[-1]}")
+                                st.write(f"• Actual range: {actual_values.min():.2f} - {actual_values.max():.2f}")
+                                st.write(f"• Predicted range: {predicted_values.min():.2f} - {predicted_values.max():.2f}")
+                            
+                            st.markdown("---")
                         
-                        st.subheader("📋 Model Rankings")
-                        comparison_data = []
-                        for model_name in models:
-                            model_info = model_data[model_name]
-                            if model_info.get('fitted', False):
-                                rank = sorted(
-                                    [(m, model_data[m]['r2']) for m in models if model_data[m].get('fitted', False)],
-                                    key=lambda x: x[1], reverse=True
-                                )
-                                rank_num = [x[0] for x in rank].index(model_name) + 1
-                                comparison_data.append({
-                                    'Rank': rank_num,
-                                    'Model': model_name,
-                                    'R²': f"{model_info['r2']:.4f}",
-                                    'RMSE': f"{model_info['rmse']:.2f}",
-                                    'Status': '🏆' if rank_num == 1 else '✓'
-                                })
-                        
-                        if comparison_data:
-                            df_comp = pd.DataFrame(comparison_data).sort_values('Rank')
-                            st.dataframe(df_comp, use_container_width=True, hide_index=True)
+                        except Exception as e:
+                            st.error(f"Error plotting {model_name}: {str(e)}")
+                    
+                    st.subheader("📋 Model Rankings")
+                    comparison_data = []
+                    for model_name in models:
+                        model_info = model_data[model_name]
+                        if model_info.get('fitted', False):
+                            rank = sorted(
+                                [(m, model_data[m]['r2']) for m in models if model_data[m].get('fitted', False)],
+                                key=lambda x: x[1], reverse=True
+                            )
+                            rank_num = [x[0] for x in rank].index(model_name) + 1
+                            comparison_data.append({
+                                'Rank': rank_num,
+                                'Model': model_name,
+                                'R²': f"{model_info['r2']:.4f}",
+                                'RMSE': f"{model_info['rmse']:.2f}",
+                                'Status': '🏆' if rank_num == 1 else '✓'
+                            })
+                    
+                    if comparison_data:
+                        df_comp = pd.DataFrame(comparison_data).sort_values('Rank')
+                        st.dataframe(df_comp, use_container_width=True, hide_index=True)
 
 def main():
     """Main application function"""
@@ -2507,3 +2544,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
