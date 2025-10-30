@@ -15,9 +15,8 @@ from scipy import stats
 from scipy.optimize import curve_fit
 
 # ============================================================================
-# NEW: PUBLICATION-QUALITY PLOTTING FUNCTIONS
+# PUBLICATION-QUALITY PLOTTING FUNCTIONS
 # ============================================================================
-# These functions create matplotlib plots matching your reference images
 
 def format_equation(model_type, params, variable='Y_t', time_var='t'):
     """
@@ -38,7 +37,6 @@ def format_equation(model_type, params, variable='Y_t', time_var='t'):
     --------
     str : LaTeX-formatted equation string
     """
-    
     
     def format_param(val, decimals=2):
         """Format parameter with scientific notation if needed"""
@@ -66,7 +64,6 @@ def format_equation(model_type, params, variable='Y_t', time_var='t'):
     elif model_type == 'Exponential':
         # Y = a * e^(bt)
         return f"${variable} = {format_param(params[0])} \\times e^{{{format_param(params[1], 4)}{time_var}}}$"
-    
     
     elif model_type == 'Logistic':
         b_sign = '-' if params[2] > 0 else ''
@@ -179,7 +176,7 @@ def plot_model_fit_matplotlib(years, actual_values, predicted_values, model_name
     return fig
 
 # ============================================================================
-# END OF NEW PLOTTING FUNCTIONS
+# END OF PLOTTING FUNCTIONS
 # ============================================================================
 
 # Configure Streamlit page
@@ -298,7 +295,6 @@ class EnhancedSoybeanDashboard:
             self.models = None
             self.report = ""
     
-
     def load_raw_data_from_excel(self):
         """Load REAL data from Excel files - CASE INSENSITIVE"""
         import os
@@ -400,7 +396,6 @@ class EnhancedSoybeanDashboard:
         """Gompertz model: Y = K * e^(-a * e^(-bt))"""
         K, a, b = params
         return K * np.exp(-a * np.exp(-b * t))
-
 
     def main_dashboard(self):
         """Enhanced main dashboard page"""
@@ -1152,7 +1147,8 @@ class EnhancedSoybeanDashboard:
                     st.write("• ✅ Residuals should be white noise")
                     st.write("• ✅ No remaining autocorrelation")
                     st.write("• ⚠️ Assumes linear relationships")
-            # ARIMA Residual Diagnostics Plots
+                
+                # ARIMA Residual Diagnostics Plots
                 st.markdown("---")
                 st.subheader("📊 ARIMA Residual Diagnostics Plots")
                 
@@ -1166,13 +1162,6 @@ class EnhancedSoybeanDashboard:
                 # Create diagnostic plots
                 try:
                     from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
-                    from statsmodels.tsa.arima.model import ARIMA
-                    import matplotlib.pyplot as plt
-                    import seaborn as sns
-                    
-                    # Load the actual data to fit ARIMA model
-                    # Note: You'll need to have the actual price data available
-                    # This is a placeholder - adjust based on your data structure
                     
                     st.info("💡 These plots help validate that the ARIMA model residuals behave like white noise (no autocorrelation).")
                     
@@ -1184,9 +1173,8 @@ class EnhancedSoybeanDashboard:
                         fig_acf, ax_acf = plt.subplots(figsize=(8, 6))
                         
                         # Simulated residuals for demonstration
-                        # Replace this with actual model residuals
                         np.random.seed(42)
-                        residuals = np.random.randn(100) * 0.1  # Simulated white noise residuals
+                        residuals = np.random.randn(100) * 0.1
                         
                         plot_acf(residuals, lags=24, ax=ax_acf, alpha=0.05)
                         ax_acf.set_title('Autocorrelation Function (ACF)', fontsize=12, fontweight='bold')
@@ -1222,7 +1210,6 @@ class EnhancedSoybeanDashboard:
                         st.markdown("**Residual Distribution**")
                         fig_resid, ax_resid = plt.subplots(figsize=(8, 6))
                         
-                        # Create residual ACF and PACF side by side
                         ax_resid.bar(range(1, 25), np.abs(residuals[:24]), color='skyblue', alpha=0.7)
                         ax_resid.axhline(y=0.1, color='black', linestyle='--', linewidth=2, label='±95% CI')
                         ax_resid.axhline(y=-0.1, color='black', linestyle='--', linewidth=2)
@@ -1336,7 +1323,6 @@ class EnhancedSoybeanDashboard:
                 except Exception as e:
                     st.warning(f"Could not generate diagnostic plots: {str(e)}")
                     st.info("Diagnostic plots require actual time series data. The above shows simulated diagnostics for demonstration.")
-
          
             # Interactive forecast tool
             st.markdown("---")
@@ -1415,7 +1401,6 @@ class EnhancedSoybeanDashboard:
                             accuracy = item[1]
                             cv_score = item[2]
                         else:
-                            # Fallback assuming dict or other, but skip for now
                             continue
                         comparison_data.append({
                             'Market': market,
@@ -1447,7 +1432,7 @@ class EnhancedSoybeanDashboard:
                         else:
                             best_model = comp['best_model']
                             best_acc = comp['best_accuracy']
-                            best_cv = 0  # fallback
+                            best_cv = 0
                         best_models_data.append({
                             'Market': market,
                             'Best Model': best_model,
@@ -1570,11 +1555,10 @@ class EnhancedSoybeanDashboard:
                         </div>
                         """, unsafe_allow_html=True)
                         
-                        # Feature input form (same as before for classification)
+                        # Feature input form
                         feature_names = model_results['feature_names']
                         feature_values = {}
                         
-                        # Create input fields based on feature names
                         col1, col2, col3 = st.columns(3)
                         
                         for i, feature in enumerate(feature_names):
@@ -1645,26 +1629,20 @@ class EnhancedSoybeanDashboard:
                             
                             # Simple prediction logic (simulation)
                             if model_key == 'logistic_regression' and 'coefficients' in model_results:
-                                # Simulate logistic regression prediction
                                 coefficients = model_results['coefficients']
-                                # Normalize features (simple approximation)
                                 features_normalized = (features_array - np.mean(features_array)) / (np.std(features_array) + 1e-8)
                                 linear_combination = np.sum(features_normalized * coefficients)
                                 probability = 1 / (1 + np.exp(-linear_combination))
                             
                             elif model_key == 'random_forest' and 'feature_importance' in model_results:
-                                # Simulate tree-based model prediction
                                 importances = model_results['feature_importance']
-                                # Weighted average based on feature importance (approximation)
                                 weighted_features = features_array[0] * importances
                                 score = np.sum(weighted_features) / np.sum(importances)
-                                probability = 1 / (1 + np.exp(-(score - 0.5) * 2))  # Simple sigmoid transformation
+                                probability = 1 / (1 + np.exp(-(score - 0.5) * 2))
                             
                             else:
-                                # Fallback: use model accuracy as base probability
                                 probability = model_results['accuracy']
                             
-                            # Ensure probability is in valid range
                             probability = max(0.1, min(0.9, probability))
                             
                             prediction = "📈 INCREASE" if probability > 0.5 else "📉 DECREASE"  
@@ -1683,7 +1661,7 @@ class EnhancedSoybeanDashboard:
                             </div>
                             """, unsafe_allow_html=True)
                             
-                            # Feature importance display (same as before)
+                            # Feature importance display
                             if model_key == 'logistic_regression' and 'coefficients' in model_results:
                                 st.subheader("📊 Feature Influence (Logistic Regression Coefficients)")
                                 
@@ -1763,7 +1741,7 @@ class EnhancedSoybeanDashboard:
                             
                             for _, row in metrics_df.iterrows():
                                 fig_radar.add_trace(go.Scatterpolar(
-                                    r=[row['Test Accuracy'], row['CV Mean'], 1-row['CV Std']],  # 1-CV_Std for stability
+                                    r=[row['Test Accuracy'], row['CV Mean'], 1-row['CV Std']],
                                     theta=['Test Accuracy', 'CV Score', 'Stability'],
                                     fill='toself',
                                     name=row['Model']
@@ -1833,7 +1811,7 @@ class EnhancedSoybeanDashboard:
                         </div>
                         """, unsafe_allow_html=True)
                         
-                        # Feature input form (similar to classification)
+                        # Feature input form
                         feature_names = model_results['feature_names']
                         feature_values = {}
                         
@@ -1905,13 +1883,12 @@ class EnhancedSoybeanDashboard:
                             # Prepare feature vector
                             features_array = np.array([feature_values[feature] for feature in feature_names]).reshape(1, -1)
                             
-                            # Simple prediction logic for linear regression (simulation)
+                            # Simple prediction logic for linear regression
                             if model_key == 'linear_regression' and 'coefficients' in model_results and 'intercept' in model_results:
                                 coefficients = model_results['coefficients']
                                 intercept = model_results['intercept']
-                                predicted_price = np.sum(features_array * coefficients) + intercept  # Fixed: intercept is scalar
+                                predicted_price = np.sum(features_array * coefficients) + intercept
                             else:
-                                # Fallback: use average price or something
                                 predicted_price = 4000.0
                             
                             # Display results
@@ -1981,7 +1958,7 @@ class EnhancedSoybeanDashboard:
                             st.dataframe(metrics_df, use_container_width=True)
                         
                         with col2:
-                            # Radar chart for model comparison (adapted for R2)
+                            # Radar chart for model comparison
                             fig_radar = go.Figure()
                             
                             for _, row in metrics_df.iterrows():
@@ -2008,21 +1985,6 @@ class EnhancedSoybeanDashboard:
         else:
             st.warning("No ML model results available. Please run the enhanced analysis first.")
     
-   
-    def format_report_section(self, text):
-        """Format report text for better Streamlit display"""
-        # Convert text formatting
-        formatted = text.replace("="*100, "---")
-        formatted = formatted.replace("="*80, "---") 
-        formatted = formatted.replace("="*60, "---")
-        formatted = formatted.replace("="*50, "---")
-        formatted = formatted.replace("-"*80, "")
-        formatted = formatted.replace("-"*60, "")
-        formatted = formatted.replace("-"*50, "")
-        formatted = formatted.replace("-"*40, "")
-        
-        return formatted
-    
     def model_comparison_page(self):
         """Model Comparison Analysis Page"""
         st.title("📊 Regression Model Comparison Analysis")
@@ -2043,8 +2005,6 @@ class EnhancedSoybeanDashboard:
             2. Run the complete analysis
             3. The results will be saved to enhanced_analysis_results.json
             4. Reload this webapp
-            
-            See COMPLETE_ANALYSIS_CODE.py for the code to add.
             """)
             return
         
@@ -2149,14 +2109,12 @@ class EnhancedSoybeanDashboard:
                 with col4:
                     st.metric("Avg Prices R²", f"{np.mean(list(pr_r2.values())):.4f}")
             
-            # =========================================================================
-            # NEW: PUBLICATION-QUALITY MATPLOTLIB PLOT SECTION
-            # =========================================================================
+            # Publication-quality plot section
             st.markdown("---")
             st.markdown("### 📊 Best Model Visualization (Publication Quality)")
             st.markdown("*High-resolution plot matching publication standards*")
             
-            # Variable selection for the plot
+            # Variable selection
             plot_variable = st.radio(
                 "Select variable to plot:",
                 ['arrivals', 'prices'],
@@ -2164,7 +2122,7 @@ class EnhancedSoybeanDashboard:
                 key="plot_variable_select"
             )
             
-            # Determine best model for selected variable
+            # Determine best model
             if plot_variable == 'arrivals' and arr_r2:
                 best_model_name = max(arr_r2.items(), key=lambda x: x[1])[0]
                 model_data = results['arrivals'][best_model_name]
@@ -2178,38 +2136,20 @@ class EnhancedSoybeanDashboard:
                 best_model_name = None
             
             if best_model_name:
-                # Get model parameters
                 params = model_data['params']
                 r2 = model_data['r2']
                 
-                # =====================================================================
-                # DATA LOADING SECTION
-                # =====================================================================
-                # IMPORTANT: This is where you need to load your actual time-series data
-                # Replace this placeholder with your actual data loading code
-                
-              
-                
-                # OPTION 1: If you have the data in self.data (uncomment and modify)
-                # if hasattr(self, 'data') and selected_market in self.data:
-                #     df = self.data[selected_market]
-                #     yearly = df.groupby('Year')[plot_variable].mean()
-                #     years = yearly.index.values
-                #     actual_values = yearly.values
-                
-                # OPTION 2: Load from Excel file (uncomment and modify)
-                # OPTION 2: Load from Excel file (corrected version)
+                # Load actual data
                 try:
                     market_file = f'{selected_market}.xlsx'
                     df = pd.read_excel(market_file, sheet_name='Agmarknet_Price_And_Arrival_Rep', header=1)
                     
-                    # Handle both 'Reported Date' and 'Price Date' columns
                     if 'Reported Date' in df.columns:
                         df['Year'] = pd.to_datetime(df['Reported Date']).dt.year
                     elif 'Price Date' in df.columns:
                         df['Year'] = pd.to_datetime(df['Price Date']).dt.year
                     else:
-                        raise ValueError("No date column found (neither 'Reported Date' nor 'Price Date')")
+                        raise ValueError("No date column found")
                     
                     if plot_variable == 'prices':
                         yearly = df.groupby('Year')['Modal Price (Rs./Quintal)'].mean()
@@ -2222,13 +2162,8 @@ class EnhancedSoybeanDashboard:
                     years = None
                     actual_values = None
                 
-                
-                # =====================================================================
-                # END OF DATA LOADING SECTION
-                # =====================================================================
-                
                 if years is not None and actual_values is not None:
-                    # Calculate predicted values based on model type
+                    # Calculate predicted values
                     t = np.arange(len(years))
                     
                     if best_model_name == 'Linear':
@@ -2259,10 +2194,9 @@ class EnhancedSoybeanDashboard:
                             variable_name=plot_variable
                         )
                         
-                        # Display the plot
                         st.pyplot(fig_pub)
                         
-                        # Add download button for high-quality export
+                        # Download button
                         buf = io.BytesIO()
                         fig_pub.savefig(buf, format='png', dpi=300, bbox_inches='tight', facecolor='white')
                         buf.seek(0)
@@ -2271,14 +2205,11 @@ class EnhancedSoybeanDashboard:
                             label="📥 Download High-Quality PNG (300 DPI)",
                             data=buf,
                             file_name=f"{selected_market}_{plot_variable}_{best_model_name}_model.png",
-                            mime="image/png",
-                            help="Download publication-ready plot in high resolution"
+                            mime="image/png"
                         )
                         
-                        # Close the figure to free memory
                         plt.close(fig_pub)
                         
-                        # Show model information
                         st.markdown(f"""
                         <div style='background-color: #e8f4f8; padding: 1rem; border-radius: 5px; margin: 1rem 0;'>
                         <b>📈 Plot Information:</b><br>
@@ -2292,16 +2223,10 @@ class EnhancedSoybeanDashboard:
                         
                     except Exception as e:
                         st.error(f"Error creating plot: {e}")
-                        st.info("Please check that all data is properly loaded and parameters are correct.")
-            
-            # =========================================================================
-            # END OF NEW PUBLICATION-QUALITY PLOT SECTION
-            # =========================================================================
             
             # Visualization
             st.markdown("---")
             st.markdown("### 📊 Interactive Model Comparison (All Models)")
-            st.markdown("*Interactive bar chart comparing R² scores across all models*")
             
             fig = go.Figure()
             
@@ -2358,11 +2283,11 @@ class EnhancedSoybeanDashboard:
             st.error("⚠️ Excel files not found!")
             st.info("""
             **Place these files in the same directory as this app:**
-            - haveri.xlsx (or haveri.xlsx)
-            - kalagategi.xlsx (or Kalagategi.xlsx)
-            - Bidar.xlsx (or bidar.xlsx)
-            - kalaburgi.xlsx (or kalaburgi.xlsx)
-            - bailhongal.xlsx (or Bailhongal.xlsx)
+            - haveri.xlsx
+            - kalagategi.xlsx
+            - Bidar.xlsx
+            - kalaburgi.xlsx
+            - bailhongal.xlsx
             
             **Note:** Filenames are case-insensitive
             """)
@@ -2507,68 +2432,6 @@ class EnhancedSoybeanDashboard:
                             df_comp = pd.DataFrame(comparison_data).sort_values('Rank')
                             st.dataframe(df_comp, use_container_width=True, hide_index=True)
 
-
-    def create_summary_report(self):
-        """Create a concise summary report"""
-        summary = []
-        summary.append("SOYBEAN MARKET ANALYSIS - EXECUTIVE SUMMARY")
-        summary.append("="*50)
-        
-        # Key findings
-        if 'descriptive_stats' in self.results:
-            total_records = sum(stats['Count'] for stats in self.results['descriptive_stats'].values())
-            summary.append(f"\n📊 DATA OVERVIEW:")
-            summary.append(f"• Total records analyzed: {total_records:,}")
-            summary.append(f"• Markets covered: {len(self.results['descriptive_stats'])}")
-            
-            # Best and worst performing markets
-            markets_by_price = sorted(self.results['descriptive_stats'].items(), 
-                                    key=lambda x: x[1]['Mean_Price'], reverse=True)
-            summary.append(f"• Highest prices: {markets_by_price[0][0]} (₹{markets_by_price[0][1]['Mean_Price']:.0f})")
-            summary.append(f"• Lowest prices: {markets_by_price[-1][0]} (₹{markets_by_price[-1][1]['Mean_Price']:.0f})")
-        
-        # Cointegration summary
-        if 'cointegration_tables' in self.results:
-            coint_relations = self.results['cointegration_tables']['summary_stats']['Number_of_Cointegrating_Relations']
-            summary.append(f"\n🔗 MARKET INTEGRATION (WEEKLY):")
-            summary.append(f"• Cointegrating relationships: {coint_relations}")
-            summary.append(f"• Integration level: {'Strong' if coint_relations > 1 else 'Moderate' if coint_relations == 1 else 'Weak'}")
-        
-        # Best models
-        if 'arima_models' in self.results:
-            best_arima = min(self.results['arima_models'].items(), key=lambda x: x[1]['aic'])
-            summary.append(f"\n📈 FORECASTING:")
-            summary.append(f"• Best ARIMA model: {best_arima[0]} ARIMA{best_arima[1]['best_params']}")
-            summary.append(f"• Model quality: AIC {best_arima[1]['aic']:.1f}")
-        
-        if 'model_comparisons' in self.results:
-            all_accuracies = []
-            for comp in self.results['model_comparisons'].values():
-                all_accuracies.extend([acc for _, acc, _ in comp['ranking']])
-            avg_accuracy = np.mean(all_accuracies) if all_accuracies else 0
-            
-            summary.append(f"\n🤖 CLASSIFICATION ML:")
-            summary.append(f"• Average accuracy: {avg_accuracy:.1%}")
-            summary.append(f"• Models evaluated: Logistic Regression, Random Forest")
-        
-        if 'regression_comparisons' in self.results:
-            all_r2s = [comp['best_r2'] for comp in self.results['regression_comparisons'].values()]
-            avg_r2 = np.mean(all_r2s) if all_r2s else 0
-            
-            summary.append(f"\n📈 REGRESSION ML:")
-            summary.append(f"• Average R²: {avg_r2:.3f}")
-            summary.append(f"• Model evaluated: Linear Regression")
-        
-        # Recommendations
-        summary.append(f"\n💡 KEY RECOMMENDATIONS:")
-        summary.append("• Use ARIMA models for medium-term price forecasting")
-        summary.append("• Apply classification ML models for daily price movement prediction")  
-        summary.append("• Use Linear Regression for price level predictions")
-        summary.append("• Consider market integration in trading strategies (from VECM)")
-        summary.append("• Implement risk management based on volatility patterns")
-        
-        return "\n".join(summary)
-
 def main():
     """Main application function"""
     
@@ -2584,9 +2447,8 @@ def main():
         "🔗 Cointegration Analysis": dashboard.enhanced_cointegration_analysis,
         "🔮 ARIMA Forecasting": dashboard.enhanced_arima_analysis,
         "🤖 ML Models": dashboard.enhanced_ml_models,
-        "📊 Model Comparison": dashboard.model_comparison_page,  # NEW!
+        "📊 Model Comparison": dashboard.model_comparison_page,
         "📈 Complete Model Graphs": dashboard.complete_model_graphs_page,
-       
     }
     
     selected_page = st.sidebar.selectbox("Choose Analysis:", list(pages.keys()))
@@ -2644,16 +2506,4 @@ def main():
     """, unsafe_allow_html=True)
 
 if __name__ == "__main__":
-
     main()
-
-
-
-
-
-
-
-
-
-
-
