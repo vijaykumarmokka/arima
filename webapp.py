@@ -2269,7 +2269,7 @@ class EnhancedSoybeanDashboard:
             </div>
             """, unsafe_allow_html=True)
     
-    def complete_model_graphs_page(self):
+def complete_model_graphs_page(self):
     """Complete Model Graphs - FIXED VERSION with normalized time [0,1]"""
     st.title("📈 Complete Model Comparison Graphs")
     st.markdown("### All Markets × All Models × All Variables (REAL DATA)")
@@ -2544,4 +2544,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
