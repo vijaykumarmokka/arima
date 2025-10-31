@@ -2784,7 +2784,8 @@ def main():
         "🔮 ARIMA Forecasting": dashboard.enhanced_arima_analysis,
         "🤖 ML Models": dashboard.enhanced_ml_models,
         "📊 Model Comparison": dashboard.model_comparison_page,
-        "📈 Fixed Model Graphs": dashboard.complete_model_graphs_page,  # FIXED label
+        "📈 Fixed Model Graphs": dashboard.complete_model_graphs_page,
+        "🔄 Granger Causality": dashboard.granger_causality_analysis, 
     }
     
     selected_page = st.sidebar.selectbox("Choose Analysis:", list(pages.keys()))
@@ -2843,4 +2844,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
