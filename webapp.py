@@ -234,132 +234,125 @@ class EnhancedSoybeanDashboard:
             self.models = None
             self.report = ""
     
-
-
-"""
-MATPLOTLIB ALTERNATIVE - No Plotly Issues
-Replace your create_interactive_network method with this if Plotly keeps failing
-"""
-
-def create_interactive_network(self, significant_df):
-    """Create network diagram using Matplotlib (Plotly alternative)"""
-    import networkx as nx
-    import matplotlib.pyplot as plt
-    from matplotlib.patches import FancyArrowPatch
-    import streamlit as st
-    import numpy as np
-    
-    # Create directed graph
-    G = nx.DiGraph()
-    
-    # Add nodes
-    G.add_nodes_from(self.markets_json)
-    
-    # Add edges
-    for _, row in significant_df.iterrows():
-        G.add_edge(row['source'], row['target'], 
-                  weight=row['F-statistic'],
-                  pvalue=row['P-value'])
-    
-    # Create figure
-    fig, ax = plt.subplots(figsize=(12, 10), facecolor='white')
-    ax.set_facecolor('white')
-    
-    # Calculate layout
-    pos = nx.spring_layout(G, k=2.5, iterations=100, seed=42)
-    
-    # Scale positions
-    for node in pos:
-        pos[node] = pos[node] * 2
-    
-    node_radius = 0.2
-    
-    # Draw ARROWS first (behind nodes)
-    for edge in G.edges():
-        source, target = edge
-        x1, y1 = pos[source]
-        x2, y2 = pos[target]
+    def create_interactive_network(self, significant_df):
+        """Create network diagram using Matplotlib (Plotly alternative)"""
+        import networkx as nx
+        import matplotlib.pyplot as plt
+        from matplotlib.patches import FancyArrowPatch
+        import streamlit as st
+        import numpy as np
         
-        # Direction vector
-        dx = x2 - x1
-        dy = y2 - y1
-        distance = np.sqrt(dx**2 + dy**2)
+        # Create directed graph
+        G = nx.DiGraph()
         
-        if distance > 0:
-            # Normalize
-            ux = dx / distance
-            uy = dy / distance
+        # Add nodes
+        G.add_nodes_from(self.markets_json)
+        
+        # Add edges
+        for _, row in significant_df.iterrows():
+            G.add_edge(row['source'], row['target'], 
+                      weight=row['F-statistic'],
+                      pvalue=row['P-value'])
+        
+        # Create figure
+        fig, ax = plt.subplots(figsize=(12, 10), facecolor='white')
+        ax.set_facecolor('white')
+        
+        # Calculate layout
+        pos = nx.spring_layout(G, k=2.5, iterations=100, seed=42)
+        
+        # Scale positions
+        for node in pos:
+            pos[node] = pos[node] * 2
+        
+        node_radius = 0.2
+        
+        # Draw ARROWS first (behind nodes)
+        for edge in G.edges():
+            source, target = edge
+            x1, y1 = pos[source]
+            x2, y2 = pos[target]
             
-            # Arrow start/end
-            arrow_start_x = x1 + ux * node_radius
-            arrow_start_y = y1 + uy * node_radius
-            arrow_end_x = x2 - ux * node_radius
-            arrow_end_y = y2 - uy * node_radius
+            # Direction vector
+            dx = x2 - x1
+            dy = y2 - y1
+            distance = np.sqrt(dx**2 + dy**2)
             
-            # Draw arrow
-            arrow = FancyArrowPatch(
-                (arrow_start_x, arrow_start_y),
-                (arrow_end_x, arrow_end_y),
-                arrowstyle='-|>',
-                mutation_scale=40,
-                linewidth=4,
-                color='blue',
-                zorder=1
-            )
-            ax.add_patch(arrow)
-    
-    # Draw NODES
-    for node in G.nodes():
-        x, y = pos[node]
-        circle = plt.Circle((x, y), node_radius,
-                           facecolor='orange',
-                           edgecolor='black',
-                           linewidth=2,
-                           zorder=2)
-        ax.add_patch(circle)
-    
-    # Draw LABELS
-    for node in G.nodes():
-        x, y = pos[node]
-        ax.text(x, y, node,
-               fontsize=11,
-               fontweight='bold',
-               ha='center',
-               va='center',
-               color='black',
-               zorder=3)
-    
-    # Set limits
-    all_x = [pos[node][0] for node in G.nodes()]
-    all_y = [pos[node][1] for node in G.nodes()]
-    margin = 0.5
-    ax.set_xlim(min(all_x) - margin, max(all_x) + margin)
-    ax.set_ylim(min(all_y) - margin, max(all_y) + margin)
-    ax.set_aspect('equal')
-    ax.axis('off')
-    
-    # Title
-    ax.set_title('Granger Causality Network', fontsize=16, fontweight='bold', pad=20)
-    
-    plt.tight_layout()
-    
-    # Display in Streamlit
-    st.pyplot(fig)
-    plt.close()
-    
-    # Add legend below
-    st.markdown("""
-    **Network Interpretation:**
-    - **Orange circles:** Markets
-    - **Blue arrows:** Direction of causal influence (Source → Target)
-    - **More outgoing arrows:** Market influences many others
-    - **More incoming arrows:** Market is influenced by many others
-    """)
-    
-    # Show connection details
-    st.markdown("### Connection Details:")
-    for _, row in significant_df.iterrows():
-        st.write(f"• **{row['source']}** → **{row['target']}** (F={row['F-statistic']:.3f}, p={row['P-value']:.4f})")
+            if distance > 0:
+                # Normalize
+                ux = dx / distance
+                uy = dy / distance
+                
+                # Arrow start/end
+                arrow_start_x = x1 + ux * node_radius
+                arrow_start_y = y1 + uy * node_radius
+                arrow_end_x = x2 - ux * node_radius
+                arrow_end_y = y2 - uy * node_radius
+                
+                # Draw arrow
+                arrow = FancyArrowPatch(
+                    (arrow_start_x, arrow_start_y),
+                    (arrow_end_x, arrow_end_y),
+                    arrowstyle='-|>',
+                    mutation_scale=40,
+                    linewidth=4,
+                    color='blue',
+                    zorder=1
+                )
+                ax.add_patch(arrow)
+        
+        # Draw NODES
+        for node in G.nodes():
+            x, y = pos[node]
+            circle = plt.Circle((x, y), node_radius,
+                               facecolor='orange',
+                               edgecolor='black',
+                               linewidth=2,
+                               zorder=2)
+            ax.add_patch(circle)
+        
+        # Draw LABELS
+        for node in G.nodes():
+            x, y = pos[node]
+            ax.text(x, y, node,
+                   fontsize=11,
+                   fontweight='bold',
+                   ha='center',
+                   va='center',
+                   color='black',
+                   zorder=3)
+        
+        # Set limits
+        all_x = [pos[node][0] for node in G.nodes()]
+        all_y = [pos[node][1] for node in G.nodes()]
+        margin = 0.5
+        ax.set_xlim(min(all_x) - margin, max(all_x) + margin)
+        ax.set_ylim(min(all_y) - margin, max(all_y) + margin)
+        ax.set_aspect('equal')
+        ax.axis('off')
+        
+        # Title
+        ax.set_title('Granger Causality Network', fontsize=16, fontweight='bold', pad=20)
+        
+        plt.tight_layout()
+        
+        # Display in Streamlit
+        st.pyplot(fig)
+        plt.close()
+        
+        # Add legend below
+        st.markdown("""
+        **Network Interpretation:**
+        - **Orange circles:** Markets
+        - **Blue arrows:** Direction of causal influence (Source → Target)
+        - **More outgoing arrows:** Market influences many others
+        - **More incoming arrows:** Market is influenced by many others
+        """)
+        
+        # Show connection details
+        st.markdown("### Connection Details:")
+        for _, row in significant_df.iterrows():
+            st.write(f"• **{row['source']}** → **{row['target']}** (F={row['F-statistic']:.3f}, p={row['P-value']:.4f})")
 
     def load_raw_data_from_excel(self):
         """Load REAL data from Excel files - ENHANCED WITH CASE-INSENSITIVITY FROM FIXED CODE"""
@@ -2493,6 +2486,100 @@ def create_interactive_network(self, significant_df):
                             ranking_df = ranking_df.sort_values('R²', ascending=False)
                             st.dataframe(ranking_df, use_container_width=True, hide_index=True)
 
+    def granger_causality_analysis(self):
+        """Granger Causality Analysis Page"""
+        st.title("🔄 Granger Causality Analysis")
+        
+        if 'granger_results' in self.results:
+            granger_data = self.results['granger_results']
+            
+            st.markdown("""
+            ### 📊 Granger Causality Test Results
+            **H₀:** The source market does NOT Granger-cause the target market
+            **H₁:** The source market DOES Granger-cause the target market
+            **Decision Rule:** p-value < 0.05 → Reject H₀ (causality exists)
+            """)
+            
+            # Summary statistics
+            col1, col2, col3 = st.columns(3)
+            
+            total_tests = len(granger_data['all_pairs'])
+            significant = len(granger_data['significant_pairs'])
+            rate = significant / total_tests * 100 if total_tests > 0 else 0
+            
+            with col1:
+                st.metric("Total Tests", total_tests)
+            
+            with col2:
+                st.metric("Significant Pairs", significant)
+            
+            with col3:
+                st.metric("Causality Rate", f"{rate:.1f}%")
+            
+            # Significant connections table
+            if 'significant_pairs' in granger_data and granger_data['significant_pairs']:
+                st.subheader("🔥 Significant Causal Relationships")
+                
+                sig_df = pd.DataFrame(granger_data['significant_pairs'])
+                sig_df['p-value'] = sig_df['p-value'].round(4)
+                sig_df['F-statistic'] = sig_df['F-statistic'].round(3)
+                
+                st.dataframe(sig_df, use_container_width=True)
+                
+                # Network visualization
+                st.subheader("🌐 Causality Network")
+                self.create_interactive_network(sig_df)
+            else:
+                st.warning("No significant Granger causality relationships found.")
+            
+            # All pairs table (expandable)
+            with st.expander("📋 All Granger Causality Test Results"):
+                all_df = pd.DataFrame(granger_data['all_pairs'])
+                all_df['p-value'] = all_df['p-value'].round(4)
+                all_df['F-statistic'] = all_df['F-statistic'].round(3)
+                
+                # Color code by significance
+                def color_significance(val):
+                    if val < 0.01:
+                        return 'background-color: #d4edda'  # Green
+                    elif val < 0.05:
+                        return 'background-color: #fff3cd'  # Yellow
+                    else:
+                        return 'background-color: #f8d7da'  # Red
+                
+                styled_all = all_df.style.applymap(color_significance, subset=['p-value'])
+                st.dataframe(styled_all, use_container_width=True)
+            
+            # Interpretation
+            st.markdown("---")
+            st.subheader("💡 Economic Interpretation")
+            
+            if rate > 50:
+                st.success("""
+                **Strong Market Interdependence:** Multiple significant causal relationships suggest 
+                markets are highly interconnected. Price changes in one market rapidly influence others.
+                """)
+            elif rate > 20:
+                st.info("""
+                **Moderate Interdependence:** Some causal relationships exist, indicating partial 
+                information flow between markets. Regional factors may still dominate.
+                """)
+            else:
+                st.warning("""
+                **Weak Interdependence:** Few significant relationships suggest markets operate 
+                relatively independently. Local supply/demand may drive prices more than inter-market effects.
+                """)
+                
+                st.markdown("""
+                ### 🏆 Key Insights:
+                - **Leading Markets:** Markets with many outgoing arrows (causing others)
+                - **Follower Markets:** Markets with many incoming arrows (caused by others)
+                - **Isolated Markets:** No significant in/out connections
+                - **Bidirectional Relationships:** Mutual influence between specific market pairs
+                """)
+        else:
+            st.warning("Granger causality results not available. Run the analysis first.")
+
 def main():
     """Main application function"""
     
@@ -2569,5 +2656,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
