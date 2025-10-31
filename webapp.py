@@ -416,13 +416,37 @@ class EnhancedSoybeanDashboard:
     def granger_causality_analysis(self):
         """Granger Causality Analysis Page"""
         st.title("🔄 Granger Causality Analysis")
+        st.markdown("### Directional Influence Between Markets (Causality Testing)")
         
         if 'granger_results' in self.results:
-            significant_df = self.results['granger_results']['significant_pairs']
-            self.create_interactive_network(significant_df)
+            granger_data = self.results['granger_results']
+            
+            # Summary
+            total_tests = len(granger_data['all_tests'])
+            significant = len(granger_data['significant_tests'])
+            
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                st.metric("Total Tests", total_tests)
+            with col2:
+                st.metric("Significant", significant)
+            with col3:
+                st.metric("Significance Rate", f"{significant/total_tests*100:.1f}%" if total_tests > 0 else "0%")
+            
+            # Network visualization
+            if 'significant_df' in granger_data and not granger_data['significant_df'].empty:
+                st.subheader("🌐 Causality Network")
+                self.create_interactive_network(granger_data['significant_df'])
+            else:
+                st.info("No significant causal relationships found.")
+            
+            # Detailed table
+            st.subheader("📊 Detailed Granger Causality Results")
+            if 'all_tests' in granger_data:
+                tests_df = pd.DataFrame(granger_data['all_tests'])
+                st.dataframe(tests_df, use_container_width=True)
         else:
-            st.warning("Granger causality results not available in results.")
-            st.info("Run the Granger causality analysis in your Jupyter notebook to generate this data.")
+            st.warning("Granger causality results not available.")
 
     def main_dashboard(self):
         """Enhanced main dashboard page"""
