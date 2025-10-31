@@ -7,4 +7,5 @@ scikit-learn
 statsmodels
 plotly
 streamlit
+networkx
 openpyxl
