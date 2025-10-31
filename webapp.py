@@ -234,408 +234,404 @@ class EnhancedSoybeanDashboard:
             self.models = None
             self.report = ""
     
-    """
-Granger Causality Page for Streamlit Dashboard
-Add this to your EnhancedSoybeanDashboard class
-"""
-
-def granger_causality_analysis(self):
-    """Enhanced Granger Causality Analysis Page"""
-    st.title("🔄 Granger Causality Analysis")
-    st.markdown("### Testing Causal Relationships Between Soybean Markets")
-    
-    st.markdown("""
-    <div style='background-color: #e8f4f8; padding: 1rem; border-radius: 5px; margin: 1rem 0;'>
-    <b>📚 What is Granger Causality?</b><br>
-    Granger causality tests whether one time series can predict another. If Market A "Granger-causes" Market B, 
-    it means past values of Market A help predict current values of Market B.<br><br>
-    <b>Interpretation:</b>
-    <ul>
-    <li><b>H₀ (Null Hypothesis):</b> Market X does NOT Granger-cause Market Y</li>
-    <li><b>If p-value < 0.05:</b> Reject H₀ → Market X DOES Granger-cause Market Y ✅</li>
-    <li><b>If p-value ≥ 0.05:</b> Accept H₀ → No causal relationship ❌</li>
-    </ul>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    # Check if we need to run the analysis
-    if not hasattr(self, 'granger_results'):
-        if st.button("🚀 Run Granger Causality Analysis", type="primary"):
-            with st.spinner("Running pairwise Granger causality tests..."):
-                self.run_granger_analysis()
-        else:
-            st.info("👆 Click the button above to run Granger causality tests")
-            return
-    
-    # Display results if available
-    if hasattr(self, 'granger_results') and self.granger_results is not None:
+    def granger_causality_analysis(self):
+        """Enhanced Granger Causality Analysis Page"""
+        st.title("🔄 Granger Causality Analysis")
+        st.markdown("### Testing Causal Relationships Between Soybean Markets")
         
-        # Summary metrics
-        significant = self.granger_results[
-            self.granger_results['Rejection of H₀ At 5 %'] == 'YES'
-        ]
+        st.markdown("""
+        <div style='background-color: #e8f4f8; padding: 1rem; border-radius: 5px; margin: 1rem 0;'>
+        <b>📚 What is Granger Causality?</b><br>
+        Granger causality tests whether one time series can predict another. If Market A "Granger-causes" Market B, 
+        it means past values of Market A help predict current values of Market B.<br><br>
+        <b>Interpretation:</b>
+        <ul>
+        <li><b>H₀ (Null Hypothesis):</b> Market X does NOT Granger-cause Market Y</li>
+        <li><b>If p-value < 0.05:</b> Reject H₀ → Market X DOES Granger-cause Market Y ✅</li>
+        <li><b>If p-value ≥ 0.05:</b> Accept H₀ → No causal relationship ❌</li>
+        </ul>
+        </div>
+        """, unsafe_allow_html=True)
         
-        col1, col2, col3, col4 = st.columns(4)
+        # Check if we need to run the analysis
+        if not hasattr(self, 'granger_results'):
+            if st.button("🚀 Run Granger Causality Analysis", type="primary"):
+                with st.spinner("Running pairwise Granger causality tests..."):
+                    self.run_granger_analysis()
+            else:
+                st.info("👆 Click the button above to run Granger causality tests")
+                return
         
-        with col1:
-            st.metric("Total Tests", len(self.granger_results))
-        
-        with col2:
-            st.metric("Significant", len(significant))
-        
-        with col3:
-            percent = len(significant) / len(self.granger_results) * 100 if len(self.granger_results) > 0 else 0
-            st.metric("Significance Rate", f"{percent:.1f}%")
-        
-        with col4:
-            markets_involved = len(set(significant['source'].tolist() + significant['target'].tolist()))
-            st.metric("Markets Involved", markets_involved)
-        
-        # Tabs for different views
-        tab1, tab2, tab3, tab4 = st.tabs([
-            "📋 Full Results Table", 
-            "🎯 Significant Relationships", 
-            "🌐 Network Diagram",
-            "📊 Detailed Analysis"
-        ])
-        
-        with tab1:
-            st.subheader("Complete Granger Causality Test Results")
+        # Display results if available
+        if hasattr(self, 'granger_results') and self.granger_results is not None:
             
-            # Format display
-            display_df = self.granger_results[[
-                'Null Hypothesis', 'F-statistic', 'P-value', 'Rejection of H₀ At 5 %'
-            ]].copy()
-            display_df['F-statistic'] = display_df['F-statistic'].round(3)
-            display_df['P-value'] = display_df['P-value'].round(4)
+            # Summary metrics
+            significant = self.granger_results[
+                self.granger_results['Rejection of H₀ At 5 %'] == 'YES'
+            ]
             
-            # Style the dataframe
-            def highlight_significant(row):
-                if row['Rejection of H₀ At 5 %'] == 'YES':
-                    return ['background-color: #d4edda'] * len(row)
-                return [''] * len(row)
+            col1, col2, col3, col4 = st.columns(4)
             
-            styled_df = display_df.style.apply(highlight_significant, axis=1)
-            st.dataframe(styled_df, use_container_width=True, hide_index=True)
+            with col1:
+                st.metric("Total Tests", len(self.granger_results))
             
-            # Download button
-            csv = display_df.to_csv(index=False)
-            st.download_button(
-                label="📥 Download Full Results (CSV)",
-                data=csv,
-                file_name="granger_causality_results.csv",
-                mime="text/csv"
-            )
-        
-        with tab2:
-            st.subheader("Significant Causal Relationships (p < 0.05)")
+            with col2:
+                st.metric("Significant", len(significant))
             
-            if len(significant) > 0:
-                st.markdown(f"**Found {len(significant)} significant causal relationships:**")
+            with col3:
+                percent = len(significant) / len(self.granger_results) * 100 if len(self.granger_results) > 0 else 0
+                st.metric("Significance Rate", f"{percent:.1f}%")
+            
+            with col4:
+                markets_involved = len(set(significant['source'].tolist() + significant['target'].tolist()))
+                st.metric("Markets Involved", markets_involved)
+            
+            # Tabs for different views
+            tab1, tab2, tab3, tab4 = st.tabs([
+                "📋 Full Results Table", 
+                "🎯 Significant Relationships", 
+                "🌐 Network Diagram",
+                "📊 Detailed Analysis"
+            ])
+            
+            with tab1:
+                st.subheader("Complete Granger Causality Test Results")
                 
-                # Create a more readable format
-                for idx, row in significant.iterrows():
-                    col1, col2, col3 = st.columns([2, 1, 1])
+                # Format display
+                display_df = self.granger_results[[
+                    'Null Hypothesis', 'F-statistic', 'P-value', 'Rejection of H₀ At 5 %'
+                ]].copy()
+                display_df['F-statistic'] = display_df['F-statistic'].round(3)
+                display_df['P-value'] = display_df['P-value'].round(4)
+                
+                # Style the dataframe
+                def highlight_significant(row):
+                    if row['Rejection of H₀ At 5 %'] == 'YES':
+                        return ['background-color: #d4edda'] * len(row)
+                    return [''] * len(row)
+                
+                styled_df = display_df.style.apply(highlight_significant, axis=1)
+                st.dataframe(styled_df, use_container_width=True, hide_index=True)
+                
+                # Download button
+                csv = display_df.to_csv(index=False)
+                st.download_button(
+                    label="📥 Download Full Results (CSV)",
+                    data=csv,
+                    file_name="granger_causality_results.csv",
+                    mime="text/csv"
+                )
+            
+            with tab2:
+                st.subheader("Significant Causal Relationships (p < 0.05)")
+                
+                if len(significant) > 0:
+                    st.markdown(f"**Found {len(significant)} significant causal relationships:**")
+                    
+                    # Create a more readable format
+                    for idx, row in significant.iterrows():
+                        col1, col2, col3 = st.columns([2, 1, 1])
+                        
+                        with col1:
+                            st.markdown(f"**{row['source']}** → **{row['target']}**")
+                        
+                        with col2:
+                            st.metric("F-statistic", f"{row['F-statistic']:.3f}")
+                        
+                        with col3:
+                            st.metric("p-value", f"{row['P-value']:.4f}")
+                        
+                        st.markdown("---")
+                    
+                    # Matrix visualization
+                    st.subheader("Causality Matrix")
+                    
+                    # Create adjacency matrix
+                    markets = sorted(set(self.granger_results['source'].tolist()))
+                    matrix = pd.DataFrame(0, index=markets, columns=markets)
+                    
+                    for _, row in significant.iterrows():
+                        matrix.loc[row['source'], row['target']] = 1
+                    
+                    # Heatmap
+                    fig = px.imshow(
+                        matrix,
+                        labels=dict(x="Caused Market", y="Causing Market", color="Causal"),
+                        x=matrix.columns,
+                        y=matrix.index,
+                        color_continuous_scale='Blues',
+                        title="Granger Causality Matrix (1 = Significant Causality)"
+                    )
+                    fig.update_layout(height=600)
+                    st.plotly_chart(fig, use_container_width=True)
+                    
+                else:
+                    st.warning("⚠️ No significant causal relationships found at 5% significance level")
+            
+            with tab3:
+                st.subheader("Network Diagram")
+                
+                if len(significant) > 0:
+                    # Create network visualization
+                    self.create_interactive_network(significant)
+                else:
+                    st.info("No significant relationships to visualize")
+            
+            with tab4:
+                st.subheader("Detailed Market-wise Analysis")
+                
+                selected_market = st.selectbox(
+                    "Select market to analyze:",
+                    self.markets_json
+                )
+                
+                if selected_market:
+                    col1, col2 = st.columns(2)
                     
                     with col1:
-                        st.markdown(f"**{row['source']}** → **{row['target']}**")
+                        st.markdown(f"### 📤 {selected_market} Causes:")
+                        causes = self.granger_results[
+                            (self.granger_results['source'] == selected_market) &
+                            (self.granger_results['Rejection of H₀ At 5 %'] == 'YES')
+                        ]
+                        
+                        if len(causes) > 0:
+                            for _, row in causes.iterrows():
+                                st.success(f"✅ {row['target']} (F={row['F-statistic']:.3f}, p={row['P-value']:.4f})")
+                        else:
+                            st.info(f"{selected_market} does not significantly cause any other market")
                     
                     with col2:
-                        st.metric("F-statistic", f"{row['F-statistic']:.3f}")
+                        st.markdown(f"### 📥 Causes {selected_market}:")
+                        caused_by = self.granger_results[
+                            (self.granger_results['target'] == selected_market) &
+                            (self.granger_results['Rejection of H₀ At 5 %'] == 'YES')
+                        ]
+                        
+                        if len(caused_by) > 0:
+                            for _, row in caused_by.iterrows():
+                                st.success(f"✅ {row['source']} (F={row['F-statistic']:.3f}, p={row['P-value']:.4f})")
+                        else:
+                            st.info(f"No other market significantly causes {selected_market}")
                     
-                    with col3:
-                        st.metric("p-value", f"{row['P-value']:.4f}")
-                    
+                    # Market influence score
                     st.markdown("---")
-                
-                # Matrix visualization
-                st.subheader("Causality Matrix")
-                
-                # Create adjacency matrix
-                markets = sorted(set(self.granger_results['source'].tolist()))
-                matrix = pd.DataFrame(0, index=markets, columns=markets)
-                
-                for _, row in significant.iterrows():
-                    matrix.loc[row['source'], row['target']] = 1
-                
-                # Heatmap
-                fig = px.imshow(
-                    matrix,
-                    labels=dict(x="Caused Market", y="Causing Market", color="Causal"),
-                    x=matrix.columns,
-                    y=matrix.index,
-                    color_continuous_scale='Blues',
-                    title="Granger Causality Matrix (1 = Significant Causality)"
-                )
-                fig.update_layout(height=600)
-                st.plotly_chart(fig, use_container_width=True)
-                
-            else:
-                st.warning("⚠️ No significant causal relationships found at 5% significance level")
-        
-        with tab3:
-            st.subheader("Network Diagram")
-            
-            if len(significant) > 0:
-                # Create network visualization
-                self.create_interactive_network(significant)
-            else:
-                st.info("No significant relationships to visualize")
-        
-        with tab4:
-            st.subheader("Detailed Market-wise Analysis")
-            
-            selected_market = st.selectbox(
-                "Select market to analyze:",
-                self.markets_json
-            )
-            
-            if selected_market:
-                col1, col2 = st.columns(2)
-                
-                with col1:
-                    st.markdown(f"### 📤 {selected_market} Causes:")
-                    causes = self.granger_results[
-                        (self.granger_results['source'] == selected_market) &
-                        (self.granger_results['Rejection of H₀ At 5 %'] == 'YES')
-                    ]
+                    st.subheader("Market Influence Scores")
                     
-                    if len(causes) > 0:
-                        for _, row in causes.iterrows():
-                            st.success(f"✅ {row['target']} (F={row['F-statistic']:.3f}, p={row['P-value']:.4f})")
-                    else:
-                        st.info(f"{selected_market} does not significantly cause any other market")
-                
-                with col2:
-                    st.markdown(f"### 📥 Causes {selected_market}:")
-                    caused_by = self.granger_results[
-                        (self.granger_results['target'] == selected_market) &
-                        (self.granger_results['Rejection of H₀ At 5 %'] == 'YES')
-                    ]
+                    influence_data = []
+                    for market in self.markets_json:
+                        outgoing = len(self.granger_results[
+                            (self.granger_results['source'] == market) &
+                            (self.granger_results['Rejection of H₀ At 5 %'] == 'YES')
+                        ])
+                        incoming = len(self.granger_results[
+                            (self.granger_results['target'] == market) &
+                            (self.granger_results['Rejection of H₀ At 5 %'] == 'YES')
+                        ])
+                        
+                        influence_data.append({
+                            'Market': market,
+                            'Influences Others': outgoing,
+                            'Influenced By': incoming,
+                            'Net Influence': outgoing - incoming
+                        })
                     
-                    if len(caused_by) > 0:
-                        for _, row in caused_by.iterrows():
-                            st.success(f"✅ {row['source']} (F={row['F-statistic']:.3f}, p={row['P-value']:.4f})")
-                    else:
-                        st.info(f"No other market significantly causes {selected_market}")
-                
-                # Market influence score
-                st.markdown("---")
-                st.subheader("Market Influence Scores")
-                
-                influence_data = []
-                for market in self.markets_json:
-                    outgoing = len(self.granger_results[
-                        (self.granger_results['source'] == market) &
-                        (self.granger_results['Rejection of H₀ At 5 %'] == 'YES')
-                    ])
-                    incoming = len(self.granger_results[
-                        (self.granger_results['target'] == market) &
-                        (self.granger_results['Rejection of H₀ At 5 %'] == 'YES')
-                    ])
+                    influence_df = pd.DataFrame(influence_data)
                     
-                    influence_data.append({
-                        'Market': market,
-                        'Influences Others': outgoing,
-                        'Influenced By': incoming,
-                        'Net Influence': outgoing - incoming
-                    })
-                
-                influence_df = pd.DataFrame(influence_data)
-                
-                fig = px.bar(
-                    influence_df,
-                    x='Market',
-                    y=['Influences Others', 'Influenced By'],
-                    title='Market Influence Patterns',
-                    barmode='group',
-                    labels={'value': 'Number of Relationships', 'variable': 'Type'}
-                )
-                st.plotly_chart(fig, use_container_width=True)
-                
-                st.dataframe(influence_df, use_container_width=True, hide_index=True)
+                    fig = px.bar(
+                        influence_df,
+                        x='Market',
+                        y=['Influences Others', 'Influenced By'],
+                        title='Market Influence Patterns',
+                        barmode='group',
+                        labels={'value': 'Number of Relationships', 'variable': 'Type'}
+                    )
+                    st.plotly_chart(fig, use_container_width=True)
+                    
+                    st.dataframe(influence_df, use_container_width=True, hide_index=True)
 
-def run_granger_analysis(self):
-    """Run Granger causality tests"""
-    from statsmodels.tsa.stattools import grangercausalitytests
-    
-    # Load raw data
-    self.load_raw_data_from_excel()
-    
-    if not self.data_loaded:
-        st.error("❌ Could not load market data. Please check Excel files.")
-        return
-    
-    # Prepare weekly data for all markets
-    weekly_data = {}
-    
-    for market in self.markets_json:
-        if market in self.raw_data:
-            df = self.raw_data[market].copy()
-            
-            # Get date and price
-            if 'Reported Date' in df.columns:
-                df['Date'] = pd.to_datetime(df['Reported Date'])
-            elif 'Price Date' in df.columns:
-                df['Date'] = pd.to_datetime(df['Price Date'])
-            
-            df = df[['Date', 'Modal Price (Rs./Quintal)']].dropna()
-            df.columns = ['Date', 'Price']
-            df.set_index('Date', inplace=True)
-            
-            # Resample to weekly
-            weekly = df.resample('W').mean().dropna()
-            weekly_data[market] = weekly
-    
-    # Run pairwise tests
-    results = []
-    max_lag = 4
-    
-    progress_bar = st.progress(0)
-    status_text = st.empty()
-    
-    total_tests = len(self.markets_json) * (len(self.markets_json) - 1)
-    test_count = 0
-    
-    for market1 in self.markets_json:
-        for market2 in self.markets_json:
-            if market1 == market2:
-                continue
-            
-            test_count += 1
-            progress_bar.progress(test_count / total_tests)
-            status_text.text(f"Testing: {market1} → {market2} ({test_count}/{total_tests})")
-            
-            if market1 not in weekly_data or market2 not in weekly_data:
-                continue
-            
-            try:
-                # Combine data
-                combined = pd.DataFrame({
-                    market1: weekly_data[market1]['Price'],
-                    market2: weekly_data[market2]['Price']
-                }).dropna()
+    def run_granger_analysis(self):
+        """Run Granger causality tests"""
+        from statsmodels.tsa.stattools import grangercausalitytests
+        
+        # Load raw data
+        self.load_raw_data_from_excel()
+        
+        if not self.data_loaded:
+            st.error("❌ Could not load market data. Please check Excel files.")
+            return
+        
+        # Prepare weekly data for all markets
+        weekly_data = {}
+        
+        for market in self.markets_json:
+            if market in self.raw_data:
+                df = self.raw_data[market].copy()
                 
-                if len(combined) < 30:
+                # Get date and price
+                if 'Reported Date' in df.columns:
+                    df['Date'] = pd.to_datetime(df['Reported Date'])
+                elif 'Price Date' in df.columns:
+                    df['Date'] = pd.to_datetime(df['Price Date'])
+                
+                df = df[['Date', 'Modal Price (Rs./Quintal)']].dropna()
+                df.columns = ['Date', 'Price']
+                df.set_index('Date', inplace=True)
+                
+                # Resample to weekly
+                weekly = df.resample('W').mean().dropna()
+                weekly_data[market] = weekly
+        
+        # Run pairwise tests
+        results = []
+        max_lag = 4
+        
+        progress_bar = st.progress(0)
+        status_text = st.empty()
+        
+        total_tests = len(self.markets_json) * (len(self.markets_json) - 1)
+        test_count = 0
+        
+        for market1 in self.markets_json:
+            for market2 in self.markets_json:
+                if market1 == market2:
                     continue
                 
-                # Run test
-                test_data = combined[[market2, market1]]
-                test_result = grangercausalitytests(test_data, maxlag=max_lag, verbose=False)
+                test_count += 1
+                progress_bar.progress(test_count / total_tests)
+                status_text.text(f"Testing: {market1} → {market2} ({test_count}/{total_tests})")
                 
-                # Extract results (using lag 1)
-                f_stat = test_result[1][0]['ssr_ftest'][0]
-                p_value = test_result[1][0]['ssr_ftest'][1]
+                if market1 not in weekly_data or market2 not in weekly_data:
+                    continue
                 
-                results.append({
-                    'Null Hypothesis': f"{market1} does not Granger cause {market2}",
-                    'F-statistic': f_stat,
-                    'P-value': p_value,
-                    'Rejection of H₀ At 5 %': 'YES' if p_value < 0.05 else 'NO',
-                    'source': market1,
-                    'target': market2
-                })
-            
-            except Exception as e:
-                st.warning(f"Error testing {market1} → {market2}: {e}")
-                continue
-    
-    progress_bar.empty()
-    status_text.empty()
-    
-    self.granger_results = pd.DataFrame(results)
-    st.success(f"✅ Completed {len(results)} Granger causality tests!")
-
-def create_interactive_network(self, significant_df):
-    """Create interactive network diagram"""
-    import networkx as nx
-    
-    # Create directed graph
-    G = nx.DiGraph()
-    
-    # Add nodes
-    G.add_nodes_from(self.markets_json)
-    
-    # Add edges
-    for _, row in significant_df.iterrows():
-        G.add_edge(row['source'], row['target'], 
-                  weight=row['F-statistic'],
-                  pvalue=row['P-value'])
-    
-    # Calculate layout
-    pos = nx.spring_layout(G, k=2, iterations=50, seed=42)
-    
-    # Create edge trace
-    edge_x = []
-    edge_y = []
-    for edge in G.edges():
-        x0, y0 = pos[edge[0]]
-        x1, y1 = pos[edge[1]]
-        edge_x.extend([x0, x1, None])
-        edge_y.extend([y0, y1, None])
-    
-    edge_trace = go.Scatter(
-        x=edge_x, y=edge_y,
-        line=dict(width=2, color='#0000FF'),
-        hoverinfo='none',
-        mode='lines',
-        showlegend=False
-    )
-    
-    # Create node trace
-    node_x = []
-    node_y = []
-    node_text = []
-    
-    for node in G.nodes():
-        x, y = pos[node]
-        node_x.append(x)
-        node_y.append(y)
+                try:
+                    # Combine data
+                    combined = pd.DataFrame({
+                        market1: weekly_data[market1]['Price'],
+                        market2: weekly_data[market2]['Price']
+                    }).dropna()
+                    
+                    if len(combined) < 30:
+                        continue
+                    
+                    # Run test
+                    test_data = combined[[market2, market1]]
+                    test_result = grangercausalitytests(test_data, maxlag=max_lag, verbose=False)
+                    
+                    # Extract results (using lag 1)
+                    f_stat = test_result[1][0]['ssr_ftest'][0]
+                    p_value = test_result[1][0]['ssr_ftest'][1]
+                    
+                    results.append({
+                        'Null Hypothesis': f"{market1} does not Granger cause {market2}",
+                        'F-statistic': f_stat,
+                        'P-value': p_value,
+                        'Rejection of H₀ At 5 %': 'YES' if p_value < 0.05 else 'NO',
+                        'source': market1,
+                        'target': market2
+                    })
+                
+                except Exception as e:
+                    st.warning(f"Error testing {market1} → {market2}: {e}")
+                    continue
         
-        # Count connections
-        out_degree = G.out_degree(node)
-        in_degree = G.in_degree(node)
-        node_text.append(f"{node}<br>Influences: {out_degree}<br>Influenced by: {in_degree}")
-    
-    node_trace = go.Scatter(
-        x=node_x, y=node_y,
-        mode='markers+text',
-        hoverinfo='text',
-        text=[node for node in G.nodes()],
-        hovertext=node_text,
-        textposition="middle center",
-        marker=dict(
-            size=40,
-            color='#FFA500',
-            line=dict(width=2, color='black')
-        ),
-        textfont=dict(size=12, color='black', family='Arial Black'),
-        showlegend=False
-    )
-    
-    # Create figure
-    fig = go.Figure(data=[edge_trace, node_trace],
-                   layout=go.Layout(
-                       title='Granger Causality Network',
-                       titlefont_size=16,
-                       showlegend=False,
-                       hovermode='closest',
-                       margin=dict(b=20, l=5, r=5, t=40),
-                       xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
-                       yaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
-                       height=600
-                   ))
-    
-    st.plotly_chart(fig, use_container_width=True)
-    
-    # Add legend
-    st.markdown("""
-    **Network Interpretation:**
-    - **Nodes (circles):** Markets
-    - **Arrows:** Direction of causal influence
-    - **Larger influence:** More outgoing arrows = market influences many others
-    - **More influenced:** More incoming arrows = market is influenced by many others
-    """)
+        progress_bar.empty()
+        status_text.empty()
+        
+        self.granger_results = pd.DataFrame(results)
+        st.success(f"✅ Completed {len(results)} Granger causality tests!")
+
+    def create_interactive_network(self, significant_df):
+        """Create interactive network diagram"""
+        import networkx as nx
+        
+        # Create directed graph
+        G = nx.DiGraph()
+        
+        # Add nodes
+        G.add_nodes_from(self.markets_json)
+        
+        # Add edges
+        for _, row in significant_df.iterrows():
+            G.add_edge(row['source'], row['target'], 
+                      weight=row['F-statistic'],
+                      pvalue=row['P-value'])
+        
+        # Calculate layout
+        pos = nx.spring_layout(G, k=2, iterations=50, seed=42)
+        
+        # Create edge trace
+        edge_x = []
+        edge_y = []
+        for edge in G.edges():
+            x0, y0 = pos[edge[0]]
+            x1, y1 = pos[edge[1]]
+            edge_x.extend([x0, x1, None])
+            edge_y.extend([y0, y1, None])
+        
+        edge_trace = go.Scatter(
+            x=edge_x, y=edge_y,
+            line=dict(width=2, color='#0000FF'),
+            hoverinfo='none',
+            mode='lines',
+            showlegend=False
+        )
+        
+        # Create node trace
+        node_x = []
+        node_y = []
+        node_text = []
+        
+        for node in G.nodes():
+            x, y = pos[node]
+            node_x.append(x)
+            node_y.append(y)
+            
+            # Count connections
+            out_degree = G.out_degree(node)
+            in_degree = G.in_degree(node)
+            node_text.append(f"{node}<br>Influences: {out_degree}<br>Influenced by: {in_degree}")
+        
+        node_trace = go.Scatter(
+            x=node_x, y=node_y,
+            mode='markers+text',
+            hoverinfo='text',
+            text=[node for node in G.nodes()],
+            hovertext=node_text,
+            textposition="middle center",
+            marker=dict(
+                size=40,
+                color='#FFA500',
+                line=dict(width=2, color='black')
+            ),
+            textfont=dict(size=12, color='black', family='Arial Black'),
+            showlegend=False
+        )
+        
+        # Create figure
+        fig = go.Figure(data=[edge_trace, node_trace],
+                       layout=go.Layout(
+                           title='Granger Causality Network',
+                           titlefont_size=16,
+                           showlegend=False,
+                           hovermode='closest',
+                           margin=dict(b=20, l=5, r=5, t=40),
+                           xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
+                           yaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
+                           height=600
+                       ))
+        
+        st.plotly_chart(fig, use_container_width=True)
+        
+        # Add legend
+        st.markdown("""
+        **Network Interpretation:**
+        - **Nodes (circles):** Markets
+        - **Arrows:** Direction of causal influence
+        - **Larger influence:** More outgoing arrows = market influences many others
+        - **More influenced:** More incoming arrows = market is influenced by many others
+        """)
+
     def load_raw_data_from_excel(self):
         """Load REAL data from Excel files - ENHANCED WITH CASE-INSENSITIVITY FROM FIXED CODE"""
         self.raw_data = {}
@@ -671,7 +667,7 @@ def create_interactive_network(self, significant_df):
         
         if self.data_loaded:
             st.sidebar.success(f"✅ **Total: {len(self.raw_data)} markets loaded**")
-    
+
     def get_actual_yearly_data(self, market, variable):
         """Get actual yearly aggregated data - WITH VALIDATION FROM FIXED CODE"""
         if market not in self.raw_data:
@@ -918,7 +914,7 @@ def create_interactive_network(self, significant_df):
                 kurtosis_df = df_markets[['Market', 'Kurtosis']].copy()
                 kurtosis_df['Kurtosis'] = kurtosis_df['Kurtosis'].round(3)
                 st.dataframe(kurtosis_df, use_container_width=True)
-    
+
     def enhanced_cointegration_analysis(self):
         """Enhanced cointegration analysis page with full VECM pipeline"""
         st.title("🔗 Comprehensive Cointegration Analysis (Weekly Data + VECM Pipeline)")
@@ -1249,7 +1245,7 @@ def create_interactive_network(self, significant_df):
         
         else:
             st.warning("Cointegration analysis results not available.")
-    
+
     def enhanced_arima_analysis(self):
         """Enhanced ARIMA analysis with detailed explanations"""
         st.title("🔮 Enhanced ARIMA Forecasting with Model Selection Explanations")
@@ -1679,7 +1675,7 @@ def create_interactive_network(self, significant_df):
         
         else:
             st.warning("No ARIMA models available. Please run the analysis first.")
-    
+
     def enhanced_ml_models(self):
         """Enhanced ML models page with forms for all three models (Classification & Regression)"""
         st.title("🤖 Enhanced Machine Learning Models")
@@ -2282,7 +2278,7 @@ def create_interactive_network(self, significant_df):
         
         else:
             st.warning("No ML model results available. Please run the enhanced analysis first.")
-    
+
     def model_comparison_page(self):
         """Model Comparison Analysis Page - ENHANCED WITH FIXED LOGIC"""
         st.title("📊 Fixed Regression Model Comparison Analysis")
@@ -2563,7 +2559,7 @@ def create_interactive_network(self, significant_df):
             </ul>
             </div>
             """, unsafe_allow_html=True)
-    
+
     def complete_model_graphs_page(self):
         """Complete Model Graphs - FULLY REPLACED WITH FIXED LOGIC"""
         st.title("📈 Fixed Complete Model Comparison Graphs")
@@ -2844,5 +2840,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
