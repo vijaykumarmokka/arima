@@ -233,133 +233,126 @@ class EnhancedSoybeanDashboard:
             self.results = {}
             self.models = None
             self.report = ""
-    
 
-
-"""
-MATPLOTLIB ALTERNATIVE - No Plotly Issues
-Replace your create_interactive_network method with this if Plotly keeps failing
-"""
-
-def create_interactive_network(self, significant_df):
-    """Create network diagram using Matplotlib (Plotly alternative)"""
-    import networkx as nx
-    import matplotlib.pyplot as plt
-    from matplotlib.patches import FancyArrowPatch
-    import streamlit as st
-    import numpy as np
-    
-    # Create directed graph
-    G = nx.DiGraph()
-    
-    # Add nodes
-    G.add_nodes_from(self.markets_json)
-    
-    # Add edges
-    for _, row in significant_df.iterrows():
-        G.add_edge(row['source'], row['target'], 
-                  weight=row['F-statistic'],
-                  pvalue=row['P-value'])
-    
-    # Create figure
-    fig, ax = plt.subplots(figsize=(12, 10), facecolor='white')
-    ax.set_facecolor('white')
-    
-    # Calculate layout
-    pos = nx.spring_layout(G, k=2.5, iterations=100, seed=42)
-    
-    # Scale positions
-    for node in pos:
-        pos[node] = pos[node] * 2
-    
-    node_radius = 0.2
-    
-    # Draw ARROWS first (behind nodes)
-    for edge in G.edges():
-        source, target = edge
-        x1, y1 = pos[source]
-        x2, y2 = pos[target]
+    def create_interactive_network(self, significant_df):
+        """Create network diagram using Matplotlib (Plotly alternative)"""
+        import networkx as nx
+        import matplotlib.pyplot as plt
+        from matplotlib.patches import FancyArrowPatch
+        import streamlit as st
+        import numpy as np
         
-        # Direction vector
-        dx = x2 - x1
-        dy = y2 - y1
-        distance = np.sqrt(dx**2 + dy**2)
+        # Create directed graph
+        G = nx.DiGraph()
         
-        if distance > 0:
-            # Normalize
-            ux = dx / distance
-            uy = dy / distance
+        # Add nodes
+        G.add_nodes_from(self.markets_json)
+        
+        # Add edges
+        for _, row in significant_df.iterrows():
+            G.add_edge(row['source'], row['target'], 
+                      weight=row['F-statistic'],
+                      pvalue=row['P-value'])
+        
+        # Create figure
+        fig, ax = plt.subplots(figsize=(12, 10), facecolor='white')
+        ax.set_facecolor('white')
+        
+        # Calculate layout
+        pos = nx.spring_layout(G, k=2.5, iterations=100, seed=42)
+        
+        # Scale positions
+        for node in pos:
+            pos[node] = pos[node] * 2
+        
+        node_radius = 0.2
+        
+        # Draw ARROWS first (behind nodes)
+        for edge in G.edges():
+            source, target = edge
+            x1, y1 = pos[source]
+            x2, y2 = pos[target]
             
-            # Arrow start/end
-            arrow_start_x = x1 + ux * node_radius
-            arrow_start_y = y1 + uy * node_radius
-            arrow_end_x = x2 - ux * node_radius
-            arrow_end_y = y2 - uy * node_radius
+            # Direction vector
+            dx = x2 - x1
+            dy = y2 - y1
+            distance = np.sqrt(dx**2 + dy**2)
             
-            # Draw arrow
-            arrow = FancyArrowPatch(
-                (arrow_start_x, arrow_start_y),
-                (arrow_end_x, arrow_end_y),
-                arrowstyle='-|>',
-                mutation_scale=40,
-                linewidth=4,
-                color='blue',
-                zorder=1
-            )
-            ax.add_patch(arrow)
-    
-    # Draw NODES
-    for node in G.nodes():
-        x, y = pos[node]
-        circle = plt.Circle((x, y), node_radius,
-                           facecolor='orange',
-                           edgecolor='black',
-                           linewidth=2,
-                           zorder=2)
-        ax.add_patch(circle)
-    
-    # Draw LABELS
-    for node in G.nodes():
-        x, y = pos[node]
-        ax.text(x, y, node,
-               fontsize=11,
-               fontweight='bold',
-               ha='center',
-               va='center',
-               color='black',
-               zorder=3)
-    
-    # Set limits
-    all_x = [pos[node][0] for node in G.nodes()]
-    all_y = [pos[node][1] for node in G.nodes()]
-    margin = 0.5
-    ax.set_xlim(min(all_x) - margin, max(all_x) + margin)
-    ax.set_ylim(min(all_y) - margin, max(all_y) + margin)
-    ax.set_aspect('equal')
-    ax.axis('off')
-    
-    # Title
-    ax.set_title('Granger Causality Network', fontsize=16, fontweight='bold', pad=20)
-    
-    plt.tight_layout()
-    
-    # Display in Streamlit
-    st.pyplot(fig)
-    plt.close()
-    
-    # Add legend below
-    st.markdown("""
-    **Network Interpretation:**
-    - **Orange circles:** Markets
-    - **Blue arrows:** Direction of causal influence (Source → Target)
-    - **More outgoing arrows:** Market influences many others
-    - **More incoming arrows:** Market is influenced by many others
-    """)
-    
-    # Show connection details
-    st.markdown("### Connection Details:")
-    for _, row in significant_df.iterrows():
-        st.write(f"• **{row['source']}** → **{row['target']}** (F={row['F-statistic']:.3f}, p={row['P-value']:.4f})")
+            if distance > 0:
+                # Normalize
+                ux = dx / distance
+                uy = dy / distance
+                
+                # Arrow start/end
+                arrow_start_x = x1 + ux * node_radius
+                arrow_start_y = y1 + uy * node_radius
+                arrow_end_x = x2 - ux * node_radius
+                arrow_end_y = y2 - uy * node_radius
+                
+                # Draw arrow
+                arrow = FancyArrowPatch(
+                    (arrow_start_x, arrow_start_y),
+                    (arrow_end_x, arrow_end_y),
+                    arrowstyle='-|>',
+                    mutation_scale=40,
+                    linewidth=4,
+                    color='blue',
+                    zorder=1
+                )
+                ax.add_patch(arrow)
+        
+        # Draw NODES
+        for node in G.nodes():
+            x, y = pos[node]
+            circle = plt.Circle((x, y), node_radius,
+                               facecolor='orange',
+                               edgecolor='black',
+                               linewidth=2,
+                               zorder=2)
+            ax.add_patch(circle)
+        
+        # Draw LABELS
+        for node in G.nodes():
+            x, y = pos[node]
+            ax.text(x, y, node,
+                   fontsize=11,
+                   fontweight='bold',
+                   ha='center',
+                   va='center',
+                   color='black',
+                   zorder=3)
+        
+        # Set limits
+        all_x = [pos[node][0] for node in G.nodes()]
+        all_y = [pos[node][1] for node in G.nodes()]
+        margin = 0.5
+        ax.set_xlim(min(all_x) - margin, max(all_x) + margin)
+        ax.set_ylim(min(all_y) - margin, max(all_y) + margin)
+        ax.set_aspect('equal')
+        ax.axis('off')
+        
+        # Title
+        ax.set_title('Granger Causality Network', fontsize=16, fontweight='bold', pad=20)
+        
+        plt.tight_layout()
+        
+        # Display in Streamlit
+        st.pyplot(fig)
+        plt.close()
+        
+        # Add legend below
+        st.markdown("""
+        **Network Interpretation:**
+        - **Orange circles:** Markets
+        - **Blue arrows:** Direction of causal influence (Source → Target)
+        - **More outgoing arrows:** Market influences many others
+        - **More incoming arrows:** Market is influenced by many others
+        """)
+        
+        # Show connection details
+        st.markdown("### Connection Details:")
+        for _, row in significant_df.iterrows():
+            st.write(f"• **{row['source']}** → **{row['target']}** (F={row['F-statistic']:.3f}, p={row['P-value']:.4f})")
 
     def load_raw_data_from_excel(self):
         """Load REAL data from Excel files - ENHANCED WITH CASE-INSENSITIVITY FROM FIXED CODE"""
@@ -419,6 +412,17 @@ def create_interactive_network(self, significant_df):
         except Exception as e:
             st.error(f"Error: {e}")
             return None, None
+
+    def granger_causality_analysis(self):
+        """Granger Causality Analysis Page"""
+        st.title("🔄 Granger Causality Analysis")
+        
+        if 'granger_results' in self.results:
+            significant_df = self.results['granger_results']['significant_pairs']
+            self.create_interactive_network(significant_df)
+        else:
+            st.warning("Granger causality results not available in results.")
+            st.info("Run the Granger causality analysis in your Jupyter notebook to generate this data.")
 
     def main_dashboard(self):
         """Enhanced main dashboard page"""
@@ -2569,5 +2573,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
