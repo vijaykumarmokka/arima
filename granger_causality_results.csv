@@ -1,0 +1,21 @@
+Null Hypothesis,F-statistic,P-value,Rejection of H₀ At 5 %,source,target
+Haveri does not Granger cause Kalagategi,24.111995769066827,1.8244682164910243e-06,YES,Haveri,Kalagategi
+Haveri does not Granger cause Bidar,0.5271959966252661,0.46837369904038884,NO,Haveri,Bidar
+Haveri does not Granger cause Kalaburgi,30.075248426360528,9.721596810360836e-08,YES,Haveri,Kalaburgi
+Haveri does not Granger cause Bailhongal,0.9427559110762204,0.3323848377969052,NO,Haveri,Bailhongal
+Kalagategi does not Granger cause Haveri,14.588976714010249,0.0001760206726069907,YES,Kalagategi,Haveri
+Kalagategi does not Granger cause Bidar,0.6056736154665516,0.43711313666563323,NO,Kalagategi,Bidar
+Kalagategi does not Granger cause Kalaburgi,151.72109239844693,1.6888651896898923e-27,YES,Kalagategi,Kalaburgi
+Kalagategi does not Granger cause Bailhongal,2.520585476512022,0.11355678897893136,NO,Kalagategi,Bailhongal
+Bidar does not Granger cause Haveri,85.65169563513706,4.901469285688778e-18,YES,Bidar,Haveri
+Bidar does not Granger cause Kalagategi,107.68470436281271,2.0960481715325094e-21,YES,Bidar,Kalagategi
+Bidar does not Granger cause Kalaburgi,288.8990719136236,6.361819642434043e-48,YES,Bidar,Kalaburgi
+Bidar does not Granger cause Bailhongal,20.04460116238776,1.006031859338554e-05,YES,Bidar,Bailhongal
+Kalaburgi does not Granger cause Haveri,0.7514669492575722,0.38679938136397374,NO,Kalaburgi,Haveri
+Kalaburgi does not Granger cause Kalagategi,20.382632385434572,9.821268534734747e-06,YES,Kalaburgi,Kalagategi
+Kalaburgi does not Granger cause Bidar,82.99314584191671,5.944225163984952e-18,YES,Kalaburgi,Bidar
+Kalaburgi does not Granger cause Bailhongal,65.86104851360273,8.42792119321922e-15,YES,Kalaburgi,Bailhongal
+Bailhongal does not Granger cause Haveri,62.135400477647245,6.655195661201152e-14,YES,Bailhongal,Haveri
+Bailhongal does not Granger cause Kalagategi,114.63461646215352,1.768726514708495e-22,YES,Bailhongal,Kalagategi
+Bailhongal does not Granger cause Bidar,2.2578175617222915,0.13378515674777453,NO,Bailhongal,Bidar
+Bailhongal does not Granger cause Kalaburgi,257.77309437146437,8.463834071755317e-44,YES,Bailhongal,Kalaburgi
